@@ -99,6 +99,5 @@ exports.modifyUserProfile = async(profile,id)=>{
     throw new Error(e)
   }finally{
     conn.release()
-    pool.end()
   }
 }
