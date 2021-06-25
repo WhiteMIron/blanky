@@ -1,5 +1,4 @@
 const pool = require("../../config/database");
-const excludeWord = ['Hello','I\'m', 'in', 'cook', 'you', 'I', 'Addae','the','she', 'he', 'my', 'this', 'that', 'day', 'to'];
 const constants = require("../../consts_folder/constants");
 const englishParagraphService = require("../../services/english_paragraph");
 const blankModule = require("./blank")
@@ -7,11 +6,6 @@ const commonQuestionModule = require("./common_question")
 const paragraphModule = require("./paragraph")
 const multipleChoiceQuestionsModule = require("./multiple_choice_questions")
 const checkAnswerModule = require("./check_answer")
-const readline = require("readline");
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 exports.createQuestion =async () =>{
 
