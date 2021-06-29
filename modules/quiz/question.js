@@ -1,17 +1,9 @@
-const pool = require("../../config/database");
-const excludeWord = ['Hello','I\'m', 'in', 'cook', 'you', 'I', 'Addae','the','she', 'he', 'my', 'this', 'that', 'day', 'to'];
-const constants = require("../../consts_folder/constants");
 const englishParagraphService = require("../../services/english_paragraph");
 const blankModule = require("./blank")
 const commonQuestionModule = require("./common_question")
 const paragraphModule = require("./paragraph")
 const multipleChoiceQuestionsModule = require("./multiple_choice_questions")
-const checkAnswerModule = require("./check_answer")
-const readline = require("readline");
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+
 
 exports.createQuestion =async () =>{
 
@@ -19,7 +11,6 @@ exports.createQuestion =async () =>{
     let rand_0_length= await commonQuestionModule.randomNumRangeListLen(paragraphRow)
     let paragraphId = paragraphRow[rand_0_length].id
     let paragraph = paragraphRow[rand_0_length].english_paragraph
-
 
     let questionParagraphList = await paragraphModule.splitParagraphBaseDot(paragraph)
     let questionParagraph = await paragraphModule.randomParagraph(questionParagraphList)
@@ -36,7 +27,7 @@ exports.createQuestion =async () =>{
     let randomNumList = await mixNumList(blankWords)
     let multipleChoiceQuestions= await multipleChoiceQuestionsModule.createMultipleChoiceQuestions(blankWords,randomNumList)
 
-
+    console.log(questionTranslation)
     let question ={
       originalParagraph : originalParagraph,
       paragraph : questionParagraph,

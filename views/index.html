@@ -29,6 +29,8 @@
     <button class="btn btn-primary" id="answerBtn2">2</button>
     <button class="btn btn-primary" id="answerBtn3">3</button>
     <button class="btn btn-primary" id="answerBtn4">4</button>
+    <button class="btn btn-primary" id="joinGameBtn">게임참가</button>
+    <button class="btn btn-primary" id="forceLeaveBtn">강퇴</button>
     <div id="chatLogs"></div>
   </div>
 
@@ -36,39 +38,33 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
   $(function(){
-    var upper = io('/upper');
+    var socket = io('/upper');
     var roomName = "";
-    var name = "";
-    // 서버로 자신의 정보를 전송한다.
-    upper.emit("enterNameSpace", {
+    var userName = "";
+
+    socket.emit("enterNameSpace", {
       userName: makeRandomName()
 
     });
-    upper.on("waiting", function(data) {
+    socket.on("waiting", function(data) {
       $("#chatLogs").append("<div><strong>" +"나:   " + data.userName + " [대기중] </strong>" + "</div>");
     });
 
-    upper.on('test',function(){
-      // userName = data.socket.userName
-      // socket = data.socket
-      $("#chatLogs").append("<div><strong>"+"test" + "</strong></div>");
-      // socket.emit('testb')
-    })
 
-    upper.on("startWaiting", function() {
+    socket.on("startWaiting", function() {
       $("#chatLogs").append("<div><strong>"+"상대방 게임시작을 기다리는 중" + "</strong></div>");
     });
 
 
-    upper.on("Leave", function() {
+    socket.on("Leave", function() {
       $("#chatLogs").append("<div><strong>" +" 대기중  " +   "</strong>" + "</div>");
     });
 
-    upper.on("enterRoomOppnent",function(data){
+    socket.on("enterRoomOppnent",function(data){
       $("#chatLogs").append("<div><strong>[안내] "+ data.userName+"님이 입장하였습니다."+"</strong>" + "</div>");
   });
 
-    upper.on("enterRoomMy", function(data) {
+    socket.on("enterRoomMy", function(data) {
       userName = data.userName
       roomName = data.roomName
 
@@ -77,14 +73,14 @@
 
     });
 
-    upper.on("discWhileChat", function() {
+    socket.on("discWhileChat", function() {
       $("#chatLogs").append("<div><strong>" + " 상대방 연결이 종료되었습니다.   </strong>" +"</div>");
       $("#chatLogs").append("<div><strong>" + " [대기중]   </strong>" +"</div>");
       });
 
 
 
-    upper.on("printQuestion", function(data) {
+    socket.on("printQuestion", function(data) {
       let originalParagraph = data.originalParagraph
       let question = data.question
       let multipleChoiceQuestions = data.multipleChoiceQuestions
@@ -97,19 +93,19 @@
       }
 
     });
-    upper.on("errorPrintQuestion", function(data) {
+    socket.on("errorPrintQuestion", function(data) {
       $("#chatLogs").append("<div>" + "<strong>" + "</strong>" + data.msg + "</div>");
     });
 
-    upper.on("myChat", function(data) {
+    socket.on("myChat", function(data) {
       $("#chatLogs").append("<div><strong> 나: " + data.msg +"</strong></div>");
     });
 
-    upper.on("broadcastChat", function(data) {
+    socket.on("broadcastChat", function(data) {
       $("#chatLogs").append("<div>" +data.msg + " : <strong>" + data.userName + "</strong></div>");
     });
 
-    upper.on("answerRight", function(data) {
+    socket.on("answerRight", function(data) {
       round = data.round
       score = data.score
       $("#chatLogs").append("<br></br>");
@@ -117,7 +113,7 @@
       $("#chatLogs").append("<div><strong> [나]:" +round+ "라운드: " + score + "</strong>" + "점</strong></div>");
   });
 
-    upper.on("answerWrong", function(data) {
+    socket.on("answerWrong", function(data) {
       round = data.round
       score = data.score
 
@@ -127,7 +123,7 @@
 
     });
 
-    upper.on("broadcastAnswerRight",function(data){
+    socket.on("broadcastAnswerRight",function(data){
       userName = data.userName
       round = data.round
       score = data.score
@@ -137,7 +133,7 @@
 
     })
 
-    upper.on("broadcastAnswerWrong",function(data){
+    socket.on("broadcastAnswerWrong",function(data){
       userName = data.userName
       round = data.round
       score = data.score
@@ -147,52 +143,90 @@
     })
 
 
-    upper.on("printMultipleChoiceQuestions",function(data){
+    socket.on("printMultipleChoiceQuestions",function(data){
       for(let i=1;i<=data.multipleChoiceQuestions.length;i++){
         $("#chatLogs").append("<div>" + "<strong>"+ i+ "번 보기 " + data.multipleChoiceQuestions[i-1] + "</div>");
       }
     })
 
+    socket.on("disconnectedOpponent",function(){
+      $("#chatLogs").append("<div><strong>"+"상대방의 연결이 끊겼습니다." +"</strong></div>");
+    })
+    
+    socket.on("disconnectedOpponentWhilePlay",function(){
+      $("#chatLogs").append("<div><strong>"+"상대방의 연결이 끊겼습니다." +"</strong></div>");
+      $("#chatLogs").append("<div><strong>"+"Win!" +"</strong></div>");
+      socket.emit('enterNameSpace',{userName:userName})
+
+    })
+
+    socket.on("finish",function(){
+      $("#chatLogs").append("<div><strong>"+"문제를 다 풀었습니다." +"</strong></div>");
+    })
+
+
+    socket.on("waitOpponentSloveQuestion",function(){
+      $("#chatLogs").append("<div><strong>"+"상대방이 아직 문제를 다 풀지 않았습니다." +"</strong></div>");
+    })
+
+    socket.on("leaveRoom",function(){
+      $("#chatLogs").append("<div><strong>"+"방에서 나왔습니다." +"</strong></div>");
+    })
+
+    socket.on("kiked",function(){
+      $("#chatLogs").append("<div><strong>"+"강퇴되었습니다." +"</strong></div>");
+    })
+
+    
+
     $("#send").on("click",function(e){
       e.preventDefault();
       var $msgForm = $("#msgForm");
-      upper.emit("chat", {
+      socket.emit("chat", {
         msg: $msgForm.val()
       });
       $msgForm.val("");
     });
 
     $("#startBtn").on("click",function(){
-        upper.emit("start");
+        socket.emit("start");
       })
 
     $("#answerBtn1").on("click",function(){
-        upper.emit("answer", {
+        socket.emit("answer", {
             userid: name,
             room: roomName,
             answer: 1
           });
         })
     $("#answerBtn2").on("click",function(){
-      upper.emit("answer", {
+      socket.emit("answer", {
         userid: name,
         room: roomName,
         answer: 2
       });
     })
     $("#answerBtn3").on("click",function(){
-      upper.emit("answer", {
+      socket.emit("answer", {
         userid: name,
         room: roomName,
         answer: 3
       });
     })
     $("#answerBtn4").on("click",function(){
-      upper.emit("answer", {
+      socket.emit("answer", {
         userid: name,
         room: roomName,
         answer: 4
       });
+    })
+
+    $("#joinGameBtn").on("click",function(){
+      socket.emit('enterNameSpace',{userName:userName})
+})
+    $("#forceLeaveBtn").on("click",function(){
+      socket.emit("kick")
+      
     })
 
     function makeRandomName(){

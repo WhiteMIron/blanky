@@ -23,6 +23,7 @@ exports.createRandomBlankWords = async (paragraph) =>{
       if (blank.indexOf(tmpStr[randomNumList[i]]) == -1 && tmpStr[randomNumList[i]].length > 1)
         blank.push(tmpStr[randomNumList[i]])
     }
+    console.log(blank)
     return blank
 }
 
@@ -31,7 +32,6 @@ exports.setBlanks = async (searchValue, paragraph) =>{
   let position =await searchPositionWord(searchValue,paragraph)
   let blankChars=await setBlankChars(position.length)
   let questionParagraph= await replaceAt(paragraph,position.startIndex,position.endIndex,blankChars)
-
   return questionParagraph
 }
 

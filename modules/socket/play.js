@@ -29,12 +29,21 @@ exports.play = function(socket, io, rooms) {
           messageModule.startWaiting(socket)
     }
   })
+
+    socket.on('sendQuestion',async function(){
+      let room = socket.room
+      sendQuestion(io, room, questionMsg)
+      let players = room.sockets
+      setPlayersQuestionStatus(players, questionMsg.multipleChoiceQuestions, questionMsg.blankWords)
+    })
+
     socket.on('answer', async function(data) {
       answer = data.answer - 1
       let result = await checkAnswerModule.isRightAnswer(answer, socket.multipleChoiceQuestions, socket.blankWords)
       let userName = socket.userName
-      let round = socket.room.round
-
+      let room = socket.room
+      let round = room.round
+   
       let blankWords = result.blankWords
       let multipleChoiceQuestions = result.multipleChoiceQuestions
 
@@ -45,10 +54,29 @@ exports.play = function(socket, io, rooms) {
         messageModule.answerRight(socket,round,score)
         messageModule.printMultipleChoiceQuestions(socket,multipleChoiceQuestions)
         messageModule.broadcastAnswerRight(socket,userName,round,score)
-  }
+      
+        result=checkAllPlayerSloveQuestion(room.sockets)
+        if(result ==true){
+          if(room.round<1){
+            plusRound(room)
+            let questionMsg = await createQuestion()
+            sendQuestion(io, room, questionMsg)
+            let players = room.sockets
+            setPlayersQuestionStatus(players, questionMsg.multipleChoiceQuestions, questionMsg.blankWords)
+          }
+          else{
+            io.to(room.name).emit("finish")
+            leaveRoom(room)
+          }
+        }
+        else{
+          result=checkPlayerSloveQuestion(multipleChoiceQuestions)
+          if(result==true)
+            socket.emit("waitOpponentSloveQuestion")
+        }
+      }
 
-
-      if (result.isRight == false) {
+      else{
         minusScore(socket)
         let score = socket.score
         setQuestionStatus(socket,multipleChoiceQuestions,blankWords)
@@ -58,6 +86,29 @@ exports.play = function(socket, io, rooms) {
       }
     })
 
+}
+
+
+function checkAllPlayerSloveQuestion(players){
+  for(player of players){
+   result =checkPlayerSloveQuestion(player.multipleChoiceQuestions)
+   if(result==true)
+    continue
+   else
+    return false
+  }
+  return true
+}
+
+function checkPlayerSloveQuestion(multipleChoiceQuestions){
+  if(multipleChoiceQuestions.length ==0)
+    return true
+  else 
+    return false
+}
+
+function plusRound(room){
+  room.round ++
 }
 
 function plusScore(socket){
@@ -122,9 +173,12 @@ function setPlayStatusRoom(room){
   room.status = constants.play
 }
 
-function removeRoom(room){
-  let roomName = room.name
-  room.sockets.splice(0,room.sockets.length)
+function leaveRoom(room){
+  let players = room.sockets
+  for( player of players){
+    player.leave(room.name)
+    player.room = null
+    player.emit("leaveRoom")
+  }
 
-  socket.leave(roomName)
 }
