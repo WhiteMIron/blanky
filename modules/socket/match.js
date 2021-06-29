@@ -13,6 +13,11 @@ function setPlayerInfo(socket,waitingClients,userName){
   socket.score = 0
   socket.status = constants.waiting
   socket.room = null
+  socket.matchHistoryId = null
+  socket.roundHistoryId = null
+  //startIndex : wordLength
+  socket.rightAnswerDict={}
+  socket.wrongAnswerDict={}
   waitingClients.push(socket)
 }
 
@@ -63,7 +68,11 @@ function createRoom(roomName){
     sockets: [],
     status : constants.wait, // ready, play
     readyPlayers : [],
-    round: 1
+    // round: 1
+    round :{
+      count :1,
+      questionParagraph:""
+    }
   }
   return room
 }

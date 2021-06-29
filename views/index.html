@@ -60,7 +60,7 @@
       $("#chatLogs").append("<div><strong>" +" 대기중  " +   "</strong>" + "</div>");
     });
 
-    socket.on("enterRoomOppnent",function(data){
+    socket.on("enterRoomOpponent",function(data){
       $("#chatLogs").append("<div><strong>[안내] "+ data.userName+"님이 입장하였습니다."+"</strong>" + "</div>");
   });
 
@@ -105,6 +105,25 @@
       $("#chatLogs").append("<div>" +data.msg + " : <strong>" + data.userName + "</strong></div>");
     });
 
+
+    socket.on("answerNotify", function(data) {
+      round = data.round
+      score = data.score
+      isAnswer = data.isAnswer
+
+      if(isAnswer==true){
+        $("#chatLogs").append("<br></br>");
+        $("#chatLogs").append("<div><strong>" + "[정답]</strong></div>");
+      }
+      else if(isAnswer ==false){
+        $("#chatLogs").append("<br></br>");
+        $("#chatLogs").append("<div><strong>" + "[오답]</strong></div>");
+      }
+      $("#chatLogs").append("<div><strong> [나]:" +round+ "라운드: " + score + "</strong>" + "점</strong></div>");
+  });
+
+
+
     socket.on("answerRight", function(data) {
       round = data.round
       score = data.score
@@ -122,6 +141,20 @@
       $("#chatLogs").append("<div><strong> [나]:" +round+ "라운드: " + score + "</strong>" + "점</strong></div>");
 
     });
+
+    socket.on("broadcastAnswerNotify",function(data){
+      userName = data.userName
+      round = data.round
+      score = data.score
+      isAnswer = data.isAnswer
+
+      if(isAnswer==true)
+        $("#chatLogs").append("<div><strong>" + "[정답]</strong><div>");
+      else if(isAnswer= false)
+        $("#chatLogs").append("<div><strong>" + "[오답]</strong><div>");
+      
+      $("#chatLogs").append("<div><strong>"+ "[" + userName + "] " + round+ "라운드: " + score + "</strong>점 : from <strong>" + data.userName + "</strong></div>");
+    })
 
     socket.on("broadcastAnswerRight",function(data){
       userName = data.userName
@@ -165,7 +198,7 @@
     })
 
 
-    socket.on("waitOpponentSloveQuestion",function(){
+    socket.on("waitOpponentSolveQuestion",function(){
       $("#chatLogs").append("<div><strong>"+"상대방이 아직 문제를 다 풀지 않았습니다." +"</strong></div>");
     })
 
@@ -173,7 +206,7 @@
       $("#chatLogs").append("<div><strong>"+"방에서 나왔습니다." +"</strong></div>");
     })
 
-    socket.on("kiked",function(){
+    socket.on("kicked",function(){
       $("#chatLogs").append("<div><strong>"+"강퇴되었습니다." +"</strong></div>");
     })
 
@@ -194,28 +227,28 @@
 
     $("#answerBtn1").on("click",function(){
         socket.emit("answer", {
-            userid: name,
+            userId: name,
             room: roomName,
             answer: 1
           });
         })
     $("#answerBtn2").on("click",function(){
       socket.emit("answer", {
-        userid: name,
+        userId: name,
         room: roomName,
         answer: 2
       });
     })
     $("#answerBtn3").on("click",function(){
       socket.emit("answer", {
-        userid: name,
+        userId: name,
         room: roomName,
         answer: 3
       });
     })
     $("#answerBtn4").on("click",function(){
       socket.emit("answer", {
-        userid: name,
+        userId: name,
         room: roomName,
         answer: 4
       });

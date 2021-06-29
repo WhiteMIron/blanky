@@ -29,6 +29,5 @@ exports.findByParagraphId = async(paragraphId)=>{
     throw new Error(e)
   } finally {
     conn.release()
-    // pool.end()
   }
 }

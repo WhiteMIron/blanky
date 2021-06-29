@@ -34,7 +34,7 @@ exports.disconnect = function(socket,io){
           console.log("playerName:",player.userName)
           player.leave(roomName)
           player.room=null
-          player.emit('kiked')
+          player.emit('kicked')
         }
     })
    

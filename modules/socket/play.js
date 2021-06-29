@@ -3,6 +3,7 @@ const questionModule = require("../quiz/question")
 const checkAnswerModule = require("../quiz/check_answer")
 const messageModule = require("./message")
 const chatModule = require("./chat")
+const matchService = require("../../services/match_history")
 
 exports.play = function(socket, io, rooms) {
     socket.on('start', async function() {
@@ -13,10 +14,17 @@ exports.play = function(socket, io, rooms) {
       if (roomStatus == constants.ready) {
         try {
           setPlayStatusRoom(room)
+
+          for(player of room.sockets){
+            player.matchHistoryId=await matchService.recordMatchHistory()
+          }
           let questionMsg = await createQuestion()
-          sendQuestion(io, room, questionMsg)
           let players = room.sockets
+          let round = room.round
+          sendQuestion(io, room, questionMsg)
           setPlayersQuestionStatus(players, questionMsg.multipleChoiceQuestions, questionMsg.blankWords)
+          round.questionParagraph = questionMsg.originalParagraph
+        
         } catch (error) {
           msg = {
             code: 400,
@@ -30,68 +38,112 @@ exports.play = function(socket, io, rooms) {
     }
   })
 
-    socket.on('sendQuestion',async function(){
-      let room = socket.room
-      sendQuestion(io, room, questionMsg)
-      let players = room.sockets
-      setPlayersQuestionStatus(players, questionMsg.multipleChoiceQuestions, questionMsg.blankWords)
-    })
-
     socket.on('answer', async function(data) {
       answer = data.answer - 1
+      let rightAnswer = socket.blankWords[0]
       let result = await checkAnswerModule.isRightAnswer(answer, socket.multipleChoiceQuestions, socket.blankWords)
       let userName = socket.userName
       let room = socket.room
-      let round = room.round
-   
+      let round =room.round
+      let roundCount = round.count
+      let roundQuestionParagraph = round.questionParagraph
+
       let blankWords = result.blankWords
       let multipleChoiceQuestions = result.multipleChoiceQuestions
 
       if (result.isRight == true) {
         plusScore(socket)
         let score = socket.score
+
+        answerPositionIndex=round.questionParagraph.indexOf(rightAnswer)
+        answerLength = rightAnswer.length
+        if(Object.keys(socket.wrongAnswerDict).length==0)
+          socket.rightAnswerDict[answerPositionIndex] =answerLength
+        else{
+          for(key of Object.keys(socket.wrongAnswerDict)){
+            if(answerPositionIndex!=key){
+              socket.rightAnswerDict[answerPositionIndex] =answerLength
+            }
+          }
+        }
+    
+        
         setQuestionStatus(socket,multipleChoiceQuestions,blankWords)
-        messageModule.answerRight(socket,round,score)
+        messageModule.answerNotify(socket,roundCount,score,true)
         messageModule.printMultipleChoiceQuestions(socket,multipleChoiceQuestions)
-        messageModule.broadcastAnswerRight(socket,userName,round,score)
-      
-        result=checkAllPlayerSloveQuestion(room.sockets)
+        messageModule.broadcastAnswerNotify(socket,userName,roundCount,score,true)
+ 
+        result=checkAllPlayerSolveQuestion(room.sockets)
         if(result ==true){
-          if(room.round<1){
+          roundHistoryId=await matchService.recordRoundHistory(roundCount,score,roundQuestionParagraph,socket.matchHistoryId,socket.userName)
+          for(answerPositionIndex of Object.keys(socket.rightAnswerDict))
+            matchService.recordAnswerHistory(answerPositionIndex,socket.rightAnswerDict[answerPositionIndex],true,roundHistoryId)
+          for(answerPositionIndex of Object.keys(socket.wrongAnswerDict)) {
+            matchService.recordAnswerHistory(answerPositionIndex,socket.wrongAnswerDict[answerPositionIndex],false,roundHistoryId)
+          }
+       
+
+          if(roundCount<1){
             plusRound(room)
             let questionMsg = await createQuestion()
             sendQuestion(io, room, questionMsg)
             let players = room.sockets
             setPlayersQuestionStatus(players, questionMsg.multipleChoiceQuestions, questionMsg.blankWords)
+            round.questionParagraph = questionMsg.originalParagraph
+        
           }
           else{
+            console.log("finish")
             io.to(room.name).emit("finish")
             leaveRoom(room)
           }
         }
         else{
-          result=checkPlayerSloveQuestion(multipleChoiceQuestions)
-          if(result==true)
-            socket.emit("waitOpponentSloveQuestion")
+          result=checkPlayerSolveQuestion(multipleChoiceQuestions)
+          if(result==true){
+            roundHistoryId=await matchService.recordRoundHistory(roundCount,score,roundQuestionParagraph,socket.matchHistoryId,socket.userName)
+         
+            for(answerPositionIndex of Object.keys(socket.rightAnswerDict))
+              matchService.recordAnswerHistory(answerPositionIndex,socket.rightAnswerDict[answerPositionIndex],true,roundHistoryId)
+            for(answerPositionIndex of Object.keys(socket.wrongAnswerDict)) {
+              matchService.recordAnswerHistory(answerPositionIndex,socket.wrongAnswerDict[answerPositionIndex],false,roundHistoryId)
+            }
+            
+            socket.emit("waitOpponentSolveQuestion")
+          }
         }
       }
 
       else{
+      
+        answerPositionIndex=round.questionParagraph.indexOf(rightAnswer)
+        answerLength = rightAnswer.length
+     
+        if(Object.keys(socket.wrongAnswerDict)==0)
+          socket.wrongAnswerDict[answerPositionIndex] =answerLength
+        
+        for(key of Object.keys(socket.wrongAnswerDict)){
+          if(key!=answerPositionIndex){
+            socket.wrongAnswerDict[answerPositionIndex] =answerLength
+        }
+      }
+
         minusScore(socket)
         let score = socket.score
         setQuestionStatus(socket,multipleChoiceQuestions,blankWords)
-        messageModule.answerWrong(socket,round,score)
+        messageModule.answerNotify(socket,roundCount,score,false)
         messageModule.printMultipleChoiceQuestions(socket,multipleChoiceQuestions)
-        messageModule.broadcastAnswerWrong(socket,userName,round,score)
+        messageModule.broadcastAnswerNotify(socket,userName,roundCount,score,false)
+     
       }
     })
 
 }
 
 
-function checkAllPlayerSloveQuestion(players){
+function checkAllPlayerSolveQuestion(players){
   for(player of players){
-   result =checkPlayerSloveQuestion(player.multipleChoiceQuestions)
+   result =checkPlayerSolveQuestion(player.multipleChoiceQuestions)
    if(result==true)
     continue
    else
@@ -100,7 +152,7 @@ function checkAllPlayerSloveQuestion(players){
   return true
 }
 
-function checkPlayerSloveQuestion(multipleChoiceQuestions){
+function checkPlayerSolveQuestion(multipleChoiceQuestions){
   if(multipleChoiceQuestions.length ==0)
     return true
   else 
@@ -108,7 +160,7 @@ function checkPlayerSloveQuestion(multipleChoiceQuestions){
 }
 
 function plusRound(room){
-  room.round ++
+  room.round.count ++
 }
 
 function plusScore(socket){

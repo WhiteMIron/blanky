@@ -17,7 +17,6 @@ exports.isRightAnswer = async (answer,multipleChoiceQuestions,blankWords) =>{
         result["isRight"] =false
         result["multipleChoiceQuestions"] =tmpMultipleChoiceQuestions
         result["blankWords"] = tmpBlankWords
-
       }
 
       return result

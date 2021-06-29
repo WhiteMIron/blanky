@@ -8,7 +8,7 @@ exports.waiting = function(socket){
 
 
 exports.broadcastEnterRoom = function(socket,io){
-    io.to(socket.room.name).emit("enterRoomOppnent",{userName:socket.userName})
+    io.to(socket.room.name).emit("enterRoomOpponent",{userName:socket.userName})
 }
 
 exports.enterRoom = function(socket){
@@ -18,31 +18,19 @@ exports.enterRoom = function(socket){
   })
 }
 
-exports.answerRight = function(socket,round,score){
-  socket.emit('answerRight',{
+exports.answerNotify = function(socket,round,score,isAnswer){
+  socket.emit('answerNotify',{
     round:round,
-    score:score
+    score:score,
+    isAnswer:isAnswer
   })
 }
 
-exports.answerWrong = function(socket,round,score){
-  socket.emit('answerWrong',{
-    round:round,
-    score:score
-  })
-}
 
-exports.broadcastAnswerRight = function(socket,userName,round,score){
-  socket.broadcast.to(socket.room.name).emit('broadcastAnswerRight',{
+exports.broadcastAnswerNotify = function(socket,userName,round,score,isAnswer){
+  socket.broadcast.to(socket.room.name).emit('broadcastAnswerNotify',{
     userName: userName,
-    round: round,
-    score: score
-  });
-}
-
-exports.broadcastAnswerWrong = function(socket,userName,round,score){
-  socket.broadcast.to(socket.room.name).emit('broadcastAnswerWrong',{
-    userName: userName,
+    isAnswer : isAnswer,
     round: round,
     score: score
   });
