@@ -8,7 +8,7 @@ io.on('connection', function (socket){
   socket.on('CH01', function (from, msg) {
 
 });
-
+})
 http.listen(3000, function () {
   console.log('listening on *:3000');
 });
