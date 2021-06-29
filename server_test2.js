@@ -6,8 +6,6 @@ io.on('connection', function (socket){
    console.log('connection');
 
   socket.on('CH01', function (from, msg) {
-    console.log('MSG', from, ' saying ', msg);
-  });
 
 });
 
