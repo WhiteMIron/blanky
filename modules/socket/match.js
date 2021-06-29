@@ -2,7 +2,7 @@ const constants = require("../../consts_folder/socket/constants")
 const messageModule = require("./message")
 
 exports.match =  function(socket,io,waitingClients, rooms){
-    socket.on('enterNameSpace',  function(data) {
+   socket.on('enterNameSpace',  function(data) {
       setPlayerInfo(socket,waitingClients,data.userName)
       searchPlayer(socket,io,waitingClients,rooms)
    })
@@ -63,7 +63,7 @@ function createRoom(roomName){
     sockets: [],
     status : constants.wait, // ready, play
     readyPlayers : [],
-    round: 0
+    round: 1
   }
   return room
 }

@@ -1,11 +1,18 @@
+<<<<<<< HEAD
 const pool = require("../../config/database");
 const constants = require("../../consts_folder/constants");
+=======
+>>>>>>> bb364f69d0687d3bb6d665fd3f0f996b962068ca
 const englishParagraphService = require("../../services/english_paragraph");
 const blankModule = require("./blank")
 const commonQuestionModule = require("./common_question")
 const paragraphModule = require("./paragraph")
 const multipleChoiceQuestionsModule = require("./multiple_choice_questions")
+<<<<<<< HEAD
 const checkAnswerModule = require("./check_answer")
+=======
+
+>>>>>>> bb364f69d0687d3bb6d665fd3f0f996b962068ca
 
 exports.createQuestion =async () =>{
 
@@ -13,7 +20,6 @@ exports.createQuestion =async () =>{
     let rand_0_length= await commonQuestionModule.randomNumRangeListLen(paragraphRow)
     let paragraphId = paragraphRow[rand_0_length].id
     let paragraph = paragraphRow[rand_0_length].english_paragraph
-
 
     let questionParagraphList = await paragraphModule.splitParagraphBaseDot(paragraph)
     let questionParagraph = await paragraphModule.randomParagraph(questionParagraphList)
@@ -30,7 +36,7 @@ exports.createQuestion =async () =>{
     let randomNumList = await mixNumList(blankWords)
     let multipleChoiceQuestions= await multipleChoiceQuestionsModule.createMultipleChoiceQuestions(blankWords,randomNumList)
 
-
+    console.log(questionTranslation)
     let question ={
       originalParagraph : originalParagraph,
       paragraph : questionParagraph,

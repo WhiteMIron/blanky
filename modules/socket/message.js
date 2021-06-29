@@ -5,6 +5,8 @@ exports.startWaiting = function(socket){
 exports.waiting = function(socket){
   socket.emit('waiting',{userName:socket.userName})
 }
+
+
 exports.broadcastEnterRoom = function(socket,io){
     io.to(socket.room.name).emit("enterRoomOppnent",{userName:socket.userName})
 }
