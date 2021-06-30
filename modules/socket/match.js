@@ -10,7 +10,6 @@ exports.match =  function(socket,io,waitingClients, rooms){
 
 function setPlayerInfo(socket,waitingClients,userName){
   socket.userName = userName
-  socket.score = 0
   socket.status = constants.waiting
   socket.room = null
   socket.matchHistoryId = null

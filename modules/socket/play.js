@@ -5,7 +5,7 @@ const messageModule = require("./message")
 const chatModule = require("./chat")
 const matchService = require("../../services/match_history")
 
-exports.play = function(socket, io, rooms) {
+exports.play = function(socket, io) {
     socket.on('start', async function() {
     if (socket.status == constants.matched) {
       let room = socket.room
@@ -38,7 +38,118 @@ exports.play = function(socket, io, rooms) {
     }
   })
 
-    socket.on('answer', async function(data) {
+    // socket.on('answer', async function(data) {
+    //   answer = data.answer - 1
+    //   let rightAnswer = socket.blankWords[0]
+    //   let result = await checkAnswerModule.isRightAnswer(answer, socket.multipleChoiceQuestions, socket.blankWords)
+    //   let userName = socket.userName
+    //   let room = socket.room
+    //   let round =room.round
+    //   let roundCount = round.count
+    //   let roundQuestionParagraph = round.questionParagraph
+
+    //   let blankWords = result.blankWords
+    //   let multipleChoiceQuestions = result.multipleChoiceQuestions
+
+    //   if (result.isRight == true) {
+     
+    //     answerPositionIndex=round.questionParagraph.indexOf(rightAnswer)
+    //     answerLength = rightAnswer.length
+    //     if(Object.keys(socket.wrongAnswerDict).length==0)
+    //       socket.rightAnswerDict[answerPositionIndex] =answerLength
+    //     else{
+    //       for(key of Object.keys(socket.wrongAnswerDict)){
+    //         if(answerPositionIndex!=key){
+    //           socket.rightAnswerDict[answerPositionIndex] =answerLength
+    //         }
+    //       }
+    //     }
+    
+        
+    //     setQuestionStatus(socket,multipleChoiceQuestions,blankWords)
+    //     messageModule.answerNotify(socket,roundCount,true)
+    //     messageModule.printMultipleChoiceQuestions(socket,multipleChoiceQuestions)
+    //     messageModule.broadcastAnswerNotify(socket,userName,roundCount,true)
+ 
+        
+    //     result=checkAllPlayerSolveQuestion(room.sockets)
+    //     if(result ==true){
+    //       //나중에 푼 사람
+
+    //       roundHistoryId=await matchService.recordRoundHistory(roundCount,roundQuestionParagraph,false,socket.matchHistoryId,socket.userName)
+    //       for(answerPositionIndex of Object.keys(socket.rightAnswerDict))
+    //         matchService.recordAnswerHistory(answerPositionIndex,socket.rightAnswerDict[answerPositionIndex],true,roundHistoryId)
+    //       for(answerPositionIndex of Object.keys(socket.wrongAnswerDict)) {
+    //         matchService.recordAnswerHistory(answerPositionIndex,socket.wrongAnswerDict[answerPositionIndex],false,roundHistoryId)
+          
+          
+    //       }
+       
+
+    //       if(roundCount<1){
+    //         //여기다 승패여부 
+    //         plusRound(room)
+    //         let questionMsg = await createQuestion()
+    //         sendQuestion(io, room, questionMsg)
+    //         let players = room.sockets
+    //         setPlayersQuestionStatus(players, questionMsg.multipleChoiceQuestions, questionMsg.blankWords)
+    //         round.questionParagraph = questionMsg.originalParagraph
+    //         messageModule.roundResultNotify(socket,false,roundCount)
+    //       }
+    //       else{
+    //         //여기다가도 승패여부
+    //         messageModule.roundResultNotify(socket,false,roundCount)
+    //         console.log("finish")
+    //         io.to(room.name).emit("finish")
+    //         leaveRoom(room)
+    //       }
+    //     }
+    //     else{
+    //       result=checkPlayerSolveQuestion(multipleChoiceQuestions)
+    //       if(result==true){
+    //         //먼저 푼 사람
+    //         messageModule.roundResultNotify(socket,true,roundCount)
+
+    //         roundHistoryId=await matchService.recordRoundHistory(roundCount,roundQuestionParagraph,true,socket.matchHistoryId,socket.userName)         
+    //         console.log("roundHistoryId:",roundHistoryId)
+    //         console.log("rightAnswerDict:",socket.rightAnswerDict)
+    //         console.log("wrongAnswerDict:",socket.wrongAnswerDict)
+
+    //         for(answerPositionIndex of Object.keys(socket.rightAnswerDict))
+    //          await matchService.recordAnswerHistory(answerPositionIndex,socket.rightAnswerDict[answerPositionIndex],true,roundHistoryId)
+    //         for(answerPositionIndex of Object.keys(socket.wrongAnswerDict)) {
+    //          await matchService.recordAnswerHistory(answerPositionIndex,socket.wrongAnswerDict[answerPositionIndex],false,roundHistoryId)
+    //         }
+            
+    //         socket.emit("waitOpponentSolveQuestion")
+    //       }
+    //     }
+    //   }
+
+    //   else{
+      
+    //     answerPositionIndex=round.questionParagraph.indexOf(rightAnswer)
+    //     answerLength = rightAnswer.length
+     
+    //     if(Object.keys(socket.wrongAnswerDict)==0)
+    //       socket.wrongAnswerDict[answerPositionIndex] =answerLength
+        
+    //     for(key of Object.keys(socket.wrongAnswerDict)){
+    //       if(key!=answerPositionIndex){
+    //         socket.wrongAnswerDict[answerPositionIndex] =answerLength
+    //     }
+    //   }
+
+    //     setQuestionStatus(socket,multipleChoiceQuestions,blankWords)
+    //     messageModule.answerNotify(socket,roundCount,false)
+    //     messageModule.printMultipleChoiceQuestions(socket,multipleChoiceQuestions)
+    //     messageModule.broadcastAnswerNotify(socket,userName,roundCount,false)
+     
+    //   }
+    // })
+
+
+ socket.on('answer', async function(data) {
       answer = data.answer - 1
       let rightAnswer = socket.blankWords[0]
       let result = await checkAnswerModule.isRightAnswer(answer, socket.multipleChoiceQuestions, socket.blankWords)
@@ -46,15 +157,12 @@ exports.play = function(socket, io, rooms) {
       let room = socket.room
       let round =room.round
       let roundCount = round.count
-      let roundQuestionParagraph = round.questionParagraph
-
+      console.log("roundCount:",roundCount)
       let blankWords = result.blankWords
       let multipleChoiceQuestions = result.multipleChoiceQuestions
 
       if (result.isRight == true) {
-        plusScore(socket)
-        let score = socket.score
-
+     
         answerPositionIndex=round.questionParagraph.indexOf(rightAnswer)
         answerLength = rightAnswer.length
         if(Object.keys(socket.wrongAnswerDict).length==0)
@@ -66,77 +174,113 @@ exports.play = function(socket, io, rooms) {
             }
           }
         }
+        result=checkPlayerSolveQuestion(multipleChoiceQuestions)
+        if(result==true){
+          
+            messageModule.roundResultNotify(socket,roundCount)
+        }
     
-        
-        setQuestionStatus(socket,multipleChoiceQuestions,blankWords)
-        messageModule.answerNotify(socket,roundCount,score,true)
-        messageModule.printMultipleChoiceQuestions(socket,multipleChoiceQuestions)
-        messageModule.broadcastAnswerNotify(socket,userName,roundCount,score,true)
- 
-        result=checkAllPlayerSolveQuestion(room.sockets)
-        if(result ==true){
-          roundHistoryId=await matchService.recordRoundHistory(roundCount,score,roundQuestionParagraph,socket.matchHistoryId,socket.userName)
-          for(answerPositionIndex of Object.keys(socket.rightAnswerDict))
-            matchService.recordAnswerHistory(answerPositionIndex,socket.rightAnswerDict[answerPositionIndex],true,roundHistoryId)
-          for(answerPositionIndex of Object.keys(socket.wrongAnswerDict)) {
-            matchService.recordAnswerHistory(answerPositionIndex,socket.wrongAnswerDict[answerPositionIndex],false,roundHistoryId)
-          }
-       
-
-          if(roundCount<1){
-            plusRound(room)
-            let questionMsg = await createQuestion()
-            sendQuestion(io, room, questionMsg)
-            let players = room.sockets
-            setPlayersQuestionStatus(players, questionMsg.multipleChoiceQuestions, questionMsg.blankWords)
-            round.questionParagraph = questionMsg.originalParagraph
-        
-          }
-          else{
-            console.log("finish")
-            io.to(room.name).emit("finish")
-            leaveRoom(room)
-          }
+        else{    
+          setQuestionStatus(socket,multipleChoiceQuestions,blankWords)
+          messageModule.answerNotify(socket,roundCount,true)
+          messageModule.printMultipleChoiceQuestions(socket,multipleChoiceQuestions)
+          messageModule.broadcastAnswerNotify(socket,userName,roundCount,true)
         }
-        else{
-          result=checkPlayerSolveQuestion(multipleChoiceQuestions)
-          if(result==true){
-            roundHistoryId=await matchService.recordRoundHistory(roundCount,score,roundQuestionParagraph,socket.matchHistoryId,socket.userName)
-         
-            for(answerPositionIndex of Object.keys(socket.rightAnswerDict))
-              matchService.recordAnswerHistory(answerPositionIndex,socket.rightAnswerDict[answerPositionIndex],true,roundHistoryId)
-            for(answerPositionIndex of Object.keys(socket.wrongAnswerDict)) {
-              matchService.recordAnswerHistory(answerPositionIndex,socket.wrongAnswerDict[answerPositionIndex],false,roundHistoryId)
-            }
-            
-            socket.emit("waitOpponentSolveQuestion")
-          }
-        }
-      }
-
-      else{
-      
-        answerPositionIndex=round.questionParagraph.indexOf(rightAnswer)
-        answerLength = rightAnswer.length
-     
-        if(Object.keys(socket.wrongAnswerDict)==0)
-          socket.wrongAnswerDict[answerPositionIndex] =answerLength
-        
-        for(key of Object.keys(socket.wrongAnswerDict)){
-          if(key!=answerPositionIndex){
-            socket.wrongAnswerDict[answerPositionIndex] =answerLength
-        }
-      }
-
-        minusScore(socket)
-        let score = socket.score
-        setQuestionStatus(socket,multipleChoiceQuestions,blankWords)
-        messageModule.answerNotify(socket,roundCount,score,false)
-        messageModule.printMultipleChoiceQuestions(socket,multipleChoiceQuestions)
-        messageModule.broadcastAnswerNotify(socket,userName,roundCount,score,false)
-     
       }
     })
+    
+
+  //>>>>>>>>>>>>>>> [gauge rule apply] answer event  
+    // socket.on('answer', async function(data) {
+    //   answer = data.answer - 1
+    //   let rightAnswer = socket.blankWords[0]
+    //   let result = await checkAnswerModule.isRightAnswer(answer, socket.multipleChoiceQuestions, socket.blankWords)
+    //   let userName = socket.userName
+
+    //   let blankWords = result.blankWords
+    //   let multipleChoiceQuestions = result.multipleChoiceQuestions
+
+    //   if (result.isRight == true) {
+     
+    //     answerPositionIndex=round.questionParagraph.indexOf(rightAnswer)
+    //     answerLength = rightAnswer.length
+    //     if(Object.keys(socket.wrongAnswerDict).length==0)
+    //       socket.rightAnswerDict[answerPositionIndex] =answerLength
+    //     else{
+    //       for(key of Object.keys(socket.wrongAnswerDict)){
+    //         if(answerPositionIndex!=key){
+    //           socket.rightAnswerDict[answerPositionIndex] =answerLength
+    //         }
+    //       }
+    //     }
+    
+        
+    //     setQuestionStatus(socket,multipleChoiceQuestions,blankWords)
+    //     messageModule.answerNotify(socket,roundCount,true)
+    //     messageModule.printMultipleChoiceQuestions(socket,multipleChoiceQuestions)
+    //     messageModule.broadcastAnswerNotify(socket,userName,roundCount,true)
+    //   }
+    // })
+
+
+    socket.on('recordRoundResult',async function(data){
+       let room = socket.room
+       let players = room.sockets
+       let round = socket.room.round
+       let roundCount = round.count
+       let roundQuestionParagraph = round.questionParagraph
+       let matchHistoryId = socket.matchHistoryId
+       console.log("matchHistoryId",matchHistoryId)
+       // 상대방엔 Lose event emit 
+       messageModule.roundLoseNotify(socket,roundCount)
+    
+       for(player of players){
+        let userName = player.userName
+        let rightAnswerDict = player.rightAnswerDict
+        let wrongAnswerDict = player.wrongAnswerDict
+        let blankWords =player.blankWords
+        for( word of blankWords){
+          let rightAnswer = word
+          wrongAnswerDict = player.wrongAnswerDict
+          answerPositionIndex=round.questionParagraph.indexOf(rightAnswer)
+          answerLength = rightAnswer.length
+      
+          if(Object.keys(player.wrongAnswerDict)==0)
+            player.wrongAnswerDict[answerPositionIndex] =answerLength
+          
+          for(key of Object.keys(player.wrongAnswerDict)){
+            if(key!=answerPositionIndex){
+              player.wrongAnswerDict[answerPositionIndex] =answerLength
+            }
+          }
+        }
+   
+        rightAnswerDict = player.rightAnswerDict
+        wrongAnswerDict = player.wrongAnswerDict
+        
+        console.log(rightAnswerDict)
+        console.log(wrongAnswerDict)
+        roundHistoryId=await matchService.recordRoundHistory(roundCount,roundQuestionParagraph,true,matchHistoryId,userName)         
+        console.log("roundHistoryId:",roundHistoryId)
+        for(answerPositionIndex of Object.keys(rightAnswerDict))
+          await matchService.recordAnswerHistory(answerPositionIndex,rightAnswerDict[answerPositionIndex],true,roundHistoryId)
+        for(answerPositionIndex of Object.keys(wrongAnswerDict))
+          await matchService.recordAnswerHistory(answerPositionIndex,wrongAnswerDict[answerPositionIndex],false,roundHistoryId)
+ 
+      }
+      
+       //여기다 라운드 체크하고 끝낼 건지 문제를 더 출제할건지에 대한 코드 작성해야함 
+       if(roundCount<2){
+        plusRound(room)
+        let questionMsg = await createQuestion()
+        console.log("questionMsg:",questionMsg)
+        sendQuestion(io, room, questionMsg)
+        let players = room.sockets
+        setPlayersQuestionStatus(players, questionMsg.multipleChoiceQuestions, questionMsg.blankWords)
+        round.questionParagraph = questionMsg.originalParagraph
+
+        }
+      })
 
 }
 
@@ -163,13 +307,6 @@ function plusRound(room){
   room.round.count ++
 }
 
-function plusScore(socket){
-  socket.score += 10
-}
-
-function minusScore(socket){
-  socket.score -= 3
-}
 
 function setQuestionStatus(player,multipleChoiceQuestions,blankWords){
   player.multipleChoiceQuestions = multipleChoiceQuestions
@@ -194,7 +331,6 @@ function isReadyRoom(room, socket) {
 
 
 async function createQuestion(){
-
     let question = await questionModule.createQuestion()
     let questionMsg = {
            originalParagraph: question.originalParagraph,

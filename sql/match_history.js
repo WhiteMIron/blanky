@@ -9,7 +9,7 @@ exports.saveMatchHistory = async ()=>{
     try{
         conn.query(sql)
         sql = "SELECT LAST_INSERT_ID() as id"
-        let [row]= await conn.query(sql)
+        let row =  conn.query(sql)
         return row
     }catch(e){
         throw new Error(e)
@@ -18,21 +18,21 @@ exports.saveMatchHistory = async ()=>{
     }
 }
 
-exports.saveRoundHistory = async(roundCount,attainScore,questionParagraph,matchHistoryId,userId)=>{
+exports.saveRoundHistory = async(roundCount,questionParagraph,winYN,matchHistoryId,userId)=>{
     const conn = await pool.getConnection()
-    let sql ="INSERT INTO round_history (round,attain_score,question_paragraph,match_history_id,user_id)"
+    let sql ="INSERT INTO round_history (round_count,question_paragraph,win_yn,match_history_id,user_id)"
             +"VALUES(?,?,?,?,?)"
     try{
-        params=[roundCount,attainScore,questionParagraph,matchHistoryId,userId]
+        params=[roundCount,questionParagraph,winYN,matchHistoryId,userId]
         conn.query(sql,params)
         sql = "SELECT LAST_INSERT_ID() as id"
-        let [row]= await conn.query(sql)
+        let row=  conn.query(sql)
         return row
     }catch(e){
         throw new Error(e)
     }finally
     {
-        conn.release
+        conn.release()
     }
 }
 
@@ -41,10 +41,10 @@ exports.saveAnswerHistory = async(answerPositionIndex, answerLength,answerYN,rou
     let sql="INSERT INTO answer_history(answer_position_index,answer_length,answer_yn,round_history_id) values(?,?,?,?)"
     try{
         params = [ answerPositionIndex,answerLength,answerYN,roundHistoryId]
-        await conn.query(sql,params)
+        conn.query(sql,params)
     }catch(e){
         throw new Error(e)
     }finally{
-        conn.release
+        conn.release()
     }
 }

@@ -6,7 +6,7 @@ const multipleChoiceQuestionsModule = require("./multiple_choice_questions")
 
 
 exports.createQuestion =async () =>{
-
+  
     let [paragraphRow] = await englishParagraphService.getParagraph(1)
     let rand_0_length= await commonQuestionModule.randomNumRangeListLen(paragraphRow)
     let paragraphId = paragraphRow[rand_0_length].id
@@ -27,7 +27,6 @@ exports.createQuestion =async () =>{
     let randomNumList = await mixNumList(blankWords)
     let multipleChoiceQuestions= await multipleChoiceQuestionsModule.createMultipleChoiceQuestions(blankWords,randomNumList)
 
-    console.log(questionTranslation)
     let question ={
       originalParagraph : originalParagraph,
       paragraph : questionParagraph,

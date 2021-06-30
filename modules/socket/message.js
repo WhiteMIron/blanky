@@ -18,21 +18,19 @@ exports.enterRoom = function(socket){
   })
 }
 
-exports.answerNotify = function(socket,round,score,isAnswer){
+exports.answerNotify = function(socket,round,isAnswer){
   socket.emit('answerNotify',{
     round:round,
-    score:score,
     isAnswer:isAnswer
   })
 }
 
 
-exports.broadcastAnswerNotify = function(socket,userName,round,score,isAnswer){
+exports.broadcastAnswerNotify = function(socket,userName,round,isAnswer){
   socket.broadcast.to(socket.room.name).emit('broadcastAnswerNotify',{
     userName: userName,
     isAnswer : isAnswer,
-    round: round,
-    score: score
+    round: round
   });
 }
 
@@ -45,3 +43,13 @@ exports.printMultipleChoiceQuestions = function(socket,multipleChoiceQuestions){
 exports.broadcastQuestion = function(io,roomName,questionMsg){
   io.to(roomName).emit('printQuestion', questionMsg)
 }
+
+
+exports.roundResultNotify =  function(socket,roundCount){
+    socket.emit('roundResultNotify',{roundCount:roundCount})
+}
+
+exports.roundLoseNotify =  function(socket,roundCount){
+  socket.broadcast.to(socket.room.name).emit('roundLoseNotify',{isWin:false,roundCount:roundCount})
+}
+
