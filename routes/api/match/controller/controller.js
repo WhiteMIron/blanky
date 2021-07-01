@@ -6,7 +6,8 @@ require("dotenv").config()
 
 
 exports.getMatchHistory = async (req,res) =>{
-    const userId = await getUserIdByJwt(req.headers.auth)
+    // const userId = await getUserIdByJwt(req.headers.auth)
+    userId = 2211
     const [rows] = await matchHistoryService.getMatchHistory(userId)
 
     let jsonArray = new Array()
@@ -30,13 +31,12 @@ exports.getMatchHistory = async (req,res) =>{
 
 exports.getRoundHistory = async (req,res) =>{
     let matchHistoryId = req.query.matchHistoryId
-    const opponetUserId = req.query.opponentUserId
+    const opponentUserId = req.query.opponentUserId
     let matchDate = req.query.matchDate
 
     let [roundRows] = await matchHistoryService.getRoundHistory(matchHistoryId)
     let roundHistoryJsonArray = new Array() 
     for(row of roundRows){
-        console.log("Aa")
         let json = new Object()
         json.roundCount =row.round_count
         json.questionParagraph = row.question_paragraph
@@ -51,18 +51,16 @@ exports.getRoundHistory = async (req,res) =>{
             answerJson.answerYN = answerRow.answer_yn
             answerjsonArray.push(answerJson)
         }
-        console.log("11",answerjsonArray)
 
         json.answerHistory = answerjsonArray
         roundHistoryJsonArray.push(json)
     }
 
-    [row] = await matchHistoryService.getOpponentMatchHistory(opponetUserId,matchDate)
+    [row] = await matchHistoryService.getOpponentMatchHistory(opponentUserId,matchDate)
     matchHistoryId = row[0].id
  
     let [opponentRoundRows] = await matchHistoryService.getRoundHistory(matchHistoryId)
     for(row of opponentRoundRows){
-        console.log("이거 수행~~")
         let json = new Object()
         json.roundCount =row.round_count
         json.questionParagraph = row.question_paragraph
