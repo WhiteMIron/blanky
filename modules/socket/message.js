@@ -8,13 +8,13 @@ exports.waiting = function(socket){
 
 
 exports.broadcastEnterRoom = function(socket,io){
-    io.to(socket.room.name).emit("enterRoomOpponent",{userName:socket.userName})
+    io.to(socket.room.id).emit("enterRoomOpponent",{userName:socket.userName})
 }
 
 exports.enterRoom = function(socket){
   socket.emit("enterRoomMy",{
     userName:socket.userName,
-    roomName:socket.room.name
+    roomId:socket.room.id
   })
 }
 
@@ -27,7 +27,7 @@ exports.answerNotify = function(socket,round,isAnswer){
 
 
 exports.broadcastAnswerNotify = function(socket,userName,round,isAnswer){
-  socket.broadcast.to(socket.room.name).emit('broadcastAnswerNotify',{
+  socket.broadcast.to(socket.room.id).emit('broadcastAnswerNotify',{
     userName: userName,
     isAnswer : isAnswer,
     round: round
@@ -49,7 +49,14 @@ exports.roundResultNotify =  function(socket,roundCount){
     socket.emit('roundResultNotify',{roundCount:roundCount})
 }
 
+
 exports.roundLoseNotify =  function(socket,roundCount){
-  socket.broadcast.to(socket.room.name).emit('roundLoseNotify',{isWin:false,roundCount:roundCount})
+  socket.broadcast.to(socket.room.id).emit('roundLoseNotify',{isWin:false,roundCount:roundCount})
+}
+
+exports.gameResultNotify = function(socket){
+  socket.emit('gameResultNotify',{isWin:true})
+  socket.broadcast.to(socket.room.id).emit('gameResultNotify',{isWin:false})
+
 }
 

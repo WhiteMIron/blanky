@@ -1,19 +1,27 @@
 const constants = require("../../consts_folder/socket/constants")
 
-exports.disconnect = function(socket,io){
+exports.disconnect = function(socket,waitingClients){
     socket.on('disconnect',async function(){
        if(socket.room == null){
-         console.log("Disconnect: ", socket.userName)
+        console.log("Disconnect: ", socket.userName)
+
+        for (i in waitingClients) {
+          if (waitingClients[i].userId == socket.userId) {
+            waitingClients.splice(i, 1)
+          }
+        }
+
        }
 
        else{
         let room = socket.room
-        let roomName = room.name
+        let roomId = room.id
         let players = room.sockets
         for ( player of players){
           if( player !=socket && room.status!=constants.play){
             player.emit("disconnectedOpponent")
-            player.leave(roomName)
+            console.log("방 떠남")
+            player.leave(roomId)
             player.room=null
           }
           else if(player !=socket && room.status==constants.play){
@@ -27,12 +35,12 @@ exports.disconnect = function(socket,io){
     socket.on("kick",function(){
       console.log("강퇴하였습니다.","강퇴한 사람:",socket.userName)
       let room = socket.room
-      let roomName = room.name
+      let roomId = room.id
       let players = room.sockets
       for(player of players)
         if( player !=socket){
           console.log("playerName:",player.userName)
-          player.leave(roomName)
+          player.leave(roomId)
           player.room=null
           player.emit('kicked')
         }

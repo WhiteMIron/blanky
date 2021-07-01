@@ -17,7 +17,7 @@ exports.getUserInfo=async (req, res) => {
     dualScore:row[0].user_dual_score,
     soloScore:row[0].user_solo_score,
     profileImg:row[0].user_profile_img,
-    description:"올것이 왔군..",
+    description:row[0].user_description,
     "rank":1,
     "totalRank" :12500
   }
@@ -40,14 +40,14 @@ exports.changeUserInfo= async(req,res) =>{
 }
 
 exports.changeUserProfile = async(req,res) => {
-  let profile = req.file;
+  let profile = req.file.location;
   const id = await getUserIdByJwt(req.headers.auth)
   await userService.changeUserProfile(profile,id)
 }
 
 async function getUserIdByJwt(token){
-
   const decoded = jwt.verify(token, process.env.secret)
   const id = decoded.userId
   return id
 }
+

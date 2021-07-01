@@ -41,12 +41,13 @@
   <script>
   $(function(){
     var socket = io('/upper');
-    var roomName = "";
-    var userName = "";
+    var roomId = "";
+    var userName =makeRandomName()
+    var userId = makeRandomId()
 
     socket.emit("enterNameSpace", {
-      userName: makeRandomName()
-
+      userName: userName,
+      userId : userId
     });
     socket.on("waiting", function(data) {
       $("#chatLogs").append("<div><strong>" +"나:   " + data.userName + " [대기중] </strong>" + "</div>");
@@ -68,10 +69,10 @@
 
     socket.on("enterRoomMy", function(data) {
       userName = data.userName
-      roomName = data.roomName
+      roomId = data.roomId
 
       $("#chatLogs").append("<div><strong>" +"나: " + userName +"</strong>" + "</div>");
-      $("#chatLogs").append("<div><strong>" + roomName + "번방 참가 </strong></div>");
+      $("#chatLogs").append("<div><strong>" + roomId + "번방 참가 </strong></div>");
 
     });
 
@@ -144,7 +145,7 @@
     socket.on("disconnectedOpponentWhilePlay",function(){
       $("#chatLogs").append("<div><strong>"+"상대방의 연결이 끊겼습니다." +"</strong></div>");
       $("#chatLogs").append("<div><strong>"+"Win!" +"</strong></div>");
-      socket.emit('enterNameSpace',{userName:userName})
+      socket.emit('enterNameSpace',{userId:userId,userName:userName})
 
     })
 
@@ -164,19 +165,8 @@
     socket.on("kicked",function(){
       $("#chatLogs").append("<div><strong>"+"강퇴되었습니다." +"</strong></div>");
     })
-
-    // before gauge apply
-    // socket.on("roundResultNotify",function(data){
-    //   let isWin =data.isWin
-    //   let roundCount =data.roundCount 
-    //   if(isWin==true)
-    //     $("#chatLogs").append("<div><strong>"+roundCount+"라운드 Win!" +"</strong></div>");
-
-    //   else if(data.isWin==false){
-    //     $("#chatLogs").append("<div><strong>"+roundCount+"라운드 Lose!" +"</strong></div>");
-    //   }
-    // })
     
+
     socket.on("roundResultNotify",function(data){
       let roundCount =data.roundCount 
       $("#chatLogs").append("<div><strong>"+roundCount+"라운드 Win!" +"</strong></div>");
@@ -188,6 +178,16 @@
       
     })
 
+    socket.on("gameResultNotify",function(data){
+      let isWin =data.isWin
+      if(isWin == true)
+        $("#chatLogs").append("<div><strong>"+"Game Win!" +"</strong></div>");
+
+      else if(isWin == false)
+        $("#chatLogs").append("<div><strong>"+"Game Lose!" +"</strong></div>");
+
+    })
+    
     $("#send").on("click",function(e){
       e.preventDefault();
       var $msgForm = $("#msgForm");
@@ -204,28 +204,28 @@
     $("#answerBtn1").on("click",function(){
         socket.emit("answer", {
             userId: name,
-            room: roomName,
+            room: roomId,
             answer: 1
           });
         })
     $("#answerBtn2").on("click",function(){
       socket.emit("answer", {
         userId: name,
-        room: roomName,
+        room: roomId,
         answer: 2
       });
     })
     $("#answerBtn3").on("click",function(){
       socket.emit("answer", {
         userId: name,
-        room: roomName,
+        room: roomId,
         answer: 3
       });
     })
     $("#answerBtn4").on("click",function(){
       socket.emit("answer", {
         userId: name,
-        room: roomName,
+        room: roomId,
         answer: 4
       });
     })
@@ -245,11 +245,20 @@
 
     function makeRandomName(){
       var name = "";
-      var possible = "0123";
+      var possible = "abcd";
       for( var i = 0; i < 4; i++ ) {
         name += possible.charAt(Math.floor(Math.random() * possible.length));
       }
       return name;
+    }
+
+    function makeRandomId(){
+      var id = "";
+      var possible = "0123";
+      for( var i = 0; i < 4; i++ ) {
+        id += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return id;
     }
   });
   </script>

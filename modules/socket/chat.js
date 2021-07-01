@@ -3,20 +3,20 @@ exports.chat = function(socket, io) {
   socket.on('chat', function(data) {
 
    if(socket.room !=null){
-    let roomName = socket.room.name
+    let roomId = socket.room.id
     let chatMsg = {
       userName: socket.userName,
-      roomName: roomName,
+      roomId: roomId,
       msg: data.msg
     }
     socket.emit('myChat', chatMsg)
-    socket.broadcast.to(roomName).emit('broadcastChat', chatMsg)
+    socket.broadcast.to(roomId).emit('broadcastChat', chatMsg)
     }
     else{
 
       chatMsg = {
         userName: socket.userName,
-        roomName: "",
+        roomId: "",
         msg: data.msg
       }
       socket.emit('myChat',chatMsg)

@@ -41,3 +41,7 @@ exports.changeUserInfo = async(User,id)=>{
 exports.changeUserProfile =  async(profile,id)=>{
   await queries.modifyUserProfile(profile,id)
 }
+
+exports.changeUserScore = async(id,attainScore)=>{
+  await queries.modifyUserScore(id,attainScore)
+}

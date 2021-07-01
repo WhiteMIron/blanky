@@ -92,7 +92,7 @@ exports.modifyUserInfo = async(user,id)=>{
 
 exports.modifyUserProfile = async(profile,id)=>{
   const conn = await pool.getConnection()
-  var sql = "UPDATE uset SET uset_profile =? where id = ?"
+  var sql = "UPDATE user SET user_profile_img =? where id = ?"
   params=[profile,id]
   try{
     conn.query(sql,params)
@@ -100,6 +100,18 @@ exports.modifyUserProfile = async(profile,id)=>{
     throw new Error(e)
   }finally{
     conn.release()
-    pool.end()
   }
+}
+
+exports.modifyUserScore = async(id,attainScore)=>{
+    const conn = await pool.getConnection()
+    var sql = "UPDATE user SET user_dual_score=user_dual_score +(?) where id = ?"
+    params=[attainScore,id]
+    try{
+      conn.query(sql,params)
+    }catch(e){
+      throw new Error(e)
+    }finally{
+      conn.release()
+    }
 }
