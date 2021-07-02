@@ -1,9 +1,18 @@
+<<<<<<< HEAD
+const pool = require("../../config/database");
+const constants = require("../../consts_folder/constants");
+=======
+>>>>>>> bb364f69d0687d3bb6d665fd3f0f996b962068ca
 const englishParagraphService = require("../../services/english_paragraph");
 const blankModule = require("./blank")
 const commonQuestionModule = require("./common_question")
 const paragraphModule = require("./paragraph")
 const multipleChoiceQuestionsModule = require("./multiple_choice_questions")
+<<<<<<< HEAD
+const checkAnswerModule = require("./check_answer")
+=======
 
+>>>>>>> bb364f69d0687d3bb6d665fd3f0f996b962068ca
 
 exports.createQuestion =async () =>{
   

@@ -1,6 +1,5 @@
 const pool = require("../config/database")
 
-//근데 여기서 에러나는거를 못잡네?
 exports.findOneByUserId= async(userId)=>{
     const conn = await pool.getConnection()
     var sql="SELECT * FROM user where id=?"
