@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Socket.io Chat Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <h3>블랭키 듀얼 난이도 상.ver2</h3>
+    <h5>메시지 명령어 start(두명 유저가 모두 요청시 지문등장)</h5>
+    <h5>메시지 명령어 leave 방떠나기</h5>
+    <h5>메시지 명령어(문제정답):    {"answer": 1}</h5>
+    <h5>메시지 명령어(문제정답):    {"answer": 2}</h5>
+    <h5>메시지 명령어(문제정답):    {"answer": 3}</h5>
+    <h5>메시지 명령어(문제정답):    {"answer": 4}</h5>
+
+    <form class="form-inline">
+      <div class="form-group">
+        <label for="msgForm">메시지: </label>
+        <input type="text" class="form-control" id="msgForm">
+      </div>
+
+      <button class="btn btn-primary" id="send" type="submit">Send</button>
+
+    </form>
+    <button class="btn btn-warning" id="startBtn">start</button>
+    <button class="btn btn-primary" id="answerBtn1">1</button>
+    <button class="btn btn-primary" id="answerBtn2">2</button>
+    <button class="btn btn-primary" id="answerBtn3">3</button>
+    <button class="btn btn-primary" id="answerBtn4">4</button>
+    <button class="btn btn-primary" id="joinGameBtn">게임참가</button>
+    <button class="btn btn-primary" id="forceLeaveBtn">강퇴</button>
+    <button class="btn btn-primary" id="testBtn">테스트</button>
+    
+    <div id="chatLogs"></div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+  $(function(){
+    var socket = io('/upper');
+    var roomId = "";
+    var userName =makeRandomName()
+    var userId = makeRandomId()
+
+    socket.emit("enterNameSpace", {
+      userName: userName,
+      userId : userId
+    });
+    socket.on("waiting", function(data) {
+      $("#chatLogs").append("<div><strong>" +"나:   " + data.userName + " [대기중] </strong>" + "</div>");
+    });
+
+
+    socket.on("startWaiting", function() {
+      $("#chatLogs").append("<div><strong>"+"상대방 게임시작을 기다리는 중" + "</strong></div>");
+    });
+
+
+    socket.on("Leave", function() {
+      $("#chatLogs").append("<div><strong>" +" 대기중  " +   "</strong>" + "</div>");
+    });
+
+    socket.on("enterRoomOpponent",function(data){
+      $("#chatLogs").append("<div><strong>[안내] "+ data.userName+"님이 입장하였습니다."+"</strong>" + "</div>");
+  });
+
+    socket.on("enterRoomMy", function(data) {
+      userName = data.userName
+      roomId = data.roomId
+
+      $("#chatLogs").append("<div><strong>" +"나: " + userName +"</strong>" + "</div>");
+      $("#chatLogs").append("<div><strong>" + roomId + "번방 참가 </strong></div>");
+
+    });
+
+    socket.on("discWhileChat", function() {
+      $("#chatLogs").append("<div><strong>" + " 상대방 연결이 종료되었습니다.   </strong>" +"</div>");
+      $("#chatLogs").append("<div><strong>" + " [대기중]   </strong>" +"</div>");
+      });
+
+
+
+    socket.on("printQuestion", function(data) {
+      let originalParagraph = data.originalParagraph
+      let question = data.question
+      let multipleChoiceQuestions = data.multipleChoiceQuestions
+
+      $("#chatLogs").append("<div>" + "<strong>" + "</strong>" + originalParagraph + "</div>");
+      $("#chatLogs").append("<div>" + "<strong>" + "</strong>" + question + "</div>");
+
+      for(let i=1; i<= multipleChoiceQuestions.length;i++){
+        $("#chatLogs").append("<div>" + "<strong>" +i+"번 보기 </strong>" + multipleChoiceQuestions[i-1] + "</div>");
+      }
+
+    });
+    socket.on("errorPrintQuestion", function(data) {
+      $("#chatLogs").append("<div>" + "<strong>" + "</strong>" + data.msg + "</div>");
+    });
+
+    socket.on("myChat", function(data) {
+      $("#chatLogs").append("<div><strong> 나: " + data.msg +"</strong></div>");
+    });
+
+    socket.on("broadcastChat", function(data) {
+      $("#chatLogs").append("<div>" +data.msg + " : <strong>" + data.userName + "</strong></div>");
+    });
+
+
+    socket.on("answerNotify", function(data) {
+      round = data.round
+      isAnswer = data.isAnswer
+
+      if(isAnswer==true)
+        $("#chatLogs").append("<div><strong>"+ "[나] " + round+ "라운드 정답</strong> </div>");
+      else if(isAnswer== false)
+        $("#chatLogs").append("<div><strong>"+ "[나] " + round+ "라운드 오답</strong> </div>");
+  });
+
+    socket.on("broadcastAnswerNotify",function(data){
+      userName = data.userName
+      round = data.round
+      isAnswer = data.isAnswer
+
+      if(isAnswer==true)
+        $("#chatLogs").append("<div><strong>"+ "[" + userName + "] " + round+ "라운드 정답</strong></div>");
+      else if(isAnswer== false)
+        $("#chatLogs").append("<div><strong>"+ "[" + userName + "] " + round+ "라운드 오답</strong></div>");
+    
+    })
+
+
+    socket.on("printMultipleChoiceQuestions",function(data){
+      for(let i=1;i<=data.multipleChoiceQuestions.length;i++){
+        $("#chatLogs").append("<div>" + "<strong>"+ i+ "번 보기 " + data.multipleChoiceQuestions[i-1] + "</div>");
+      }
+    })
+
+    socket.on("disconnectedOpponent",function(){
+      $("#chatLogs").append("<div><strong>"+"상대방의 연결이 끊겼습니다." +"</strong></div>");
+    })
+    
+    socket.on("disconnectedOpponentWhilePlay",function(){
+      $("#chatLogs").append("<div><strong>"+"상대방의 연결이 끊겼습니다." +"</strong></div>");
+      $("#chatLogs").append("<div><strong>"+"Win!" +"</strong></div>");
+      socket.emit('enterNameSpace',{userId:userId,userName:userName})
+
+    })
+
+    socket.on("finish",function(){
+      $("#chatLogs").append("<div><strong>"+"문제를 다 풀었습니다." +"</strong></div>");
+    })
+
+
+    socket.on("waitOpponentSolveQuestion",function(){
+      $("#chatLogs").append("<div><strong>"+"상대방이 아직 문제를 다 풀지 않았습니다." +"</strong></div>");
+    })
+
+    socket.on("leaveRoom",function(){
+      $("#chatLogs").append("<div><strong>"+"방에서 나왔습니다." +"</strong></div>");
+    })
+
+    socket.on("kicked",function(){
+      $("#chatLogs").append("<div><strong>"+"강퇴되었습니다." +"</strong></div>");
+    })
+    
+
+    socket.on("roundResultNotify",function(data){
+      let roundCount =data.roundCount 
+      $("#chatLogs").append("<div><strong>"+roundCount+"라운드 Win!" +"</strong></div>");
+      socket.emit("recordRoundResult")
+    })
+    socket.on("roundLoseNotify",function(data){
+       let roundCount = data.roundCount
+       $("#chatLogs").append("<div><strong>"+roundCount+"라운드 Lose!" +"</strong></div>");
+      
+    })
+
+    socket.on("gameResultNotify",function(data){
+      let isWin =data.isWin
+      if(isWin == true)
+        $("#chatLogs").append("<div><strong>"+"Game Win!" +"</strong></div>");
+
+      else if(isWin == false)
+        $("#chatLogs").append("<div><strong>"+"Game Lose!" +"</strong></div>");
+
+    })
+    
+    $("#send").on("click",function(e){
+      e.preventDefault();
+      var $msgForm = $("#msgForm");
+      socket.emit("chat", {
+        msg: $msgForm.val()
+      });
+      $msgForm.val("");
+    });
+
+    $("#startBtn").on("click",function(){
+        socket.emit("start");
+      })
+
+    $("#answerBtn1").on("click",function(){
+        socket.emit("answer", {
+            userId: name,
+            room: roomId,
+            answer: 1
+          });
+        })
+    $("#answerBtn2").on("click",function(){
+      socket.emit("answer", {
+        userId: name,
+        room: roomId,
+        answer: 2
+      });
+    })
+    $("#answerBtn3").on("click",function(){
+      socket.emit("answer", {
+        userId: name,
+        room: roomId,
+        answer: 3
+      });
+    })
+    $("#answerBtn4").on("click",function(){
+      socket.emit("answer", {
+        userId: name,
+        room: roomId,
+        answer: 4
+      });
+    })
+
+    $("#joinGameBtn").on("click",function(){
+      socket.emit('enterNameSpace',{userName:userName})
+})
+    $("#forceLeaveBtn").on("click",function(){
+      socket.emit("kick")
+      
+    })
+
+    $("#testBtn").on("click",function(){
+      socket.emit("recordRoundResult")
+      
+    })
+
+    function makeRandomName(){
+      var name = "";
+      var possible = "abcd";
+      for( var i = 0; i < 4; i++ ) {
+        name += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return name;
+    }
+
+    function makeRandomId(){
+      var id = "";
+      var possible = "0123";
+      for( var i = 0; i < 4; i++ ) {
+        id += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return id;
+    }
+  });
+  </script>
+</body>
+</html>
