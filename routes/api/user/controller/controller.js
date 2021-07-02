@@ -45,9 +45,23 @@ exports.changeUserProfile = async(req,res) => {
   await userService.changeUserProfile(profile,id)
 }
 
+
+exports.getGraph = async(req,res) => {
+  let id = await getUserIdByJwt(req.headers.auth)
+  const [rows]= await userService.getGraph(id)
+  
+  res.send({
+    dayStat: rows[0],
+    weekStat: rows[1],
+    monthStat: rows[2]
+  })
+  console.log(rows)
+  console.log('User Score select success')
+}
+
+
 async function getUserIdByJwt(token){
   const decoded = jwt.verify(token, process.env.secret)
   const id = decoded.userId
   return id
 }
-
