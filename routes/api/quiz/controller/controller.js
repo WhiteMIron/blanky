@@ -1,5 +1,5 @@
 // const dirName = "/home/ec2-user/zeroxflow v5/zeroxflow/views"
-const dirName ="C:\\Users\\BS\\Documents\\blankyV2\\views"
+const dirName ="C:\\Users\\BS\\Documents\\blankyV3\\views"
 
 exports.upper = function(req,res){
     console.log(dirName)
