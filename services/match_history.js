@@ -28,7 +28,6 @@ exports.recordTestRoundHistory=async(roundCount,questionParagraph,winYN,userId,m
 
 exports.recordAnswerHistory=async(answerPositionIndex, answerLength,answerYN,roundHistoryId)=>{
     await queries.saveAnswerHistory(answerPositionIndex, answerLength,answerYN,roundHistoryId)
-
 }
 
 exports.recordTestAnswerHistory=async(answerPositionIndex, answerLength,answerYN,roundHistoryId)=>{

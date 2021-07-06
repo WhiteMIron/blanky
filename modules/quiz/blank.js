@@ -8,7 +8,6 @@ exports.createRandomBlankWords = async (paragraph) =>{
 
     let tmpStr = await removeSpecialSymbol(paragraph)
     tmpStr = await excludeFilterWork(tmpStr)
-    console.log("tmpStr:",tmpStr)
     let blank = []
 
     let randomNumList = []
@@ -26,7 +25,6 @@ exports.createRandomBlankWords = async (paragraph) =>{
       if (blank.indexOf(tmpStr[randomNumList[i]]) == -1 && tmpStr[randomNumList[i]].length > 1)
         blank.push(tmpStr[randomNumList[i]])
     }
-    console.log(blank)
     return blank
 }
 

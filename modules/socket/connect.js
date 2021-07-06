@@ -49,5 +49,4 @@ exports.disconnect = function(socket,io,waitingClients){
           player.emit('kicked')
         }
     })
-
 }

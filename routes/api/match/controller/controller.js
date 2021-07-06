@@ -83,7 +83,6 @@ exports.getRoundHistory = async (req,res) =>{
         json.roundCount =row.round_count
         json.questionParagraph = row.question_paragraph
         json.winYN = Boolean(row.win_yn)
-
         let [answerRows] = await matchHistoryService.getAnswerHistory(row.id)
         let answerJsonArray = new Array()
         for (answerRow of answerRows){

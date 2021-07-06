@@ -21,7 +21,6 @@ exports.splitParagraphBaseDot = async (paragraph) =>{
   paragraph = paragraph.split(".")
   paragraph = await splitParagraphBaseQuestionMark(paragraph)
   paragraph = await splitParagraphBaseExclamationMark(paragraph)
-
   var index = 0
   for (var i in paragraph) {
     //  value init for dynamic array

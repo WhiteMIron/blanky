@@ -173,7 +173,6 @@ exports.play = function(socket, io) {
           await matchService.recordTestAnswerHistory(answerPositionIndex,rightAnswerDict[answerPositionIndex],constants.right,roundHistoryId)
         for(answerPositionIndex of Object.keys(wrongAnswerDict))
           await matchService.recordTestAnswerHistory(answerPositionIndex,wrongAnswerDict[answerPositionIndex],constants.wrong,roundHistoryId)
-
           player.rightAnswerDict={}
           player.wrongAnswerDict={}
       }
@@ -308,7 +307,6 @@ function leaveRoom(room){
     //   let multipleChoiceQuestions = result.multipleChoiceQuestions
 
     //   if (result.isRight == true) {
-
     //     answerPositionIndex=round.questionParagraph.indexOf(rightAnswer)
     //     answerLength = rightAnswer.length
     //     if(Object.keys(socket.wrongAnswerDict).length==0)
@@ -376,7 +374,6 @@ function leaveRoom(room){
     //         for(answerPositionIndex of Object.keys(socket.wrongAnswerDict)) {
     //          await matchService.recordAnswerHistory(answerPositionIndex,socket.wrongAnswerDict[answerPositionIndex],false,roundHistoryId)
     //         }
-
     //         socket.emit("waitOpponentSolveQuestion")
     //       }
     //     }
