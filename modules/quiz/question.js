@@ -4,7 +4,6 @@ const commonQuestionModule = require("./common_question")
 const paragraphModule = require("./paragraph")
 const multipleChoiceQuestionsModule = require("./multiple_choice_questions")
 
-
 exports.createQuestion =async () =>{
 
     let [paragraphRow] = await englishParagraphService.getParagraph(1)
