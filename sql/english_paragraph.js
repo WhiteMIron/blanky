@@ -2,9 +2,7 @@ const pool = require("../config/database");
 
 
 exports.findByParagraphDifficulty =async (difficulty)=>{
-
   const conn = await pool.getConnection()
-
   var sql = "SELECT ep.id, ep.english_paragraph FROM english_paragraph ep WHERE ep.english_difficulty =?"
 
   try {
@@ -29,6 +27,5 @@ exports.findByParagraphId = async(paragraphId)=>{
     throw new Error(e)
   } finally {
     conn.release()
-    // pool.end()
   }
 }

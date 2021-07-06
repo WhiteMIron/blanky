@@ -91,13 +91,50 @@ exports.modifyUserInfo = async(user,id)=>{
 
 exports.modifyUserProfile = async(profile,id)=>{
   const conn = await pool.getConnection()
-  var sql = "UPDATE uset SET uset_profile =? where id = ?"
+  var sql = "UPDATE user SET user_profile_img =? where id = ?"
   params=[profile,id]
   try{
     conn.query(sql,params)
   }catch(e){
     throw new Error(e)
   }finally{
+    conn.release()
+  }
+}
+
+exports.modifyUserScore = async(id,attainScore)=>{
+    const conn = await pool.getConnection()
+    var sql = "UPDATE user SET user_dual_score=user_dual_score +(?) where id = ?"
+    params=[attainScore,id]
+    try{
+      conn.query(sql,params)
+    }catch(e){
+      throw new Error(e)
+    }finally{
+      conn.release()
+    }
+}
+
+exports.findByGraphStatistics =async (graphId)=>{
+  const conn = await pool.getConnection()
+  try {
+    const rows = conn.query(
+    //최근 일주일 일별로 통계
+    //최근 일주일 일별로 통계
+       `SELECT DATE(tally.date) AS date, IFNULL(sum(score_history.attain_score), 0) AS score FROM score_history RIGHT OUTER JOIN tally ON DATE(score_history.match_date) = DATE(tally.date) AND user_id ='${graphId}'
+       WHERE DATE(tally.date) BETWEEN DATE_ADD(NOW(),INTERVAL -1 WEEK)AND NOW() GROUP BY DATE(tally.date);`+
+
+       //최근 10주 주별로 통계
+       `SELECT DATE(tally.date) AS date, IFNULL(sum(score_history.attain_score), 0) AS score FROM score_history RIGHT OUTER JOIN tally ON DATE(score_history.match_date) = DATE(tally.date) AND user_id ='${graphId}'
+       WHERE DATE(tally.date) BETWEEN DATE_ADD(date_format(DATE_ADD(NOW(),INTERVAL -9 WEEK),'%Y-%m-%d'), INTERVAL (DAYOFWEEK(date_format(DATE_ADD(NOW(),INTERVAL -9 WEEK),'%Y-%m-%d'))-1) * -1 DAY) AND NOW() GROUP BY WEEK(tally.date);`+
+
+       //최근 12개월 월별로 통계
+       `SELECT date_format(DATE(tally.date), '%Y-%m') AS date, IFNULL(sum(score_history.attain_score), 0) AS score FROM score_history RIGHT OUTER JOIN tally ON DATE(score_history.match_date) = DATE(tally.date) AND user_id ='${graphId}'
+       WHERE DATE(tally.date) BETWEEN date_format(DATE_ADD(NOW(),INTERVAL -11 MONTH),'%Y-%m-01') AND NOW() GROUP BY MONTH(tally.date);`)
+    return rows
+  } catch (e) {
+    throw new Error(e)
+  } finally {
     conn.release()
   }
 }

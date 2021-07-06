@@ -31,7 +31,7 @@
     <button class="btn btn-primary" id="answerBtn4">4</button>
     <button class="btn btn-primary" id="joinGameBtn">게임참가</button>
     <button class="btn btn-primary" id="forceLeaveBtn">강퇴</button>
-    <button class="btn btn-primary" id="testBtn">지우기</button>
+    <button class="btn btn-primary" id="testBtn">테스트</button>
 
     <div id="chatLogs"></div>
   </div>
@@ -147,7 +147,7 @@
       let opponentUserName = data.userName
       $("#chatLogs").append("<div><strong>"+"["+opponentUserName+"]"+"상대방의 연결이 끊겼습니다." +"</strong></div>");
       $("#chatLogs").append("<div><strong>"+"Win!" +"</strong></div>");
-      // socket.emit('enterNameSpace',{userId:myId,userName:myName})
+      socket.emit('enterNameSpace',{userId:myId,userName:myName})
 
     })
 
@@ -155,17 +155,8 @@
       $("#chatLogs").append("<div><strong>"+"문제를 다 풀었습니다." +"</strong></div>");
     })
 
-
-    socket.on("waitOpponentSolveQuestion",function(){
-      $("#chatLogs").append("<div><strong>"+"상대방이 아직 문제를 다 풀지 않았습니다." +"</strong></div>");
-    })
-
     socket.on("leaveRoom",function(){
       $("#chatLogs").append("<div><strong>"+"방에서 나왔습니다." +"</strong></div>");
-    })
-
-    socket.on("kicked",function(){
-      $("#chatLogs").append("<div><strong>"+"강퇴되었습니다." +"</strong></div>");
     })
 
 
@@ -177,6 +168,7 @@
     socket.on("roundLoseNotify",function(data){
        let roundCount = data.roundCount
        $("#chatLogs").append("<div><strong>"+roundCount+"라운드 Lose!" +"</strong></div>");
+
     })
 
     socket.on("gameResultNotify",function(data){
@@ -188,6 +180,7 @@
         $("#chatLogs").append("<div><strong>"+"Game Lose!" +"</strong></div>");
 
     })
+
     $("#send").on("click",function(e){
       e.preventDefault();
       var $msgForm = $("#msgForm");
@@ -231,7 +224,7 @@
     })
 
     $("#joinGameBtn").on("click",function(){
-      socket.emit('enterNameSpace',{userName:myName,userId:myId})
+      socket.emit('enterNameSpace',{userId:myId,userName:myName})
 
 })
     $("#forceLeaveBtn").on("click",function(){
@@ -240,8 +233,8 @@
     })
 
     $("#testBtn").on("click",function(){
-      // socket.emit("recordRoundResult")
-      clearTextarea()
+      socket.emit("recordRoundResult")
+
     })
 
     function makeRandomName(){
@@ -261,13 +254,6 @@
       }
       return id;
     }
-
-    function clearTextarea() {
-       $('#chatLogs').empty();
-
-   }
-
-
   });
   </script>
 </body>

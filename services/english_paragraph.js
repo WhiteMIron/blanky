@@ -1,4 +1,3 @@
-const pool = require("../config/database");
 const queries = require("../sql/english_paragraph")
 
 exports.getParagraph =async (difficulty)=>{

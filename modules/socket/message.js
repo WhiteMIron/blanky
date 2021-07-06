@@ -5,44 +5,32 @@ exports.startWaiting = function(socket){
 exports.waiting = function(socket){
   socket.emit('waiting',{userName:socket.userName})
 }
+
+
 exports.broadcastEnterRoom = function(socket,io){
-    io.to(socket.room.name).emit("enterRoomOppnent",{userName:socket.userName})
+    io.to(socket.room.id).emit("enterRoomOpponent",{userName:socket.userName})
 }
 
 exports.enterRoom = function(socket){
   socket.emit("enterRoomMy",{
     userName:socket.userName,
-    roomName:socket.room.name
+    roomId:socket.room.id
   })
 }
 
-exports.answerRight = function(socket,round,score){
-  socket.emit('answerRight',{
+exports.answerNotify = function(socket,round,isAnswer){
+  socket.emit('answerNotify',{
     round:round,
-    score:score
+    isAnswer:isAnswer
   })
 }
 
-exports.answerWrong = function(socket,round,score){
-  socket.emit('answerWrong',{
-    round:round,
-    score:score
-  })
-}
 
-exports.broadcastAnswerRight = function(socket,userName,round,score){
-  socket.broadcast.to(socket.room.name).emit('broadcastAnswerRight',{
+exports.broadcastAnswerNotify = function(socket,userName,round,isAnswer){
+  socket.broadcast.to(socket.room.id).emit('broadcastAnswerNotify',{
     userName: userName,
-    round: round,
-    score: score
-  });
-}
-
-exports.broadcastAnswerWrong = function(socket,userName,round,score){
-  socket.broadcast.to(socket.room.name).emit('broadcastAnswerWrong',{
-    userName: userName,
-    round: round,
-    score: score
+    isAnswer : isAnswer,
+    round: round
   });
 }
 
@@ -55,3 +43,20 @@ exports.printMultipleChoiceQuestions = function(socket,multipleChoiceQuestions){
 exports.broadcastQuestion = function(io,roomName,questionMsg){
   io.to(roomName).emit('printQuestion', questionMsg)
 }
+
+
+exports.roundResultNotify =  function(socket,roundCount){
+    socket.emit('roundResultNotify',{roundCount:roundCount})
+}
+
+
+exports.roundLoseNotify =  function(socket,roundCount){
+  socket.broadcast.to(socket.room.id).emit('roundLoseNotify',{isWin:false,roundCount:roundCount})
+}
+
+exports.gameResultNotify = function(socket){
+  socket.emit('gameResultNotify',{isWin:true})
+  socket.broadcast.to(socket.room.id).emit('gameResultNotify',{isWin:false})
+
+}
+
