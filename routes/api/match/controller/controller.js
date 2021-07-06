@@ -7,20 +7,36 @@ require("dotenv").config()
 
 exports.getMatchHistory = async (req,res) =>{
     // const userId = await getUserIdByJwt(req.headers.auth)
-    userId = 2211
+    userId = 1031
     const [rows] = await matchHistoryService.getMatchHistory(userId)
 
     let jsonArray = new Array()
-
     for(row of rows){
         let json = new Object()
         json.id =row.id
         json.matchDate = row.match_date
-        json.winYN = row.win_YN
-        json.opponetUserId = row.opponent_user_id
+        if(row.player1_user_id != userId){
+            opponentUserId=row.player1_user_id
+            row=await userService.getUserById(opponentUserId)
+            json.opponentUserNickname = row[0].user_nickname
+            json.opponentUserId = row[0].id
+       }
+        else{
+            opponentUserId=row.player2_user_id
+            row=await userService.getUserById(opponentUserId)
+            json.opponentUserNickname = row[0].user_nickname
+            json.opponentUserId = row[0].id
+        }
+
+        if(row.win_user_id == userId){
+            json.winYN = Boolean(true)
+        }
+        else{
+            json.winYN = Boolean(false)
+        }
         jsonArray.push(json)
     }
-
+    console.log(jsonArray)
     var jObj =  new Object()
     jObj.code = 200
     jObj.data = jsonArray
@@ -30,53 +46,55 @@ exports.getMatchHistory = async (req,res) =>{
 }
 
 exports.getRoundHistory = async (req,res) =>{
+    // const userId = await getUserIdByJwt(req.headers.auth)
+    const userId =1031
     let matchHistoryId = req.query.matchHistoryId
     const opponentUserId = req.query.opponentUserId
-    let matchDate = req.query.matchDate
 
-    let [roundRows] = await matchHistoryService.getRoundHistory(matchHistoryId)
-    let roundHistoryJsonArray = new Array() 
+    let roundHistoryJsonArray = new Array()
+    let [roundRows] = await matchHistoryService.getRoundHistory(matchHistoryId,userId)
     for(row of roundRows){
         let json = new Object()
         json.roundCount =row.round_count
         json.questionParagraph = row.question_paragraph
-        json.winYN = row.win_yn
+        json.winYN = Boolean(row.win_yn)
 
         let [answerRows] = await matchHistoryService.getAnswerHistory(row.id)
-        let answerjsonArray = new Array()
+        let answerJsonArray = new Array()
         for (answerRow of answerRows){
             let answerJson = new Object()
             answerJson.answerIndex = answerRow.answer_position_index
-            answerJson.answerLength = answerRow.answer_length     
-            answerJson.answerYN = answerRow.answer_yn
-            answerjsonArray.push(answerJson)
+            answerJson.answerLength = answerRow.answer_length
+            answerJson.answerYN = Boolean(answerRow.answer_yn)
+            answerJsonArray.push(answerJson)
         }
 
-        json.answerHistory = answerjsonArray
+        json.answerHistory = answerJsonArray
         roundHistoryJsonArray.push(json)
     }
 
-    [row] = await matchHistoryService.getOpponentMatchHistory(opponentUserId,matchDate)
-    matchHistoryId = row[0].id
- 
-    let [opponentRoundRows] = await matchHistoryService.getRoundHistory(matchHistoryId)
+
+    let [opponentRoundRows] = await matchHistoryService.getRoundHistory(matchHistoryId,opponentUserId)
+    console.log(opponentRoundRows)
     for(row of opponentRoundRows){
+        console.log(roundRows)
+
         let json = new Object()
         json.roundCount =row.round_count
         json.questionParagraph = row.question_paragraph
-        json.winYN = row.win_yn
-   
+        json.winYN = Boolean(row.win_yn)
+
         let [answerRows] = await matchHistoryService.getAnswerHistory(row.id)
-        let answerjsonArray = new Array()
+        let answerJsonArray = new Array()
         for (answerRow of answerRows){
             let answerJson = new Object()
             answerJson.answerIndex = answerRow.answer_position_index
-            answerJson.answerLength = answerRow.answer_length     
-            answerJson.answerYN = answerRow.answer_yn
-            answerjsonArray.push(answerJson)
+            answerJson.answerLength = answerRow.answer_length
+            answerJson.answerYN = Boolean(answerRow.answer_yn)
+            answerJsonArray.push(answerJson)
         }
-        console.log(answerjsonArray)
-        json.answerHistory = answerjsonArray
+        console.log(answerJsonArray)
+        json.answerHistory = answerJsonArray
 
         roundHistoryJsonArray.push(json)
     }

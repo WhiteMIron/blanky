@@ -13,6 +13,7 @@
     "exrpess": "0.0.1-security",
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "multer-s3": "^2.9.0",
@@ -31,8 +32,10 @@
   },
   "devDependencies": {},
   "scripts": {
+    "predev": "kill -9 $(lsof -i tcp:8000 -t)",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node app.js"
+    "dev": "nodemon --delay 3000ms app.js",
+    "postdev": "kill -9 $(lsof -i tcp:8000 -t)"
   },
   "author": "",
   "license": "ISC"

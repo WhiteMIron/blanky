@@ -21,8 +21,6 @@
 *                   properties :
 *                      code :
 *                         type : integer
-*                      message :
-*                         type : string
 *                      data :
 *                         type : array
 *                      id :
@@ -30,25 +28,29 @@
 *                      matchDate :
 *                         type : string
 *                      winYN :
+*                         type : bool
+*                      opponentUserId:
 *                         type : integer
-*                      opponetUserId:
-*                         type : integer
+*                      opponentUserNickname:
+*                         type : string
 *                   example :
 *                       code : 200
-*                       message : 대전기록 조회 성공
-*                       data : 
-*                               [ 
+*                       data :
+*                               [
 *                                {
 *                                  "id": 431,
 *                                  "matchDate": "2021-07-01T13:31:22.*000Z",
-*                                  "winYN": 1,
-*                                  "opponetUserId": 2220
+*                                  "winYN": true,
+*                                  "opponentUserId": 2220,
+                                   "opponentUserNickname" : "무지랭이"
 *                                },
 *                                {
-*                                  "id": 431,
-*                                  "matchDate": "2021-07-01T13:31:22.*000Z",
-*                                  "winYN": 1,
-*                                 "opponetUserId": 2220
+*                                  "id": 432,
+*                                  "matchDate": "2021-07-01T13:41:22.*000Z",
+*                                  "winYN": true,
+ *                                 "opponentUserId": 2220,
+                                   "opponentUserNickname" : "무지랭이"
+
 *                                }
 *                               ]
 *
@@ -105,8 +107,6 @@
 *            name : matchHistoryId
 *          - in: query
 *            name : opponentUserId
-*          - in : query
-*            name : matchDate
 *        tags: [match]
 *
 *        responses:
@@ -119,46 +119,49 @@
 *                   properties :
 *                      code :
 *                         type : integer
-*                      message :
-*                         type : string
 *                      data :
 *                         type : array
-*                      id :
-*                         type : string
-*                      matchDate :
+*                      roundCount :
+*                         type : integer
+*                      questionParagraph :
 *                         type : string
 *                      winYN :
+*                         type : bool
+*                      answerHistory :
+*                         type : array
+*                      answerIndex :
 *                         type : integer
-*                      opponetUserId:
+*                      answerLength :
 *                         type : integer
+*                      answerYN :
+*                         type : bool
 *                   example :
 *                       code : 200
-*                       message : 라운드 기록 조회 성공
 *                       data: [
 *                                {
 *                                   "roundCount": 1,
 *                                   "questionParagraph": "We're planning to join the K-pop Cover Dance Festival someday. We really want to visit Korea to see our favorite singers.",
-*                                   "winYN": 1,
+*                                   "winYN": true,
 *                                   "answerHistory": [
 *                                    {
 *                                       "answerIndex": 33,
 *                                       "answerLength": 5,
-*                                       "answerYN": 1
+*                                       "answerYN": true
 *                                    },
 *                                    {
 *                                       "answerIndex": 39,
 *                                       "answerLength": 5,
-*                                       "answerYN": 1
+*                                       "answerYN": true
 *                                    },
 *                                    {
 *                                       "answerIndex": 54,
 *                                       "answerLength": 7,
-*                                       "answerYN": 1
+*                                       "answerYN": true
 *                                    },
 *                                    {
 *                                       "answerIndex": 96,
 *                                       "answerLength": 3,
-*                                       "answerYN": 1
+*                                       "answerYN": true
 *                                    }
 *                                   ]
 *                                 },
@@ -170,76 +173,76 @@
 *                                   {
 *                                        "answerIndex": 7,
 *                                        "answerLength": 5,
-*                                        "answerYN": 1
+*                                        "answerYN": true
 *                                   },
 *                                   {
 *                                        "answerIndex": 44,
 *                                        "answerLength": 3,
-*                                        "answerYN": 1
+*                                        "answerYN": true
 *                                   },
 *                                   {
 *                                        "answerIndex": 48,
 *                                        "answerLength": 6,
-*                                        "answerYN": 1
+*                                        "answerYN": true
 *                                   },
 *                                   {
 *                                        "answerIndex": 65,
 *                                        "answerLength": 6,
-*                                        "answerYN": 1
+*                                        "answerYN": true
 *                                   }
 *                                  ]
 *                                },
 *                               {
 *                                   "roundCount": 1,
 *                                   "questionParagraph": "We're planning to join the K-pop Cover Dance Festival someday. We really want to visit Korea to see our favorite singers.",
-*                                   "winYN": 0,
+*                                   "winYN": false,
 *                                   "answerHistory": [
 *                                   {
 *                                       "answerIndex": 33,
 *                                       "answerLength": 5,
-*                                       "answerYN": 0
+*                                       "answerYN": false
 *                                    },
 *                                    {
 *                                       "answerIndex": 39,
 *                                       "answerLength": 5,
-*                                       "answerYN": 0
+*                                       "answerYN": false
 *                                    },
 *                                    {
 *                                       "answerIndex": 54,
 *                                       "answerLength": 7,
-*                                       "answerYN": 0
+*                                       "answerYN": false
 *                                    },
 *                                    {
 *                                       "answerIndex": 96,
 *                                       "answerLength": 3,
-*                                       "answerYN": 0
+*                                       "answerYN": false
 *                                    }
 *                                   ]
 *                                  },
 *                                  {
 *                                   "roundCount": 2,
 *                                   "questionParagraph": "I feel great because many Korea lovers from all around the world posted messages.",
-*                                   "winYN": 0,
+*                                   "winYN": false,
 *                                   "answerHistory": [
 *                                   {
 *                                       "answerIndex": 7,
 *                                       "answerLength": 5,
-*                                       "answerYN": 0
+*                                       "answerYN": false
 *                                   },
 *                                   {
 *                                       "answerIndex": 44,
 *                                       "answerLength": 3,
-*                                       "answerYN": 0
+*                                       "answerYN": false
 *                                   },
 *                                   {
 *                                       "answerIndex": 48,
 *                                       "answerLength": 6,
-*                                       "answerYN": 0
+*                                       "answerYN": false
 *                                   },
 *                                   {
 *                                       "answerIndex": 65,
 *                                       "answerLength": 6,
-*                                       "answerYN": 0
+*                                       "answerYN": false
 *                                   }
 *                                  ]
 *                                 }

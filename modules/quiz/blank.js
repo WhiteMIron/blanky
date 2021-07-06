@@ -1,11 +1,14 @@
 const commonQuestionModule = require("./common_question")
 const constants = require("../../consts_folder/constants");
-const excludeWord = ['Hello','I\'m', 'in', 'cook', 'you', 'I', 'Addae','the','she', 'he', 'my', 'this', 'that', 'day', 'to'];
+const excludeWords = ['Hello', 'in', 'cook', 'you', 'Addae','the','she', 'he', 'my', 'this', 'that', 'day', 'to'];
+
+//명사 동사 전치사 이렇게 빈칸 구성할 수도?
 
 exports.createRandomBlankWords = async (paragraph) =>{
 
     let tmpStr = await removeSpecialSymbol(paragraph)
     tmpStr = await excludeFilterWork(tmpStr)
+    console.log("tmpStr:",tmpStr)
     let blank = []
 
     let randomNumList = []
@@ -23,11 +26,11 @@ exports.createRandomBlankWords = async (paragraph) =>{
       if (blank.indexOf(tmpStr[randomNumList[i]]) == -1 && tmpStr[randomNumList[i]].length > 1)
         blank.push(tmpStr[randomNumList[i]])
     }
+    console.log(blank)
     return blank
 }
 
 exports.setBlanks = async (searchValue, paragraph) =>{
-
   let position =await searchPositionWord(searchValue,paragraph)
   let blankChars=await setBlankChars(position.length)
   let questionParagraph= await replaceAt(paragraph,position.startIndex,position.endIndex,blankChars)
@@ -36,29 +39,30 @@ exports.setBlanks = async (searchValue, paragraph) =>{
 
 async function searchPositionWord (searchValue, paragraph){
   let searchValueLength = searchValue.length
-
-  startIndex=paragraph.indexOf(searchValue)
-
+  let startIndex = paragraph.indexOf(searchValue) 
   while(true){
-    //case first word match
-    if(startIndex==0)
-      break
+    endIndex=startIndex+searchValueLength
+    index = endIndex
 
-    else if(paragraph[startIndex-1]==" ")
-      break
-
+    
+    if( searchValue==paragraph.substring(startIndex,endIndex)  && paragraph[index]==" " || paragraph[index]=="," || paragraph[index]=="?" ||paragraph[index]=="!" || paragraph[endIndex]=="."){
+      if(startIndex!=0 && paragraph[startIndex-1]!=" "){
+        startIndex =paragraph.indexOf(searchValue,endIndex+1)
+        continue
+      }
+      break 
+    }
     else
-      startIndex =paragraph.indexOf(searchValue,startIndex+1)
-
+      startIndex =paragraph.indexOf(searchValue,startIndex+searchValueLength+1)
+      
   }
-
-  endIndex=startIndex+searchValueLength
 
   let position ={
     startIndex: startIndex ,
     endIndex: endIndex ,
     length: searchValueLength
   }
+ 
   return position
 }
 
@@ -70,8 +74,9 @@ async function replaceAt(paragraph,startIndex,endIndex,blankChars){
 
 async function setBlankChars(searchValueLength){
     let blankChars=""
-    for(let i=0;i<searchValueLength;i++)
-        blankChars+="_"
+    for(let i=0;i<searchValueLength;i++){
+      blankChars+="_"
+    }
     return blankChars
 }
 
@@ -90,21 +95,20 @@ async function removeSpecialSymbol(paragraph){
 }
 
 
-async function excludeFilterWork (paragraph){
-  let tmpStr = []
-  for (i in excludeWord) {
-    for (j in paragraph) {
+async function excludeFilterWork (paragraphWords){
+  let tmp = []
+  for (pWord of paragraphWords) {
+        let index =excludeWords.indexOf(pWord)
 
-      let index =tmpStr.indexOf(paragraph[j])
-      if (excludeWord[i] != paragraph[j] && paragraph[j].length>1 && index==-1)
-        tmpStr.push(paragraph[j])
-        //tmpStr duplication remove
-      else if(index!=-1){
-        tmpStr.splice(index,1)
-      }
-    }
-    paragraph = tmpStr
-    tmpStr = []
+        if (index == -1){
+          index= tmp.indexOf(pWord)
+          if(index == -1)
+            tmp.push(pWord)
+        }
   }
-  return paragraph
+  paragraphWords =tmp
+
+  return paragraphWords
 }
+
+

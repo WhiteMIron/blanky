@@ -7,7 +7,7 @@ require("dotenv").config()
 exports.getUserInfo=async (req, res) => {
 
   const id = await getUserIdByJwt(req.headers.auth)
-  const row= await userService.getUserbyId(id)
+  const row= await userService.getUserById(id)
 
   user={
     id:row[0].id,
@@ -45,9 +45,22 @@ exports.changeUserProfile = async(req,res) => {
   await userService.changeUserProfile(profile,id)
 }
 
+exports.getGraph = async(req,res) => {
+  // let id = await getUserIdByJwt(req.headers.auth)
+  let id =2211
+  const [rows]= await userService.getGraph(id)
+
+  res.send({
+    dayStat: rows[0],
+    weekStat: rows[1],
+    monthStat: rows[2]
+  })
+  console.log(rows)
+  console.log('User Score select success')
+}
+
 async function getUserIdByJwt(token){
   const decoded = jwt.verify(token, process.env.secret)
   const id = decoded.userId
   return id
 }
-

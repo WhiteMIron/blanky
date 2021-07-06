@@ -8,7 +8,7 @@ exports.getUserByKakaoId= async(userKakaoId) =>{
     return row
 }
 
-exports.getUserbyId= async(userId)=>{
+exports.getUserById= async(userId)=>{
     row = await queries.findOneByUserId(userId)
     return row
 }
@@ -44,4 +44,10 @@ exports.changeUserProfile =  async(profile,id)=>{
 
 exports.changeUserScore = async(id,attainScore)=>{
   await queries.modifyUserScore(id,attainScore)
+}
+
+
+exports.getGraph =async (graphId)=>{
+    rows = await queries.findByGraphStatistics(graphId)
+    return rows
 }

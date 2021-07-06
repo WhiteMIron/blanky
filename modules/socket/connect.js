@@ -1,7 +1,8 @@
 const constants = require("../../consts_folder/socket/constants")
 
-exports.disconnect = function(socket,waitingClients){
+exports.disconnect = function(socket,io,waitingClients){
     socket.on('disconnect',async function(){
+       console.log("연결 끊김")
        if(socket.room == null){
         console.log("Disconnect: ", socket.userName)
 
@@ -25,9 +26,12 @@ exports.disconnect = function(socket,waitingClients){
             player.room=null
           }
           else if(player !=socket && room.status==constants.play){
-            player.emit("disconnectedOpponentWhilePlay")
-            player.room=null
-          }
+           player.emit("disconnectedOpponentWhilePlay",{userName:player.userName})
+           console.log("플레이중 방 떠남",player.userId)
+           player.room=null
+  
+         }
+
         }
       }
     })
@@ -45,5 +49,5 @@ exports.disconnect = function(socket,waitingClients){
           player.emit('kicked')
         }
     })
-   
+
 }

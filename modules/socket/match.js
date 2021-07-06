@@ -3,8 +3,9 @@ const messageModule = require("./message")
 
 exports.match =  function(socket,io,waitingClients, rooms){
    socket.on('enterNameSpace',  function(data) {
-      setPlayerInfo(socket,waitingClients,data.userId,data.userName)
-      searchPlayer(socket,io,waitingClients,rooms)
+
+    setPlayerInfo(socket,waitingClients,data.userId,data.userName)
+    searchPlayer(socket,io,waitingClients,rooms)
     })
  }
 
@@ -14,6 +15,7 @@ function setPlayerInfo(socket,waitingClients, userId, userName){
   socket.status = constants.waiting
   socket.room = null
   socket.winCount =0
+  socket.matchDate = null
   socket.matchHistoryId = null
   socket.roundHistoryId = null
   socket.rightAnswerDict={}
@@ -35,16 +37,15 @@ async function searchPlayer(socket,io,waitingClients,rooms){
 
        joinRoom(opponent,room)
        joinRoom(socket,room)
-       addRoom(rooms,room)
-
+       // addRoom(rooms,room)
        removeWaitingClients(i,waitingClients,socket)
        messageModule.broadcastEnterRoom(socket,io)
     }
    }
  }
 
-function removeWaitingClients(opponentWatingIndex, waitingClients, socket) {
-  waitingClients.splice(opponentWatingIndex, 1) //상대방 제외
+function removeWaitingClients(opponentWaitingIndex, waitingClients, socket) {
+  waitingClients.splice(opponentWaitingIndex, 1) //상대방 제외
 
   for (i in waitingClients) {
     if (waitingClients[i].userId == socket.userId) {
@@ -77,4 +78,16 @@ function createRoom(roomId){
 
 function addRoom (rooms,room){
   rooms.push(room)
+}
+
+
+
+function sendQuestion(io,room,questionMsg){
+  let roomId = room.id
+  messageModule.broadcastQuestion(io,roomId,questionMsg)
+}
+
+function setPlayersQuestionStatus (players,multipleChoiceQuestions,blankWords){
+  for( player of players)
+    setQuestionStatus(player,multipleChoiceQuestions,blankWords)
 }

@@ -21,7 +21,7 @@ exports.splitParagraphBaseDot = async (paragraph) =>{
   paragraph = paragraph.split(".")
   paragraph = await splitParagraphBaseQuestionMark(paragraph)
   paragraph = await splitParagraphBaseExclamationMark(paragraph)
-  
+
   var index = 0
   for (var i in paragraph) {
     //  value init for dynamic array
@@ -39,7 +39,7 @@ exports.splitParagraphBaseDot = async (paragraph) =>{
     else {
       questionParagraphList[index] += paragraph[i]
     }
-    if (questionParagraphList[index].length > 70) {
+    if (questionParagraphList[index].length > 80) {
       // console.log(questionParagraphList[index], questionParagraphList[index].length)
       questionParagraphList[index]=questionParagraphList[index].trim()
       index += 1

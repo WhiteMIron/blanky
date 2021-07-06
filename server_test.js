@@ -23,10 +23,12 @@ var lowerRooms =[]
 
 upper.on('connection', function(socket) {
 
-   require("./modules/socket/match.js").match(socket,upper,upperWaitingClients,upperRooms)
+   // require("./modules/socket/match.js").match(socket,upper,upperWaitingClients,upperRooms)
+
+   require("./modules/socket/match2.js").match(socket,upper,upperWaitingClients,upperRooms)
    require("./modules/socket/chat.js").chat(socket)
    require("./modules/socket/play.js").play(socket,upper,upperRooms)
-   require("./modules/socket/connect.js").disconnect(socket,upperWaitingClients)
+   require("./modules/socket/connect.js").disconnect(socket,upper,upperWaitingClients)
 })
 server.listen(3000, function() {
   console.log('Socket IO server listening on port 3000');

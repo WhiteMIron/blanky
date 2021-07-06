@@ -1,0 +1,33 @@
+config:
+  target: "http://localhost:3000/upper"
+  phases:
+    - duration: 20
+      arrivalRate: 50
+
+  engines:
+   socketio-v3: {}
+scenarios:
+  - name: My first scenario
+    engine: socketio-v3
+    flow:
+    - emit: ["enterNameSpace",{userId: "{{$randomString()}}",userName: "{{$randomNumber(1,1000)}}"}]
+    - think : 1
+    - emit: ["start"]
+    - think : 2
+    - loop :
+      - emit: ["answer",{answer: "5"}]
+      - think : 2
+      count : 10
+      # - emit: ["answer",{answer: "2"}]
+      # - think : 2
+      # count : 1
+    #   - emit: ["answer",{answer: "4"}]
+    #   - think : 2
+    #     response:
+    #       channel: "roundResultNotify"
+    #       capture:
+    #         json: "$.roundCount"
+    #         as: "roundCount"
+    #   - log: "response={{roundCount}}"
+    #   whileTrue: "statusReady"
+    # - emit: ["recordRoundResult"]
