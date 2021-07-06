@@ -40,14 +40,9 @@ exports.createQuestion =async () =>{
 
 
 async function createQuestion(blankWords,questionParagraph){
-<<<<<<< HEAD
     for(i in blankWords){
         questionParagraph=await blankModule.setBlanks(blankWords[i],questionParagraph)
     }
-=======
-    for(i in blankWords)
-        questionParagraph=await blankModule.setBlanks(blankWords[i],questionParagraph)
->>>>>>> 54ae49a28ed0c77e8a5d78bda4ebfddf35f09f2c
     return questionParagraph
 }
 
