@@ -7,7 +7,7 @@ require("dotenv").config()
 
 exports.getMatchHistory = async (req,res) =>{
     // const userId = await getUserIdByJwt(req.headers.auth)
-    userId = 1031
+    userId = 1020
     const [rows] = await matchHistoryService.getMatchHistory(userId)
 
     let jsonArray = new Array()
@@ -47,7 +47,7 @@ exports.getMatchHistory = async (req,res) =>{
 
 exports.getRoundHistory = async (req,res) =>{
     // const userId = await getUserIdByJwt(req.headers.auth)
-    const userId =1031
+    const userId =1020
     let matchHistoryId = req.query.matchHistoryId
     const opponentUserId = req.query.opponentUserId
 

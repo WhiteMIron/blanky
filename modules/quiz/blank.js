@@ -25,6 +25,7 @@ exports.createRandomBlankWords = async (paragraph) =>{
       if (blank.indexOf(tmpStr[randomNumList[i]]) == -1 && tmpStr[randomNumList[i]].length > 1)
         blank.push(tmpStr[randomNumList[i]])
     }
+    console.log(blank)
     return blank
 }
 
@@ -37,22 +38,22 @@ exports.setBlanks = async (searchValue, paragraph) =>{
 
 async function searchPositionWord (searchValue, paragraph){
   let searchValueLength = searchValue.length
-  let startIndex = paragraph.indexOf(searchValue) 
+  let startIndex = paragraph.indexOf(searchValue)
   while(true){
     endIndex=startIndex+searchValueLength
     index = endIndex
 
-    
+
     if( searchValue==paragraph.substring(startIndex,endIndex)  && paragraph[index]==" " || paragraph[index]=="," || paragraph[index]=="?" ||paragraph[index]=="!" || paragraph[endIndex]=="."){
       if(startIndex!=0 && paragraph[startIndex-1]!=" "){
         startIndex =paragraph.indexOf(searchValue,endIndex+1)
         continue
       }
-      break 
+      else
+        break
     }
     else
       startIndex =paragraph.indexOf(searchValue,startIndex+searchValueLength+1)
-      
   }
 
   let position ={
@@ -60,7 +61,7 @@ async function searchPositionWord (searchValue, paragraph){
     endIndex: endIndex ,
     length: searchValueLength
   }
- 
+
   return position
 }
 
@@ -108,5 +109,3 @@ async function excludeFilterWork (paragraphWords){
 
   return paragraphWords
 }
-
-

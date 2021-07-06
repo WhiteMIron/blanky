@@ -1,4 +1,4 @@
-const dirName = "C:\\Users\\user\\Documents\\blankyV5\\views"
+const dirName = "/home/ec2-user/blankyV7/views"
 
 
 exports.upper = function(req,res){
