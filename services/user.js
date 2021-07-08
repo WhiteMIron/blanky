@@ -51,3 +51,8 @@ exports.getGraph =async (graphId)=>{
     rows = await queries.findByGraphStatistics(graphId)
     return rows
 }
+
+exports.getRanks =async (userId)=>{
+    rows = await queries.findRanksByuserId(userId)
+    return rows
+}

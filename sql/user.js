@@ -138,3 +138,19 @@ exports.findByGraphStatistics =async (graphId)=>{
     conn.release()
   }
 }
+
+exports.findRanksByuserId = async(userId)=>{
+  const conn = await pool.getConnection()
+  var sql =`SELECT user_nickname AS 'name', user_profile_img AS 'profile' FROM user WHERE user_id =?`
+  params=[userId]
+  try{
+    const rows= conn.query(sql,params)
+     return rows
+
+  }catch(e){
+      throw new Error(e)
+  }finally {
+      conn.release()
+  }
+
+}

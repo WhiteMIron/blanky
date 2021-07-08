@@ -2,7 +2,11 @@ const queries = require("../../../../sql/user")
 const userService = require("../../../../services/user")
 const jwt =require('jsonwebtoken')
 require("dotenv").config()
-
+const asyncRedis = require("async-redis");
+const redis = asyncRedis.createClient({
+  host: "127.0.0.1",
+  port: 6379,
+});
 
 exports.getUserInfo=async (req, res) => {
 
@@ -58,6 +62,45 @@ exports.getGraph = async(req,res) => {
   })
   console.log(rows)
   console.log('User Score select success')
+}
+
+exports.getRank = async (req, res) => {
+  console.log("요청들어옴")
+  // let id = await getUserIdByJwt(req.headers.auth)
+  let id = 2211
+
+  var board = "blanky_rank"
+  var result_json = [];
+  var j = 1;
+  var l = 1;
+  var m = 1;
+
+  reply = await redis.ZREVRANGE("blanky_rank", 0, 49, 'WITHSCORES')
+  var count = reply.length;
+  for (var i = 0; i < count; i += 2) {
+    const [rows] = await userService.getRanks(reply[i])
+    if (j > 1) {
+      if (reply[j] == reply[j - 2]) {
+        l,m++
+      }
+      else {
+        l+= m,m = 1
+      }
+    }
+    result_json.push(
+      {
+        ranknum: l,
+        name: rows[0].name,
+        score: reply[j],
+        id: reply[j - 1],
+        profile: rows[0].profile,
+      }
+    )
+    j += 2
+  }
+  res.send({
+    rank: result_json
+  })
 }
 
 async function getUserIdByJwt(token){
