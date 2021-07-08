@@ -59,9 +59,6 @@
 *                                }
 *
 *
-*
-*
-*
 *          "410":
 *             description: 추가정보 미등록
 *             content:
@@ -149,11 +146,6 @@
 *                       code : 201
 *                       message : 유저정보 변경 성공
 *
-*
-*
-*
-*
-*
 *          "410":
 *             description: 추가정보 미등록
 *             content:
@@ -234,6 +226,121 @@
 *                       code : 201
 *                       message : 유저프로필 변경 성공
 *
+*
+*          "410":
+*             description: 추가정보 미등록
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 410
+*                       message : 추가정보 미등록
+*          "419":
+*             description: 토큰 만료
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 419
+*                       message : 토큰이 만료되었습니다.
+*          "401":
+*             description: 유효하지 않은 토큰입니다.
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 401
+*                       message : 유효하지 않은 토큰입니다.
+*   /user/statistics:
+*      get:
+*        summary: get score statistics
+*        parameters:
+*          - in: header
+*            name: auth
+*        tags: [user]
+*
+*        responses:
+*          "200":
+*             description: 점수 통계 조회 성공
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                      data :
+*                         type : object
+*                      dayStat :
+*                         type : array
+*                      weekStat :
+*                         type : array
+*                      monthStat :
+*                         type : array
+*                      date :
+*                         type : string
+*                      score :
+*                         type : string
+*
+*                   example :
+*                       code : 200
+*                       data : {
+*                                "dayStat" :[
+*                                    { "date" : "2021-07-01",
+*                                      "socre" : "0"
+*                                    },
+*                                    { "date" : "2021-07-02",
+*                                      "socre" : "0"
+*                                    },
+*                                    { "date" : "2021-07-02",
+*                                      "socre" : "0"
+*                                    },
+*                                ],
+*
+*                                "weekStat" :[
+*                                    { "date" : "2021-07-01",
+*                                      "socre" : "0"
+*                                    },
+*                                    { "date" : "2021-07-02",
+*                                      "socre" : "0"
+*                                    },
+*                                    { "date" : "2021-07-02",
+*                                      "socre" : "0"
+*                                    }
+*                                    ],
+*
+*                                "monthStat" :[
+*                                    { "date" : "2021-07-01",
+*                                      "socre" : "0"
+*                                    },
+*                                    { "date" : 2021-07-02",
+*                                      "socre" : "0"
+*                                    },
+*                                    { "date" : "2021-07-02",
+*                                      "socre" : "0"
+*                                    }
+*                                 ]
+*                             }
 *
 *          "410":
 *             description: 추가정보 미등록

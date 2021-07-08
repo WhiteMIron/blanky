@@ -42,30 +42,49 @@ async function searchPositionWord (searchValue, paragraph){
   console.log("paragraph:",paragraph)
   console.log("searchValue:",searchValue)
   let searchValueLength = searchValue.length
+<<<<<<< HEAD
   let startIndex = paragraph.indexOf(searchValue) 
  
+=======
+  let startIndex = paragraph.indexOf(searchValue)
+>>>>>>> 7ec7e83816a8dd65bf77ba72295cccb7f318e25f
   while(true){
     
     endIndex=startIndex+searchValueLength
     index = endIndex
+<<<<<<< HEAD
     console.log("substring:",paragraph.substring(startIndex,endIndex))
     console.log("paragraph[index]==' '",paragraph[index]==" ")
     break
     if( searchValue==paragraph.substring(startIndex,endIndex) && (paragraph[index]=="" || paragraph[index]==" " || paragraph[index]=="," || paragraph[index]=="?" ||paragraph[index]=="!" || paragraph[endIndex]=="." ||  paragraph[endIndex]=='"' ||  paragraph[endIndex]=='(' )){
       // console.log("여기 걸림0")
       if(startIndex!=0 && paragraph[startIndex-1]!=" " && paragraph[startIndex-1]!='"' && paragraph[startIndex-1]!='('){
+=======
+
+
+    if( searchValue==paragraph.substring(startIndex,endIndex)  && paragraph[index]==" " || paragraph[index]=="," || paragraph[index]=="?" ||paragraph[index]=="!" || paragraph[endIndex]=="."){
+      if(startIndex!=0 && paragraph[startIndex-1]!=" "){
+>>>>>>> 7ec7e83816a8dd65bf77ba72295cccb7f318e25f
         startIndex =paragraph.indexOf(searchValue,endIndex+1)
         // console.log("여기 걸림1")
         continue
 
       }
+<<<<<<< HEAD
       // console.log("여기 걸림2")
       break 
+=======
+      else
+        break
+>>>>>>> 7ec7e83816a8dd65bf77ba72295cccb7f318e25f
     }
     else{
       // console.log("여기 걸림3")
       startIndex =paragraph.indexOf(searchValue,startIndex+searchValueLength+1)
+<<<<<<< HEAD
     }
+=======
+>>>>>>> 7ec7e83816a8dd65bf77ba72295cccb7f318e25f
   }
 
   let position ={
@@ -73,7 +92,7 @@ async function searchPositionWord (searchValue, paragraph){
     endIndex: endIndex ,
     length: searchValueLength
   }
- 
+
   return position
 }
 
@@ -126,5 +145,3 @@ async function excludeFilterWork (paragraphWords){
 
   return paragraphWords
 }
-
-

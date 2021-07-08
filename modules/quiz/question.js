@@ -4,7 +4,6 @@ const commonQuestionModule = require("./common_question")
 const paragraphModule = require("./paragraph")
 const multipleChoiceQuestionsModule = require("./multiple_choice_questions")
 
-
 exports.createQuestion =async () =>{
 
     let [paragraphRow] = await englishParagraphService.getParagraph(1)
@@ -18,6 +17,10 @@ exports.createQuestion =async () =>{
     // let questionTranslationList = translationRow[0].english_paragraph_translation.split("#")
     // let questionTranslation = questionTranslationList[questionParagraphList.indexOf(questionParagraph)]
 
+<<<<<<< HEAD
+=======
+    // console.log(questionParagraph)
+>>>>>>> 7ec7e83816a8dd65bf77ba72295cccb7f318e25f
     let blankWords = await blankModule.createRandomBlankWords(questionParagraph)
     questionTranslation =""
     let originalParagraph = questionParagraph
