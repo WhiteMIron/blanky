@@ -5,7 +5,7 @@ exports.match =  function(socket,io,waitingClients, rooms){
    socket.on('enterNameSpace',   function(data) {
     setPlayerInfo(socket,waitingClients,data.userId,data.userName)
     messageModule.waiting(socket)
-    setTimeout(searchPlayer,5000,socket,io,waitingClients,rooms)
+    setTimeout(searchPlayer,2000,socket,io,waitingClients,rooms)
     })
  }
 

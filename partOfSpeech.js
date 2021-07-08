@@ -8,22 +8,6 @@ const request = require('request-promise');
     console.log(paragraph)
 
     for(word of words){
-        // var options ={
-        //     uri: "https://dict.naver.com/api3/enko/search",
-        //     method:"GET",
-        //     qs:{
-
-        //         query :word
-            
-        //     },
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     }
-        // }
-
-        // const body= await request(options)
-       
-        // const json = JSON.parse(body)
         var options ={
             uri: "https://dict.naver.com/api3/enko/search",
             method:"GET",
@@ -41,7 +25,7 @@ const request = require('request-promise');
         const json = JSON.parse(body)
         const meansCollectors =json.searchResultMap.searchResultListMap.WORD.items[0].meansCollector
         for(meansCollector of meansCollectors )
-            if(word.charAt(word.length-1) =="d"){
+            if(word.charAt(word.length-1) =="ed"){
                 if(word,meansCollector.partOfSpeech=="동사")
                   console.log(word,meansCollector.partOfSpeech,":",meansCollector.partOfSpeech2)
             }

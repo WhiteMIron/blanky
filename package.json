@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
+    "artillery": "^1.7.6",
     "assert": "^2.0.0",
     "aws-sdk": "^2.928.0",
     "body-parser": "^1.19.0",
@@ -30,7 +31,9 @@
     "winston": "^3.3.3",
     "yamljs": "^0.3.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "artillery-engine-socketio-v3": "^1.0.1"
+  },
   "scripts": {
     "predev": "kill -9 $(lsof -i tcp:8000 -t)",
     "test": "echo \"Error: no test specified\" && exit 1",
