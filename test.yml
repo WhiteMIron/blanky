@@ -1,9 +1,8 @@
 config:
   target: "http://localhost:3000/upper"
   phases:
-    - duration: 20
-      arrivalRate: 50
-
+    - duration: 1
+      arrivalRate: 2
   engines:
    socketio-v3: {}
 scenarios:
@@ -11,13 +10,13 @@ scenarios:
     engine: socketio-v3
     flow:
     - emit: ["enterNameSpace",{userId: "{{$randomString()}}",userName: "{{$randomNumber(1,1000)}}"}]
-    - think : 1
+    - think : 10
     - emit: ["start"]
-    - think : 2
-    - loop :
-      - emit: ["answer",{answer: "5"}]
-      - think : 2
-      count : 10
+    - think : 10
+    # - loop :
+    #   - emit: ["answer",{answer: "5"}]
+    #   - think : 2
+    #   count : 10
       # - emit: ["answer",{answer: "2"}]
       # - think : 2
       # count : 1

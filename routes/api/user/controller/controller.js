@@ -43,6 +43,7 @@ exports.changeUserProfile = async(req,res) => {
   let profile = req.file.location;
   const id = await getUserIdByJwt(req.headers.auth)
   await userService.changeUserProfile(profile,id)
+  res.status(201).send({code:201,message:"유저정보 변경 성공"})
 }
 
 exports.getGraph = async(req,res) => {

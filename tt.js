@@ -1,18 +1,16 @@
-let str = "abcd"
-let tmp = ["abc", "a", "bb","acc","attain", "arrow","a","ac"]
+const englishParagraphService = require("./services/english_paragraph");
+(async()=>{
+    let chapterId = 1
+    let json = new Object()
+  
+    let [row]= await englishParagraphService.getParagraph(chapterId)
+ 
+    json.code =200
+    json.data = {
+      paragraph : row[0].english_paragraph.replace(/\r\n/gi," ") ,
+      translation : row[0].english_paragraph_translation.replace(/\#/gi, " ")
+    }
+    console.log(json)
+  })()
 
-excludeWord ="a"
-console.log(tmp.indexOf("ac"))
-for(t of tmp){
-  console.log(t)
-  index=t.indexOf("a")
-  //이 index를 무시해야함 a만을 찾아야해
-  console.log(index)
-  console.log("t[index+t.length]:",t.substring(index,excludeWord.length))
-  word = t.substring(index,excludeWord.length)
-  if(word==t){
-    console.log("일치함")
-  }
-  else
-    console.log("불일치함")
-}
+  

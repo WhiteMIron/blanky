@@ -1,8 +1,13 @@
 const queries = require("../sql/english_paragraph")
 
-exports.getParagraph =async (difficulty)=>{
+exports.getParagraphs =async (difficulty)=>{
   rows = await queries.findByParagraphDifficulty(difficulty)
   return rows
+}
+
+exports.getParagraph=async (chapterId)=>{
+  row = await queries.findByParagraphId(chapterId)
+  return row
 }
 
 

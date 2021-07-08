@@ -3,7 +3,7 @@ const pool = require("../config/database");
 
 exports.findByParagraphDifficulty =async (difficulty)=>{
   const conn = await pool.getConnection()
-  var sql = "SELECT ep.id, ep.english_paragraph FROM english_paragraph ep WHERE ep.english_difficulty =?"
+  var sql = "SELECT * FROM english_paragraph ep WHERE ep.english_paragraph_difficulty=?"
 
   try {
     const rows = conn.query(sql, difficulty)
@@ -19,10 +19,10 @@ exports.findByParagraphDifficulty =async (difficulty)=>{
 exports.findByParagraphId = async(paragraphId)=>{
 
   const conn = await pool.getConnection()
-  var sql = "SELECT english_translation FROM english_paragraph where id=?"
+  var sql = "SELECT * FROM english_paragraph where id=?"
   try {
-    const rows = conn.query(sql, paragraphId)
-    return rows
+    const row = conn.query(sql, paragraphId)
+    return row
   } catch (e) {
     throw new Error(e)
   } finally {
