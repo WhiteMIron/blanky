@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 const dirName = "C:\\Users\\BS\\Documents\\카카오톡 받은 파일\\blankyV7 - 복사본\\views"
 const englishParagraphService = require("../../../../services/english_paragraph");
+=======
+// const dirName = "/home/ec2-user/zeroxflow v5/zeroxflow/views"
+const dirName ="C:\\Users\\hee\\Documents\\blanky\\views"
+>>>>>>> 47612d54d1ab08a00118c09696d90110425ad41e
 
 exports.upper = function(req,res){
   res.sendFile(dirName + '/index.html');
