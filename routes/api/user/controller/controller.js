@@ -2,7 +2,11 @@ const queries = require("../../../../sql/user")
 const userService = require("../../../../services/user")
 const jwt =require('jsonwebtoken')
 require("dotenv").config()
-
+const asyncRedis = require("async-redis");
+const redis = asyncRedis.createClient({
+  host: "127.0.0.1",
+  port: 6379,
+});
 
 exports.getUserInfo=async (req, res) => {
 
@@ -47,8 +51,8 @@ exports.changeUserProfile = async(req,res) => {
 }
 
 exports.getGraph = async(req,res) => {
-  // let id = await getUserIdByJwt(req.headers.auth)
-  let id =2211
+  let id = await getUserIdByJwt(req.headers.auth)
+  // let id =2211
   const [rows]= await userService.getGraph(id)
 
   res.send({
@@ -56,8 +60,41 @@ exports.getGraph = async(req,res) => {
     weekStat: rows[1],
     monthStat: rows[2]
   })
-  console.log(rows)
+  // console.log(rows)
   console.log('User Score select success')
+}
+
+exports.getRank = async(req,res) => {
+  const [rows]= await userService.getRanks()
+
+  var resultJson = [];
+  var j = 1
+  var k = 1
+  for (var i = 0; i < rows.length; i++) {
+    if (i > 0) {
+      if (rows[i].score == rows[i - 1].score) {
+        j
+        k++
+      }
+      else {
+        j += k
+        k = 1
+      }
+    }
+    resultJson.push(
+      {
+        ranknum: j,
+        id: rows[i].user_id,
+        name: rows[i].name,
+        score: rows[i].score,
+        img: rows[i].img
+      }
+    )
+  }
+  res.send({
+    rank: resultJson
+  })
+  console.log('User Rank select success')
 }
 
 async function getUserIdByJwt(token){

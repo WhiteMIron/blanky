@@ -120,7 +120,6 @@ exports.findByGraphStatistics =async (graphId)=>{
   try {
     const rows = conn.query(
     //최근 일주일 일별로 통계
-    //최근 일주일 일별로 통계
        `SELECT DATE(tally.date) AS date, IFNULL(sum(score_history.attain_score), 0) AS score FROM score_history RIGHT OUTER JOIN tally ON DATE(score_history.match_date) = DATE(tally.date) AND user_id ='${graphId}'
        WHERE DATE(tally.date) BETWEEN DATE_ADD(NOW(),INTERVAL -1 WEEK)AND NOW() GROUP BY DATE(tally.date);`+
 
@@ -131,6 +130,22 @@ exports.findByGraphStatistics =async (graphId)=>{
        //최근 12개월 월별로 통계
        `SELECT date_format(DATE(tally.date), '%Y-%m') AS date, IFNULL(sum(score_history.attain_score), 0) AS score FROM score_history RIGHT OUTER JOIN tally ON DATE(score_history.match_date) = DATE(tally.date) AND user_id ='${graphId}'
        WHERE DATE(tally.date) BETWEEN date_format(DATE_ADD(NOW(),INTERVAL -11 MONTH),'%Y-%m-01') AND NOW() GROUP BY MONTH(tally.date);`)
+    return rows
+  } catch (e) {
+    throw new Error(e)
+  } finally {
+    conn.release()
+  }
+}
+
+exports.findRanksByuserId =async ()=>{
+  const conn = await pool.getConnection()
+  try {
+    const rows = conn.query(
+    //전체 유저 랭킹 조회
+    `SELECT user_id, user_nickname AS 'name', user_dual_score AS 'score',
+    user_profile_img AS 'img' FROM user ORDER BY score DESC, name ASC LIMIT 50;`)
+
     return rows
   } catch (e) {
     throw new Error(e)
