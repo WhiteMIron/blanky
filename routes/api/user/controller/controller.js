@@ -55,8 +55,7 @@ exports.getGraph = async(req,res) => {
     weekStat: rows[1],
     monthStat: rows[2]
   })
-  // console.log(rows)
-  console.log('User Score select success')
+  console.log('User Graph select success')
 }
 
 exports.getRank = async(req,res) => {
@@ -90,6 +89,15 @@ exports.getRank = async(req,res) => {
     rank: resultJson
   })
   console.log('User Rank select success')
+}
+
+exports.getChapterRank = async(req,res) => {
+  const [rows]= await userService.getChapterRanks()
+
+  res.send({
+    cahpterRank: rows
+  })
+  console.log('User ChapterRank select success')
 }
 
 async function getUserIdByJwt(token){

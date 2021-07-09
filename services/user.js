@@ -56,3 +56,8 @@ exports.getRanks =async ()=>{
     return rows
 }
 
+exports.getChapterRanks =async ()=>{
+    rows = await queries.findChapterRanksByuserId()
+    return rows
+}
+
