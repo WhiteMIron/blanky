@@ -13,6 +13,11 @@ exports.getUserById= async(userId)=>{
     return row
 }
 
+exports.getUserByRank= async()=>{
+    rows = await queries.findOneByUserRank()
+    return rows
+}
+
 exports.loginCheck=async (userKakaoId) =>{
 
     rows=await queries.findOneByUserKakaoIdAndVerify(userKakaoId)

@@ -7,7 +7,25 @@ exports.getUserInfo=async (req, res) => {
 
   const id = await getUserIdByJwt(req.headers.auth)
   const row= await userService.getUserById(id)
-
+  const [rows]= await userService.getUserByRank()
+  var j = 1
+  var k = 1
+  var m = 0
+  for (var i = 0; i < rows[0].length; i++) {
+    if (i > 0) {
+      if (rows[0][i].score == rows[0][i - 1].score) {
+        j
+        k++
+      }
+      else {
+        j += k
+        k = 1
+      }
+    }
+    if (rows[0][i].id == id) {
+      m = j
+    }
+  }
   user={
     id:row[0].id,
     nickname:row[0].user_nickname,
@@ -17,14 +35,14 @@ exports.getUserInfo=async (req, res) => {
     soloScore:row[0].user_solo_score,
     profileImg:row[0].user_profile_img,
     description:row[0].user_description,
-    "rank":1,
-    "totalRank" :12500
+    rank:m,
+    totalRank:rows[1][0].count
   }
   var jObj =  new Object()
   jObj.code=200
   jObj.message="회원정보조회 성공"
   jObj.data =user
-  console.log(user)
+  // console.log(user)
   res.status(200).send(jObj )
 }
 

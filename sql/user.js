@@ -1,17 +1,33 @@
 const pool = require("../config/database")
 
 exports.findOneByUserId= async(userId)=>{
-    const conn = await pool.getConnection()
-    var sql="SELECT * FROM user where id=?"
-    try{
-        const [row]= await conn.query(sql,userId)
-        return row
-    }catch(e){
-        throw new Error(e)
-    }finally{
-        conn.release()
+  const conn = await pool.getConnection()
+  var sql="SELECT * FROM user where id=?"
+  try{
+      const [row]= await conn.query(sql,userId)
+      return row
+  }catch(e){
+      throw new Error(e)
+  }finally{
+      conn.release()
 
-    }
+  }
+}
+exports.findOneByUserRank =async ()=>{
+  const conn = await pool.getConnection()
+  try {
+    const rows = conn.query(
+    //유저 랭킹 조회
+    `SELECT id, user_nickname AS 'name', user_dual_score AS 'score',
+    user_profile_img AS 'img' FROM user ORDER BY score DESC;`+
+    `SELECT COUNT(*) AS 'count' FROM user;`)
+
+    return rows
+  } catch (e) {
+    throw new Error(e)
+  } finally {
+    conn.release()
+  }
 }
 
 exports.findOneByUserKakaoId = async(userkakaoId)=>{
@@ -27,6 +43,20 @@ exports.findOneByUserKakaoId = async(userkakaoId)=>{
         conn.release()
     }
 
+}
+
+exports.findRanksByuserId =async ()=>{
+  const conn = await pool.getConnection()
+  try {
+    const rows = conn.query(
+    //전체 유저 랭킹 조회
+    `SELECT SUM(user_id) AS 'count', user_dual_score AS 'score' FROM user ORDER BY score DESC;`)
+    return rows
+  } catch (e) {
+    throw new Error(e)
+  } finally {
+    conn.release()
+  }
 }
 
 exports.findOneByUserKakaoIdAndVerify= async(userKakaoId)=>{
@@ -142,7 +172,7 @@ exports.findRanksByuserId =async ()=>{
   const conn = await pool.getConnection()
   try {
     const rows = conn.query(
-    //전체 유저 랭킹 조회
+    //유저 랭킹 조회
     `SELECT user_id, user_nickname AS 'name', user_dual_score AS 'score',
     user_profile_img AS 'img' FROM user ORDER BY score DESC, name ASC LIMIT 50;`)
 
@@ -158,7 +188,7 @@ exports.findChapterRanksByuserId =async ()=>{
   const conn = await pool.getConnection()
   try {
     const rows = conn.query(
-    //전체 유저 랭킹 조회
+    //인기 있는 챕터 조회
     `SELECT id, english_paragraph_chapter_name AS 'name', english_paragraph__play_count AS 'count',
     english_paragraph_chapter_img AS 'img' FROM english_paragraph ORDER BY count DESC, name ASC LIMIT 10;`)
 
