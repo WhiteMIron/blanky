@@ -46,7 +46,6 @@ exports.changeUserScore = async(id,attainScore)=>{
   await queries.modifyUserScore(id,attainScore)
 }
 
-
 exports.getGraph =async (graphId)=>{
     rows = await queries.findByGraphStatistics(graphId)
     return rows
@@ -56,3 +55,4 @@ exports.getRanks =async ()=>{
     rows = await queries.findRanksByuserId()
     return rows
 }
+

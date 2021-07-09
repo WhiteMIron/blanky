@@ -2,11 +2,6 @@ const queries = require("../../../../sql/user")
 const userService = require("../../../../services/user")
 const jwt =require('jsonwebtoken')
 require("dotenv").config()
-const asyncRedis = require("async-redis");
-const redis = asyncRedis.createClient({
-  host: "127.0.0.1",
-  port: 6379,
-});
 
 exports.getUserInfo=async (req, res) => {
 
