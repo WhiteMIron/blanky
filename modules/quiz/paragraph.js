@@ -1,107 +1,117 @@
+exports.removeSpecialSymbol =async (paragraph) =>{
 
-  exports.removeSpecialSymbol =async (paragraph) =>{
+  paragraph = paragraph.trim()
+  tmpStr = paragraph.replace(/,/gi, "")
+  tmpStr = tmpStr.replace(/\?/gi, "")
+  tmpStr = tmpStr.replace(/!/gi, "")
+  tmpStr = tmpStr.replace(/\./gi, "")
+  tmpStr = tmpStr.replace(/\:/gi, "")
+  tmpStr = tmpStr.replace(/\r\n/gi, "")
 
-    paragraph = paragraph.trim()
-    tmpStr = paragraph.replace(/,/gi, "")
-    tmpStr = tmpStr.replace(/\?/gi, "")
-    tmpStr = tmpStr.replace(/!/gi, "")
-    tmpStr = tmpStr.replace(/\./gi, "")
-    tmpStr = tmpStr.replace(/\:/gi, "")
-    tmpStr = tmpStr.replace(/\r\n/gi, "")
-    // tmpStr = tmpStr.replace(/\\r\\n/gi, "")
+  tmpStr = tmpStr.split(" ")
+  return tmpStr
+}
 
-    tmpStr = tmpStr.split(" ")
-    return tmpStr
-  }
+exports.splitParagraphBaseDot = async (paragraph) =>{
+  let questionParagraphList = []
+  let tmp = []
+  paragraph = paragraph.split(".")
+  paragraph = await splitParagraphBaseQuestionMark(paragraph)
+  paragraph = await splitParagraphBaseExclamationMark(paragraph)
 
-  exports.splitParagraphBaseDot = async (paragraph) =>{
-    let questionParagraphList = []
-    let tmp = []
-    paragraph = paragraph.split(".")
-    paragraph = await splitParagraphBaseQuestionMark(paragraph)
-    paragraph = await splitParagraphBaseExclamationMark(paragraph)
-  
+  var index = 0
 
-    var index = 0
+  for (var i in paragraph) {
+    //  value init for dynamic array
+    if (questionParagraphList[index] == undefined)
+      questionParagraphList[index] = ""
+      paragraph[i][0]= paragraph[i][0].replace(/\r\n/gi," ")
+      console.log("paragraph:",paragraph[i][0])
 
-    for (var i in paragraph) {
-      //  value init for dynamic array
-      if (questionParagraphList[index] == undefined)
-        questionParagraphList[index] = ""
-        paragraph[i][0]= paragraph[i][0].replace(/\r\n/gi," ") 
-
-        // case "word."
-      if ( paragraph[i][0][0]=='"'||paragraph[i][0][1]=='"' && paragraph[i][0][paragraph[i][0].length-1]!='"'){
-          if( paragraph[i][0][paragraph[i][0].length - 1] != "?" && paragraph[i][0][paragraph[i][0].length - 1] != "!" ){
-            paragraph[i][0]+='."'
-            questionParagraphList[index] += paragraph[i]
-          }
-          else if (paragraph[i][0][paragraph[i][0].length - 1] != "?") {
-            paragraph[i][0]+='!"'
-            questionParagraphList[index] += paragraph[i]
-          }
-          else if (paragraph[i][0][paragraph[i][0].length - 1] != "!") {
-            paragraph[i][0]+='?"'
-            questionParagraphList[index] += paragraph[i]
-          }
-      }
-
-      else if(paragraph[i][0][0]=='"' &&paragraph[i][0][1]==" "){
-        paragraph[i][0]=paragraph[i][0].substr(1,paragraph[i][0].length)
-        questionParagraphList[index] += paragraph[i]
-      }
-
-      //case (word.)
-      else if (paragraph[i][0][1]=='(' && paragraph[i][0][paragraph[i][0].length-1]!=')'){
+      // case "word." , "word?", "word!"
+    if ( paragraph[i][0][0]=='"'||paragraph[i][0][1]=='"' && paragraph[i][0][paragraph[i][0].length-1]!='"'){
         if( paragraph[i][0][paragraph[i][0].length - 1] != "?" && paragraph[i][0][paragraph[i][0].length - 1] != "!" ){
-          paragraph[i][0]+=".)"
+          paragraph[i][0]+='."'
           questionParagraphList[index] += paragraph[i]
         }
         else if (paragraph[i][0][paragraph[i][0].length - 1] != "?") {
-          paragraph[i][0]+="!)"
+          paragraph[i][0]+='!"'
           questionParagraphList[index] += paragraph[i]
         }
         else if (paragraph[i][0][paragraph[i][0].length - 1] != "!") {
-          paragraph[i][0]+="?)"
+          paragraph[i][0]+='?"'
           questionParagraphList[index] += paragraph[i]
         }
-      }
-      else if(paragraph[i][0][0]==')' && paragraph[i][0][1]==" "){
-        paragraph[i][0]=paragraph[i][0].substr(1,paragraph[i][0].length)
-        questionParagraphList[index] += paragraph[i]
-      }
-
-      // paragraph length>0 and !end , end == !'?', end == !'!'
-      else if (paragraph[i] && i != paragraph.length - 1 && paragraph[i][0][paragraph[i][0].length - 1] != "?" && paragraph[i][0][paragraph[i][0].length - 1] != "!") {
-        questionParagraphList[index] += paragraph[i] + "."
-      }
-      // case : ...
-      else if (!paragraph[i] && i != paragraph.length - 1) {
-        questionParagraphList[index] += "."
-      }
-      // case : end ==? OR !
-      else {
-        questionParagraphList[index] += paragraph[i]
-      }
-      if (questionParagraphList[index].length > 100) {
-        console.log(questionParagraphList[index], questionParagraphList[index].length)
-        questionParagraphList[index]=questionParagraphList[index].trim()
-        index += 1
-      }
-    
     }
-    
-  
+
+    else if(paragraph[i][0][0]=='"' &&paragraph[i][0][1]==" "){
+      paragraph[i][0]=paragraph[i][0].substr(1,paragraph[i][0].length)
+      questionParagraphList[index] += paragraph[i]
+    }
+
+    //case (word.), (word!), (word?)
+    else if (paragraph[i][0][1]=='(' && paragraph[i][0][paragraph[i][0].length-1]!=')'){
+      if( paragraph[i][0][paragraph[i][0].length - 1] != "?" && paragraph[i][0][paragraph[i][0].length - 1] != "!" ){
+        paragraph[i][0]+=".)"
+        questionParagraphList[index] += paragraph[i]
+      }
+      else if (paragraph[i][0][paragraph[i][0].length - 1] != "?") {
+        paragraph[i][0]+="!)"
+        questionParagraphList[index] += paragraph[i]
+      }
+      else if (paragraph[i][0][paragraph[i][0].length - 1] != "!") {
+        paragraph[i][0]+="?)"
+        questionParagraphList[index] += paragraph[i]
+      }
+    }
+    else if(paragraph[i][0][0]==')' && paragraph[i][0][1]==" "){
+      paragraph[i][0]=paragraph[i][0].substr(1,paragraph[i][0].length)
+      questionParagraphList[index] += paragraph[i]
+    }
+
+
+    // paragraph length>0 and !end , end == !'?', end == !'!'
+    else if (paragraph[i] && i != paragraph.length - 1 && paragraph[i][0][paragraph[i][0].length - 1] != "?" && paragraph[i][0][paragraph[i][0].length - 1] != "!") {
+      questionParagraphList[index] += paragraph[i] + "."
+    }
+    // case : ...
+    else if (!paragraph[i] && i != paragraph.length - 1) {
+      questionParagraphList[index] += "."
+    }
+    // case : end ==? OR !
+    else {
+      questionParagraphList[index] += paragraph[i]
+    }
+    if (questionParagraphList[index].length > 100) {
+      console.log(questionParagraphList[index], questionParagraphList[index].length)
+      questionParagraphList[index]=questionParagraphList[index].trim()
+      index += 1
+    }
+
+    }
+
+
     questionParagraphList.pop()
     return questionParagraphList
   }
 
 
-  exports.randomParagraph= (paragraphList)=> {
-    let rand_0_length = Math.floor(Math.random() * paragraphList.length)
-    let questionParagraph = paragraphList[rand_0_length]
-    return questionParagraph.trim()
-  }
+exports.getParagraph= (paragraphList,index)=> {  // 인자랑 리스트를 같이 넣기나?
+  let questionParagraph = paragraphList[index]
+  return questionParagraph.trim()
+}
+
+exports.randomParagraph2= (paragraphList)=> {
+  let rand_0_length = Math.floor(Math.random() * paragraphList.length)
+  let questionParagraph = paragraphList[rand_0_length]
+  return questionParagraph.trim()
+}
+
+exports.randomParagraph= (paragraphList)=> {
+  let rand_0_length = Math.floor(Math.random() * paragraphList.length)
+  let questionParagraph = paragraphList[rand_0_length]
+  return questionParagraph.trim()
+}
 
 
   async function splitParagraphBaseQuestionMark(paragraph) {
