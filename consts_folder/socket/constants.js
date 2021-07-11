@@ -17,8 +17,8 @@ let constants = {
     lowerWinnerScore : 3,
     upperLoserScore : -1,
     middleWinnerScore : -1,
-    lowerWinnerScore : -1
-    
+    lowerWinnerScore : -1,
+    notExists : -1
 };
 
 module.exports =

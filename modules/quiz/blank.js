@@ -4,7 +4,7 @@ const excludeWords = ['Hello', 'in', 'cook', 'you', 'Addae','the','she', 'he', '
 
 //명사 동사 전치사 이렇게 빈칸 구성할 수도?
 
-exports.createRandomBlankWords = async (paragraph) =>{
+exports.createRandomBlankWords = async (paragraph,maxBlank) =>{
     console.log("originalParagraph:",paragraph)
 
     let tmpStr = await removeSpecialSymbol(paragraph)
@@ -14,8 +14,8 @@ exports.createRandomBlankWords = async (paragraph) =>{
 
     let randomNumList = []
 
-    while (randomNumList.length < constants.maxBlank) {
-      let rand_0_length = await commonQuestionModule.randomNumRangeListLen(tmpStr)
+    while (randomNumList.length < maxBlank) {
+      let rand_0_length = await commonQuestionModule.randomNumRangeListLen(tmpStr.length)
       if (randomNumList.indexOf(rand_0_length) == -1)
         randomNumList.push(rand_0_length)
 
@@ -31,6 +31,18 @@ exports.createRandomBlankWords = async (paragraph) =>{
     return blank
 }
 
+
+exports.getBlankPositions = async (blankWords, paragraph) =>{
+  let blankWordPositions =[]
+
+  for( word of blankWords){
+    let position =await searchPositionWord(word,paragraph)
+    blankWordPositions.push(position)
+  }
+  return  blankWordPositions
+}
+
+
 exports.setBlanks = async (searchValue, paragraph) =>{
   let position =await searchPositionWord(searchValue,paragraph)
   let blankChars=await setBlankChars(position.length)
@@ -40,7 +52,6 @@ exports.setBlanks = async (searchValue, paragraph) =>{
 
 async function searchPositionWord (searchValue, paragraph){
 
-  // searchValue = "Come"
   // console.log("paragraph:",paragraph)
   // console.log("searchValue:",searchValue)
   let searchValueLength = searchValue.length
@@ -52,7 +63,7 @@ async function searchPositionWord (searchValue, paragraph){
     index = endIndex
     // console.log("substring:",paragraph.substring(startIndex,endIndex))
     // console.log("paragraph[index]==' '",paragraph[index]==" ")
-    break
+  
     if( searchValue==paragraph.substring(startIndex,endIndex) && (paragraph[index]=="" || paragraph[index]==" " || paragraph[index]=="," || paragraph[index]=="?" ||paragraph[index]=="!" || paragraph[endIndex]=="." ||  paragraph[endIndex]=='"' ||  paragraph[endIndex]=='(' )){
       // console.log("여기 걸림0")
       if(startIndex!=0 && paragraph[startIndex-1]!=" " && paragraph[startIndex-1]!='"' && paragraph[startIndex-1]!='('){
@@ -70,10 +81,11 @@ async function searchPositionWord (searchValue, paragraph){
     }
   }
 
+  //여기에서 오브젝트를 만들어줘야하나?
   let position ={
     startIndex: startIndex ,
     endIndex: endIndex ,
-    length: searchValueLength
+    // length: searchValueLength
   }
 
   return position

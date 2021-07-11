@@ -6,7 +6,7 @@ const middle = io.of('/middle');//난이도 중
 const lower = io.of('/lower');//난이도 하
 
 const quizRouter = require("./routes/api/quiz")
-
+const constants = require("./consts_folder/constants")
 var answer = 0;
 
 app.use("/quiz",quizRouter)
@@ -15,21 +15,18 @@ var upperWaitingClients =[]
 var middleWaitingClients =[]
 var lowerWaitingClients = []
 
-var upperRooms =[]
-var middleRooms =[]
-var lowerRooms =[]
-
-
 
 upper.on('connection', function(socket) {
 
    // require("./modules/socket/match.js").match(socket,upper,upperWaitingClients,upperRooms)
 
-   require("./modules/socket/match2.js").match(socket,upper,upperWaitingClients,upperRooms)
+   require("./modules/socket/match.js").match(socket,upper,upperWaitingClients)
    require("./modules/socket/chat.js").chat(socket)
-   require("./modules/socket/play.js").play(socket,upper,upperRooms)
+   require("./modules/socket/play.js").play(socket,upper,constants.normalMaxBlank)
    require("./modules/socket/connect.js").disconnect(socket,upper,upperWaitingClients)
 })
-server.listen(3000, function() {
-  console.log('Socket IO server listening on port 3000');
-});
+
+server.listen(4000, function() {
+
+  console.log('Socket IO server listening on port 4000');
+})

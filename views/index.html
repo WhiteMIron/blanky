@@ -25,6 +25,8 @@
 
     </form>
     <button class="btn btn-warning" id="startBtn">start</button>
+    <button class="btn btn-primary" id="answerRightBtn">정답</button>
+    <button class="btn btn-primary" id="answerWrongBtn">오답</button>
     <button class="btn btn-primary" id="answerBtn1">1</button>
     <button class="btn btn-primary" id="answerBtn2">2</button>
     <button class="btn btn-primary" id="answerBtn3">3</button>
@@ -44,6 +46,7 @@
     var roomId = "";
     var myName =makeRandomName()
     var myId = makeRandomId()
+    // var myId = 2
 
     socket.emit("enterNameSpace", {
       userName: myName,
@@ -81,18 +84,20 @@
       });
 
 
-
     socket.on("printQuestion", function(data) {
-      let originalParagraph = data.originalParagraph
-      let question = data.question
-      let multipleChoiceQuestions = data.multipleChoiceQuestions
+      // let originalParagraph = data.originalParagraph
+      let questionParagraph = data.questionParagraph
+      let translation = data.translation
+      let blankWords= data.blankWords
+      let blankWordsIndexes =  data.blankWordsIndexes
 
-      $("#chatLogs").append("<div>" + "<strong>" + "</strong>" + originalParagraph + "</div>");
-      $("#chatLogs").append("<div>" + "<strong>" + "</strong>" + question + "</div>");
+      $("#chatLogs").append("<div>" + "<strong>" + "</strong>" + questionParagraph + "</div>");
+      $("#chatLogs").append("<div>" + "<strong>" + "</strong>" + translation + "</div>");
+      $("#chatLogs").append("<div>" + "<strong>" + "</strong>" + blankWords + "</div>");
 
-      for(let i=1; i<= multipleChoiceQuestions.length;i++){
-        $("#chatLogs").append("<div>" + "<strong>" +i+"번 보기 </strong>" + multipleChoiceQuestions[i-1] + "</div>");
-      }
+      for(item of blankWordsIndexes)
+        $("#chatLogs").append("<div>" + "<strong>" + "</strong>" + "startIndex:"+item.startIndex+" endIndex:"+ item.endIndex + "</div>");
+
 
     });
     socket.on("errorPrintQuestion", function(data) {
@@ -107,35 +112,11 @@
       $("#chatLogs").append("<div>" +data.msg + " : <strong>" + data.userName + "</strong></div>");
     });
 
+    socket.on("broadcastAnswerNotify", function(data) {
+      let isAnswer = data.isAnswer
+      $("#chatLogs").append("<div><strong>" +"상대방의 정답 제출 결과:"+  isAnswer +  "</strong></div>");
+    });
 
-    socket.on("answerNotify", function(data) {
-      round = data.round
-      isAnswer = data.isAnswer
-
-      if(isAnswer==true)
-        $("#chatLogs").append("<div><strong>"+ "[나] " + round+ "라운드 정답</strong> </div>");
-      else if(isAnswer== false)
-        $("#chatLogs").append("<div><strong>"+ "[나] " + round+ "라운드 오답</strong> </div>");
-  });
-
-    socket.on("broadcastAnswerNotify",function(data){
-      opponentUserName = data.userName
-      round = data.round
-      isAnswer = data.isAnswer
-
-      if(isAnswer==true)
-        $("#chatLogs").append("<div><strong>"+ "[" + opponentUserName + "] " + round+ "라운드 정답</strong></div>");
-      else if(isAnswer== false)
-        $("#chatLogs").append("<div><strong>"+ "[" + opponentUserName + "] " + round+ "라운드 오답</strong></div>");
-
-    })
-
-
-    socket.on("printMultipleChoiceQuestions",function(data){
-      for(let i=1;i<=data.multipleChoiceQuestions.length;i++){
-        $("#chatLogs").append("<div>" + "<strong>"+ i+ "번 보기 " + data.multipleChoiceQuestions[i-1] + "</div>");
-      }
-    })
 
     socket.on("disconnectedOpponent",function(){
       $("#chatLogs").append("<div><strong>"+"상대방의 연결이 끊겼습니다." +"</strong></div>");
@@ -147,12 +128,6 @@
       let opponentUserName = data.userName
       $("#chatLogs").append("<div><strong>"+"["+opponentUserName+"]"+"상대방의 연결이 끊겼습니다." +"</strong></div>");
       $("#chatLogs").append("<div><strong>"+"Win!" +"</strong></div>");
-      // socket.emit('enterNameSpace',{userId:myId,userName:myName})
-
-    })
-
-    socket.on("finish",function(){
-      $("#chatLogs").append("<div><strong>"+"문제를 다 풀었습니다." +"</strong></div>");
     })
 
 
@@ -166,17 +141,6 @@
 
     socket.on("kicked",function(){
       $("#chatLogs").append("<div><strong>"+"강퇴되었습니다." +"</strong></div>");
-    })
-
-
-    socket.on("roundResultNotify",function(data){
-      let roundCount =data.roundCount
-      $("#chatLogs").append("<div><strong>"+roundCount+"라운드 Win!" +"</strong></div>");
-      socket.emit("recordRoundResult")
-    })
-    socket.on("roundLoseNotify",function(data){
-       let roundCount = data.roundCount
-       $("#chatLogs").append("<div><strong>"+roundCount+"라운드 Lose!" +"</strong></div>");
     })
 
     socket.on("gameResultNotify",function(data){
@@ -230,10 +194,22 @@
       });
     })
 
+
+    $("#answerRightBtn").on("click",function(){
+        socket.emit('broadcastAnswerNotify',{
+        isAnswer:true
+      })
+    })
+
+    $("#answerWrongBtn").on("click",function(){
+        socket.emit('broadcastAnswerNotify',{
+        isAnswer:false
+      })
+    })
+
     $("#joinGameBtn").on("click",function(){
       socket.emit('enterNameSpace',{userName:myName,userId:myId})
-
-})
+    })
     $("#forceLeaveBtn").on("click",function(){
       socket.emit("kick")
 

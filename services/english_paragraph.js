@@ -15,3 +15,15 @@ exports.getTranslation =async (paragraphId)=>{
   rows = await queries.findByParagraphId(paragraphId)
   return rows
 }
+
+
+exports.plusPlayCount = async(chapterId)=>{
+
+  await queries.modifyPlayCount(chapterId)
+
+}
+
+exports.getChapterRanks =async ()=>{
+  rows = await queries.findChapterRanks()
+  return rows
+}

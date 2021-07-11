@@ -4,7 +4,7 @@ const express=  require("express")
 const app = express()
 const morgan = require("morgan")('combined')
 const errorHandler = require("./error/error-handler")
-const CustomError = require("./error/custum-error")
+const CustomError = require("./error/custom-error")
 const { swaggerUi, specs } = require('./modules/swagger')
 
 var indexRouter = require("./routes/index")
@@ -34,5 +34,5 @@ app.use(errorHandler)
 var port =process.env.PORT
 app.listen(port,function(){
 
-    console.log("port:",port,"Linstening...")
+    console.log("port:",port,"Listening...")
 })

@@ -7,5 +7,7 @@ router.get('/lower', controller.lower)
 
 router.get('/difficulty/:difficulty',controller.getChapterInfo)
 router.get('/chapter/:chapterId',controller.getChapterDetailInfo)
+router.get('/play/chapter/:chapterId',controller.getQuestion)
+router.get("/chapterRanks",controller.getChapterRank) //인기있는 챕터 요청
 
 module.exports= router

@@ -57,10 +57,12 @@ exports.changeUserInfo= async(req,res) =>{
 }
 
 exports.changeUserProfile = async(req,res) => {
+  console.log("요청 들어옴")
   let profile = req.file.location;
+  console.log(profile)
   const id = await getUserIdByJwt(req.headers.auth)
   await userService.changeUserProfile(profile,id)
-  res.status(201).send({code:201,message:"유저정보 변경 성공"})
+  res.status(201).send({code:201,message:"유저 프로필 변경 성공"})
 }
 
 exports.getGraph = async(req,res) => {
@@ -95,28 +97,29 @@ exports.getRank = async(req,res) => {
     }
     resultJson.push(
       {
-        ranknum: j,
-        id: rows[i].user_id,
+        rankNum: j,
+        id: rows[i].id,
         name: rows[i].name,
         score: rows[i].score,
         img: rows[i].img
       }
     )
   }
-  res.send({
-    rank: resultJson
-  })
-  console.log('User Rank select success')
+  let jObj = new Object()
+  jObj.code = 200
+  jObj.data = resultJson
+  res.send(jObj)
+  console.log('User Ranks select success')
 }
 
-exports.getChapterRank = async(req,res) => {
-  const [rows]= await userService.getChapterRanks()
+// exports.getChapterRank = async(req,res) => {
+//   const [rows]= await userService.getChapterRanks()
 
-  res.send({
-    cahpterRank: rows
-  })
-  console.log('User ChapterRank select success')
-}
+//   res.send({
+//     chapterRank: rows
+//   })
+//   console.log('User ChapterRank select success')
+// }
 
 async function getUserIdByJwt(token){
   const decoded = jwt.verify(token, process.env.secret)

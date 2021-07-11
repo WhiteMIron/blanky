@@ -1,4 +1,4 @@
-const CustomError = require('./custum-error')
+const CustomError = require('./custom-error')
 const RegisterError = require('./register-error')
 const TokenError = require('./token-error')
 
