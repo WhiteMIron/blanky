@@ -13,6 +13,11 @@ exports.getUserById= async(userId)=>{
     return row
 }
 
+exports.getUserByRank= async()=>{
+    rows = await queries.findOneByUserRank()
+    return rows
+}
+
 exports.loginCheck=async (userKakaoId) =>{
 
     rows=await queries.findOneByUserKakaoIdAndVerify(userKakaoId)
@@ -46,8 +51,18 @@ exports.changeUserScore = async(id,attainScore)=>{
   await queries.modifyUserScore(id,attainScore)
 }
 
-
 exports.getGraph =async (graphId)=>{
     rows = await queries.findByGraphStatistics(graphId)
     return rows
 }
+
+exports.getRanks =async ()=>{
+    rows = await queries.findRanksByuserId()
+    return rows
+}
+
+exports.getChapterRanks =async ()=>{
+    rows = await queries.findChapterRanksByuserId()
+    return rows
+}
+
