@@ -307,37 +307,37 @@
 *                       data : {
 *                                "dayStat" :[
 *                                    { "date" : "2021-07-01",
-*                                      "socre" : "0"
+*                                      "score" : "0"
 *                                    },
 *                                    { "date" : "2021-07-02",
-*                                      "socre" : "0"
+*                                      "score" : "0"
 *                                    },
 *                                    { "date" : "2021-07-02",
-*                                      "socre" : "0"
+*                                      "score" : "0"
 *                                    },
 *                                ],
 *
 *                                "weekStat" :[
 *                                    { "date" : "2021-07-01",
-*                                      "socre" : "0"
+*                                      "score" : "0"
 *                                    },
 *                                    { "date" : "2021-07-02",
-*                                      "socre" : "0"
+*                                      "score" : "0"
 *                                    },
 *                                    { "date" : "2021-07-02",
-*                                      "socre" : "0"
+*                                      "score" : "0"
 *                                    }
 *                                    ],
 *
 *                                "monthStat" :[
 *                                    { "date" : "2021-07-01",
-*                                      "socre" : "0"
+*                                      "score" : "0"
 *                                    },
 *                                    { "date" : 2021-07-02",
-*                                      "socre" : "0"
+*                                      "score" : "0"
 *                                    },
 *                                    { "date" : "2021-07-02",
-*                                      "socre" : "0"
+*                                      "score" : "0"
 *                                    }
 *                                 ]
 *                             }
@@ -384,4 +384,70 @@
 *                   example :
 *                       code : 401
 *                       message : 유효하지 않은 토큰입니다.
+*   /user/ranks  :
+*      get:
+*        summary: get userRanks 
+*        parameters:
+*          - in: header
+*            name: auth
+*        tags: [user]
+*
+*        responses:
+*          "200":
+*             description: 유저 전체 랭킹 정보 조회 성공
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      data :
+*                         type : array
+*                      rankNum :
+*                         type : integer
+*                      id  :
+*                         type : integer
+*                      name :
+*                         type : integer
+*                      score :
+*                         type : string
+*                      img :
+*                         type : string
+*                   example :
+*                       code : 200
+*                       data :
+*                             [
+*                               {
+*                                 "rankNum": 1,
+*                                 "id": "1020",
+*                                 "name": 25,
+*                                 "score": "10",
+*                                 "img": "https://blanky.s3.ap-northeast-2.amazonaws.com/textbookFile/middle1/geumseong/TraditionalMarket.png"
+*                                },     
+*                                {
+*                                 "rankNum": 1,
+*                                 "id": "2123",
+*                                 "name": 25,
+*                                 "score": "10",
+*                                 "img": "https://blanky.s3.ap-northeast-2.amazonaws.com/textbookFile/middle1/geumseong/TraditionalMarket.png"
+*                                }
+*                              ]
+*
+*
+*          "400":
+*             description: 잘못된 요청
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 400
+*                       message : 잘못된 요청
+*
 */

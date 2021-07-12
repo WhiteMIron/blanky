@@ -8,22 +8,20 @@ exports.getUserInfo=async (req, res) => {
   const id = await getUserIdByJwt(req.headers.auth)
   const row= await userService.getUserById(id)
   const [rows]= await userService.getUserByRank()
-  var j = 1
+  var rank = 1
   var k = 1
-  var m = 0
   for (var i = 0; i < rows[0].length; i++) {
     if (i > 0) {
       if (rows[0][i].score == rows[0][i - 1].score) {
-        j
         k++
       }
       else {
-        j += k
+        rank += k
         k = 1
       }
     }
     if (rows[0][i].id == id) {
-      m = j
+      break
     }
   }
   user={
@@ -35,7 +33,7 @@ exports.getUserInfo=async (req, res) => {
     soloScore:row[0].user_solo_score,
     profileImg:row[0].user_profile_img,
     description:row[0].user_description,
-    rank:m,
+    rank:rank,
     totalRank:rows[1][0].count
   }
   var jObj =  new Object()
@@ -57,10 +55,12 @@ exports.changeUserInfo= async(req,res) =>{
 }
 
 exports.changeUserProfile = async(req,res) => {
+  console.log("요청 들어옴")
   let profile = req.file.location;
+  console.log(profile)
   const id = await getUserIdByJwt(req.headers.auth)
   await userService.changeUserProfile(profile,id)
-  res.status(201).send({code:201,message:"유저정보 변경 성공"})
+  res.status(201).send({code:201,message:"유저 프로필 변경 성공"})
 }
 
 exports.getGraph = async(req,res) => {
@@ -76,47 +76,39 @@ exports.getGraph = async(req,res) => {
   console.log('User Graph select success')
 }
 
-exports.getRank = async(req,res) => {
+exports.getRanks = async(req,res) => {
   const [rows]= await userService.getRanks()
 
   var resultJson = [];
-  var j = 1
+  var rank = 1
   var k = 1
   for (var i = 0; i < rows.length; i++) {
     if (i > 0) {
       if (rows[i].score == rows[i - 1].score) {
-        j
         k++
       }
       else {
-        j += k
+        rank += k
         k = 1
       }
     }
     resultJson.push(
       {
-        ranknum: j,
-        id: rows[i].user_id,
+        rankNum: rank,
+        id: rows[i].id,
         name: rows[i].name,
         score: rows[i].score,
         img: rows[i].img
       }
     )
   }
-  res.send({
-    rank: resultJson
-  })
-  console.log('User Rank select success')
+  let jObj = new Object()
+  jObj.code = 200
+  jObj.data = resultJson
+  res.send(jObj)
+  console.log('User Ranks select success')
 }
 
-exports.getChapterRank = async(req,res) => {
-  const [rows]= await userService.getChapterRanks()
-
-  res.send({
-    cahpterRank: rows
-  })
-  console.log('User ChapterRank select success')
-}
 
 async function getUserIdByJwt(token){
   const decoded = jwt.verify(token, process.env.secret)

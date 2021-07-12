@@ -1,7 +1,11 @@
 'use strict';
 
 let constants = {
-    maxBlank: 4
+    easyMaxBlank: 4,
+    normalMaxBlank :6,
+    hardMaxBlank :8,
+    dualRoundCount :4,
+    soloRoundCount :3
 };
 
 module.exports =

@@ -1,5 +1,5 @@
 const queries = require("../sql/user")
-const CustomError = require("../error/custum-error");
+const CustomError = require("../error/custom-error");
 const RegisterError =require("../error/register-error")
 const authMiddleware  = require("../middlewares/auth")
 
@@ -57,12 +57,6 @@ exports.getGraph =async (graphId)=>{
 }
 
 exports.getRanks =async ()=>{
-    rows = await queries.findRanksByuserId()
+    rows = await queries.findRanksByUserId()
     return rows
 }
-
-exports.getChapterRanks =async ()=>{
-    rows = await queries.findChapterRanksByuserId()
-    return rows
-}
-

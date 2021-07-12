@@ -117,4 +117,146 @@
 *                       code : 400
 *                       message : 잘못된 요청
 *
+*   /quiz/play/chapter/{chapterId}  :
+*      get:
+*        summary: get solo quizInfo
+*        parameters:
+*          - in: path
+*            name: chapterId
+*          - in: query
+*            name: difficulty
+*        tags: [quiz]
+*
+*        responses:
+*          "200":
+*             description: 솔로모드 퀴즈 정보 조회 성공
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      data :
+*                         type : object
+*                      questionParagraph :
+*                         type : string
+*                      translation  :
+*                         type : string
+*                      blankWords :
+*                         type : array
+*                      blankWordsIndexes :
+*                         type : array
+*                      startIndex :
+*                         type : integer
+*                      endIndex :
+*                         type : integer
+*                   example :
+*                       code : 200
+*                       data :
+*                             [
+*                                {
+*                                 "questionParagraph": "With the other hand, slowly stir. Then, wait until the mixture becomes thick. Third, remove the water from it.",
+*                                  "translation": "이제 이 단계들을 따라와 봐! 첫 번째, 우유를 냄비에 따르고 따뜻하게 데워. 우유가 끓기 시작하면 불에서 우유를 내려.",
+*                                  "blankWords": [
+*                                      "hand",
+*                                      "slowly",
+*                                      "stir",
+*                                      "wait",
+*                                   ],
+*                                  "blankWordsIndexes": [
+*                                       {
+*                                        "startIndex": 15,
+*                                        "endIndex": 19
+*                                       },
+*                                       {
+*                                        "startIndex": 21,
+*                                        "endIndex": 27
+*                                       },
+*                                       {
+*                                         "startIndex": 28,
+*                                         "endIndex": 32
+*                                       },
+*                                       {
+*                                         "startIndex": 40,
+*                                         "endIndex": 44
+*                                       }
+*                                     ]  
+*                                   }
+*                                 ]
+*
+*
+*          "400":
+*             description: 잘못된 요청
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 400
+*                       message : 잘못된 요청
+*
+*   /quiz/chapterRanks  :
+*      get:
+*        summary: get chapterRanks
+*        tags: [quiz]
+*
+*        responses:
+*          "200":
+*             description: 인기 챕터 랭킹 정보 조회 성공
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      data :
+*                         type : array
+*                      id :
+*                         type : integer
+*                      name  :
+*                         type : string
+*                      count :
+*                         type : integer
+*                      img :
+*                         type : string
+*                   example :
+*                       code : 200
+*                       data :
+*                             [
+*                               {
+*                                 "id": 6,
+*                                 "name": "Markets Around Us",
+*                                 "count": 25,
+*                                 "img": "https://blanky.s3.ap-northeast-2.amazonaws.com/textbookFile/middle1/geumseong/TraditionalMarket.png"
+*                                },     {
+*                                 "id": 5,
+*                                 "name": "We Are Good Friends",
+*                                 "count": 25,
+*                                 "img": "https://blanky.s3.ap-northeast-2.amazonaws.com/textbookFile/middle1/geumseong/friends.png"
+*                                 }
+*                              ]
+*
+*
+*          "400":
+*             description: 잘못된 요청
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 400
+*                       message : 잘못된 요청
+*
 */

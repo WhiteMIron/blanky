@@ -25,8 +25,8 @@ exports.splitParagraphBaseDot = async (paragraph) =>{
     //  value init for dynamic array
     if (questionParagraphList[index] == undefined)
       questionParagraphList[index] = ""
-      paragraph[i][0]= paragraph[i][0].replace(/\r\n/gi," ")
-      console.log("paragraph:",paragraph[i][0])
+
+    paragraph[i][0]= paragraph[i][0].replace(/\r\n/gi," ")
 
       // case "word." , "word?", "word!"
     if ( paragraph[i][0][0]=='"'||paragraph[i][0][1]=='"' && paragraph[i][0][paragraph[i][0].length-1]!='"'){
@@ -69,7 +69,6 @@ exports.splitParagraphBaseDot = async (paragraph) =>{
       questionParagraphList[index] += paragraph[i]
     }
 
-
     // paragraph length>0 and !end , end == !'?', end == !'!'
     else if (paragraph[i] && i != paragraph.length - 1 && paragraph[i][0][paragraph[i][0].length - 1] != "?" && paragraph[i][0][paragraph[i][0].length - 1] != "!") {
       questionParagraphList[index] += paragraph[i] + "."
@@ -83,7 +82,7 @@ exports.splitParagraphBaseDot = async (paragraph) =>{
       questionParagraphList[index] += paragraph[i]
     }
     if (questionParagraphList[index].length > 100) {
-      console.log(questionParagraphList[index], questionParagraphList[index].length)
+      // console.log(questionParagraphList[index], questionParagraphList[index].length)
       questionParagraphList[index]=questionParagraphList[index].trim()
       index += 1
     }
@@ -101,52 +100,39 @@ exports.getParagraph= (paragraphList,index)=> {  // 인자랑 리스트를 같�
   return questionParagraph.trim()
 }
 
-exports.randomParagraph2= (paragraphList)=> {
-  let rand_0_length = Math.floor(Math.random() * paragraphList.length)
-  let questionParagraph = paragraphList[rand_0_length]
-  return questionParagraph.trim()
+async function splitParagraphBaseQuestionMark(paragraph) {
+  let tmp = []
+
+  for (i in paragraph) {
+    paragraph[i] = paragraph[i].split("?")
+    if (paragraph[i].length > 1) {
+      for (j in paragraph[i]) {
+        if (j % 2 == 0)
+          paragraph[i][j] = paragraph[i][j] + "?"
+        tmp.push([paragraph[i][j]])
+      }
+    } else
+      tmp.push(paragraph[i])
+
+  }
+  return tmp
 }
 
-exports.randomParagraph= (paragraphList)=> {
-  let rand_0_length = Math.floor(Math.random() * paragraphList.length)
-  let questionParagraph = paragraphList[rand_0_length]
-  return questionParagraph.trim()
+
+async function splitParagraphBaseExclamationMark(paragraph) {
+  let tmp = []
+
+  for (i in paragraph) {
+    paragraph[i][0] = paragraph[i][0].split("!")
+
+    if (paragraph[i][0].length > 1) {
+      for (j in paragraph[i][0]) {
+        if (j % 2 == 0)
+          paragraph[i][0][j] = paragraph[i][0][j] + "!"
+        tmp.push([paragraph[i][0][j]])
+      }
+    } else
+      tmp.push(paragraph[i][0])
+  }
+  return tmp
 }
-
-
-  async function splitParagraphBaseQuestionMark(paragraph) {
-    let tmp = []
-
-    for (i in paragraph) {
-      paragraph[i] = paragraph[i].split("?")
-      if (paragraph[i].length > 1) {
-        for (j in paragraph[i]) {
-          if (j % 2 == 0)
-            paragraph[i][j] = paragraph[i][j] + "?"
-          tmp.push([paragraph[i][j]])
-        }
-      } else
-        tmp.push(paragraph[i])
-
-    }
-    return tmp
-  }
-
-
-  async function splitParagraphBaseExclamationMark(paragraph) {
-    let tmp = []
-
-    for (i in paragraph) {
-      paragraph[i][0] = paragraph[i][0].split("!")
-
-      if (paragraph[i][0].length > 1) {
-        for (j in paragraph[i][0]) {
-          if (j % 2 == 0)
-            paragraph[i][0][j] = paragraph[i][0][j] + "!"
-          tmp.push([paragraph[i][0][j]])
-        }
-      } else
-        tmp.push(paragraph[i][0])
-    }
-    return tmp
-  }

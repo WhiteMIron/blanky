@@ -45,7 +45,7 @@ exports.findOneByUserKakaoId = async(userkakaoId)=>{
 
 }
 
-exports.findRanksByuserId =async ()=>{
+exports.findRanksByUserId =async ()=>{
   const conn = await pool.getConnection()
   try {
     const rows = conn.query(
@@ -168,29 +168,13 @@ exports.findByGraphStatistics = async (graphId) => {
   }
 }
 
-exports.findRanksByuserId =async ()=>{
+exports.findRanksByUserId =async ()=>{
   const conn = await pool.getConnection()
   try {
     const rows = conn.query(
     //유저 랭킹 조회
-    `SELECT user_id, user_nickname AS 'name', user_dual_score AS 'score',
+    `SELECT id, user_nickname AS 'name', user_dual_score AS 'score',
     user_profile_img AS 'img' FROM user ORDER BY score DESC, name ASC LIMIT 50;`)
-
-    return rows
-  } catch (e) {
-    throw new Error(e)
-  } finally {
-    conn.release()
-  }
-}
-
-exports.findChapterRanksByuserId =async ()=>{
-  const conn = await pool.getConnection()
-  try {
-    const rows = conn.query(
-    //인기 있는 챕터 조회
-    `SELECT id, english_paragraph_chapter_name AS 'name', english_paragraph__play_count AS 'count',
-    english_paragraph_chapter_img AS 'img' FROM english_paragraph ORDER BY count DESC, name ASC LIMIT 10;`)
 
     return rows
   } catch (e) {
