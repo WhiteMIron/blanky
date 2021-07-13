@@ -27,3 +27,28 @@ exports.getChapterRanks =async ()=>{
   rows = await queries.findChapterRanks()
   return rows
 }
+
+
+
+
+exports.registerParagraph = async(chapterName,paragraph,translation,cutLength,difficulty)=>{
+  let quizInfo = await paragraphModule.splitParagraphBaseDot(paragraph,translation,cutLength)
+  let addSharpParagraphs = quizInfo.addSharpParagraphs
+  let addSharpTranslations = quizInfo.addSharpTranslations
+  //#이 추가된 상황 
+  console.log(quizInfo)
+  await queries.saveParagraph(chapterName,addSharpParagraphs,addSharpTranslations,difficulty)
+}
+
+exports.changeParagraph = async(paragraph,translation,cutLength,paragraphId)=>{
+  let quizInfo = await paragraphModule.splitParagraphBaseDot(paragraph,translation,cutLength)
+  let addSharpParagraphs = quizInfo.addSharpParagraphs
+  let addSharpTranslations = quizInfo.addSharpTranslations
+  
+  console.log("quizInfo:",quizInfo)
+  await queries.modifyParagraph(addSharpParagraphs,addSharpTranslations,paragraphId)
+}
+
+exports.changeParagraphDifficulty = async(paragraphId, difficulty)=>{
+  await queries.modifyParagraphDifficulty(paragraphId, difficulty)
+}

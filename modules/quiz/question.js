@@ -3,50 +3,47 @@ const blankModule = require("./blank")
 const commonQuestionModule = require("./common_question")
 const paragraphModule = require("./paragraph")
 
+
+
 exports.setParagraphs=async (room,difficulty,roundCount)=>{
 
-  let [paragraphRow] = await englishParagraphService.getParagraphs(1)
 
-
+  let [paragraphRow] = await englishParagraphService.getParagraphs(10)
   let rand_0_length = await commonQuestionModule.randomNumRangeListLen(paragraphRow.length)  // 여러 챕터 중 한 개의 챕터
-
-  let paragraphId = paragraphRow[rand_0_length].id
   let paragraph = paragraphRow[rand_0_length].english_paragraph
-  let [translationRow] = await englishParagraphService.getTranslation(paragraphId)
+  let translation =paragraphRow[rand_0_length].english_paragraph_translation
 
 
-  let questionParagraphList = await paragraphModule.splitParagraphBaseDot(paragraph)
-
-  let questionTranslationList = translationRow[0].english_paragraph_translation.split("#")
-
-
-  let paragraphs = []
-  let translations = []
+  let paragraphs = paragraph.split("#")
+  let translations = translation.split("#")
+  
+  let questionParagraphs = []
+  let questionTranslations = []
   let randomNumList = []
 
+
   let arr =[]
-  for (i in questionParagraphList){
+  for (i in paragraphs){
     arr.push(i)
   }
-  rand_0_length= await commonQuestionModule.randomNumRangeListLen(questionParagraphList.length)
+  rand_0_length= await commonQuestionModule.randomNumRangeListLen(paragraphs.length)
   for (i=0;i<roundCount;i++){
     randomNum = Math.floor(Math.random() * arr.length)
     randomNumList.push(arr[randomNum])
     arr.splice(randomNum,1)
   }
 
-
   for (num of randomNumList){
 
-      let questionParagraph = await paragraphModule.getParagraph(questionParagraphList,num)
-     let questionTranslation = questionTranslationList[num]
+      let questionParagraph = await paragraphModule.getParagraph(paragraphs,num)
+     let questionTranslation = translations[num]
 
-      paragraphs.push(questionParagraph)
-      translations.push(questionTranslation)
+      questionParagraphs.push(questionParagraph)
+      questionTranslations.push(questionTranslation)
 
   }
-  room.paragraphs = paragraphs
-  room.translations = translations
+  room.questionParagraphs = questionParagraphs
+  room.questionTranslations = questionTranslations
 }
 
 
