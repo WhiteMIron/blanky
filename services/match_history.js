@@ -40,3 +40,18 @@ exports.getAnswerHistory = async(roundHistoryId)=>{
     let rows = await queries.findAnswerHistoryByRoundHistoryId(roundHistoryId)
     return rows
 }
+
+
+exports.recordSoloMatchHistory = async(matchDate,userId,isWin)=>{
+    let [row]=await queries.saveSoloMatchHistory(matchDate,userId,isWin)
+    return row[0].id
+}
+
+exports.recordSoloRoundHistory = async(roundCount,matchHistoryId,questionParagraph,questionTranslation,isWin)=>{
+    let [row]=await queries.saveSoloRoundHistory(roundCount,matchHistoryId,questionParagraph,questionTranslation,isWin)
+    return row[0].id
+}
+
+exports.recordSoloAnswerHistory = async(roundHistoryId,isAnswer,answerStartIndex,answerEndIndex,answerRightWord)=>{
+    await queries.saveSoloAnswerHistory(roundHistoryId,isAnswer,answerStartIndex,answerEndIndex,answerRightWord)
+}
