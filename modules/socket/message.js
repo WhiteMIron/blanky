@@ -18,25 +18,33 @@ exports.enterRoom = function(socket){
   })
 }
 
-
-exports.broadcastAnswerNotify  = function(socket,roomId,isAnswer){
-    console.log("broadcastAnswerNotify 발생",isAnswer)
-    socket.broadcast.to(roomId).emit('broadcastAnswerNotify',{
+exports.answerNotify = function(socket,round,isAnswer){
+  socket.emit('answerNotify',{
+    round:round,
     isAnswer:isAnswer
   })
 }
 
 
+exports.broadcastAnswerNotify = function(socket,roomId,isAnswer){
+    socket.broadcast.to(roomId).emit('broadcastAnswerNotify',{
+    isAnswer : isAnswer,
+  });
+}
+
 
 exports.broadcastQuestion = function(io,roomId,questionMsg){
+  // console.log("questionMsg:",questionMsg)
   io.to(roomId).emit('printQuestion', questionMsg)
 }
 
-exports.roundLoseNotify =  function(socket){
-  socket.broadcast.to(socket.room.id).emit('roundLoseNotify')
+
+exports.roundResultNotify = function(socket,isWin){
+  socket.broadcast.to(socket.room.id).emit("roundResultNotify",{isWin:isWin})
 }
 
-//상대방에게 자신이 맞춘/틀린 단어 갯수 보내기
-exports.gameResultNotify = function(socket,room){
-  socket.broadcast.to(socket.room.id).emit('gameResultNotify',{rightAnswerCount:socket.rightAnswerCount, wrongAnswerCount:socket.wrongAnswerCount})
+exports.gameResultNotify = function(socket){
+  socket.emit('gameResultNotify',{isWin:true})
+  socket.broadcast.to(socket.room.id).emit('gameResultNotify',{isWin:false})
+
 }

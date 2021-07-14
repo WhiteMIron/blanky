@@ -41,7 +41,7 @@ exports.play = function(socket, io,maxBlank) {
 
           //room에 라운드 수만큼 문장/해석 셋팅   room, difficulty, roundCount
           await questionModule.setParagraphs(room,1,3)
-          let questionMsg = await questionModule.createQuestion(room.paragraphs,room.translations,maxBlank)
+          let questionMsg = await questionModule.createQuestion(room,room.questionParagraphs,room.questionTranslations,maxBlank)
           let round = room.round
           sendQuestion(io, roomId, questionMsg)
           console.log("문제출제")
@@ -68,7 +68,7 @@ exports.play = function(socket, io,maxBlank) {
       messageModule.broadcastAnswerNotify (socket,roomId,false)
 
   })
-    
+
 
   socket.on('answer', async function(data) {
 
@@ -98,7 +98,7 @@ exports.play = function(socket, io,maxBlank) {
         }
     }
     else if(isAnswer==false){
-      messageModule.broadcastAnswerNotify (socket,roomId,true)
+      messageModule.broadcastAnswerNotify (socket,roomId,false)
 
       isExists=_.findIndex(wrongAnswerInfos, { 'word': rightAnswer})
           console.log("isExists:",isExists,"constants.notExists:",constants.notExists)
@@ -116,13 +116,14 @@ exports.play = function(socket, io,maxBlank) {
 
   })
 
+    socket.on('notifyRoundResult',async function(data){
+      let isWin =data.isWin
+      messageModule.roundResultNotify(socket,isWin)
+    })
 
 
     socket.on('recordRoundResult',async function(data){
       let isWin = data.isWin
-
-      if(isWin == true)
-        messageModule.roundLoseNotify(socket,roundCount)
 
       let room = socket.room
       let round = room.round
@@ -140,25 +141,20 @@ exports.play = function(socket, io,maxBlank) {
         let startIndex = position.startIndex
         let endIndex = position.endIndex
 
-
-        isExists=_.findIndex(wrongAnswerInfos, { 'word': rightAnswer})
-        if(isExists==constants.notExists)
-          wrongAnswerInfos.push(
-            answerInfo = {
-              startIndex: startIndex,
-              endIndex : endIndex,
-              word : rightAnswer
-            }
-        )
+        wrongAnswerInfos.push(
+          answerInfo = {
+            startIndex: startIndex,
+            endIndex : endIndex,
+            word : rightAnswer
+            })
       }
 
       rightAnswerInfos = rightAnswerInfos
       wrongAnswerInfos = wrongAnswerInfos
 
-     
+
       if(isWin == true){
 
-        messageModule.roundLoseNotify(socket,roundCount)
         await matchService.recordTestMatchResultHistory(matchHistoryId,userId)
         roundHistoryId=await matchService.recordTestRoundHistory(roundCount,roundQuestionParagraph,constants.win,userId,matchHistoryId)
         await matchService.recordScoreHistory(matchDate,upperWinnerScore,userId)
@@ -175,16 +171,17 @@ exports.play = function(socket, io,maxBlank) {
       for(info of wrongAnswerInfos)
         await matchService.recordTestAnswerHistory(info.startIndex,info.endIndex,constants.wrong,roundHistoryId,info.word)
 
-      socket.rightAnswerInfos={}
-      socket.wrongAnswerInfos={}
+      socket.rightAnswerInfos=[]
+      socket.wrongAnswerInfos=[]
     })
 
  //진쪽에서 이벤트 발생
  socket.on("submitQuestion",async function(){
-  let questionMsg = await questionModule.createQuestion(room.paragraphs,room.translations)
+  let room = socket.room
+  let questionMsg = await questionModule.createQuestion(room,room.questionParagraphs,room.questionTranslations,maxBlank)
   let round = room.round
-
-  sendQuestion(io, room, questionMsg)
+  let roomId=  room.id
+  sendQuestion(io, roomId, questionMsg)
   round.questionParagraph = questionMsg.questionParagraph
   console.log("문제출제")
 

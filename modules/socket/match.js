@@ -3,7 +3,6 @@ const messageModule = require("./message")
 
 exports.match =  function(socket,io,waitingClients){
    socket.on('enterNameSpace',   function(data) {
-    console.log("이거수행~~")
     setPlayerInfo(socket,waitingClients,data.userId,data.userName)
     messageModule.waiting(socket)
     setTimeout(searchPlayer,3000,socket,io,waitingClients)
@@ -22,7 +21,6 @@ function setPlayerInfo(socket,waitingClients, userId, userName){
   socket.rightAnswerInfos=[]
   socket.wrongAnswerInfos=[]
   waitingClients.push(socket)
-
 }
 
 
@@ -35,15 +33,15 @@ function searchPlayer(socket,io,waitingClients){
       console.log("서치중",waitingClients.length)
       let userId =  socket.userId
       if(waitingClients.length==1){
-          console.log("서치 중지")
+          console.log("대기 1명으로 서치 중지")
           break
       }
 
       else if(opponent.userId != userId && opponent.status == constants.waiting){
-        console.log("서치!")
+        console.log("매칭됨!")
         let roomId = opponent.userId
         let room = createRoom(roomId)
-        console.log(socket.userName , opponent.userName, "roomId:",roomId,"매칭 됨")
+        console.log("socketUserId:",socket.userId , "opponentUserId:",opponent.userId, "roomId:",roomId,"매칭 됨")
         joinRoom(opponent,room)
         joinRoom(socket,room)
         removeWaitingClients(index,waitingClients,socket)
