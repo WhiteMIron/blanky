@@ -38,7 +38,7 @@ function searchPlayer(socket,io,waitingClients){
       }
 
       else if(opponent.userId != userId && opponent.status == constants.waiting){
-        console.log("매칭됨!")
+        console.log("매칭!")
         let roomId = opponent.userId
         let room = createRoom(roomId)
         console.log("socketUserId:",socket.userId , "opponentUserId:",opponent.userId, "roomId:",roomId,"매칭 됨")

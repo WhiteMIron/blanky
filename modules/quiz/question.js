@@ -8,7 +8,7 @@ const paragraphModule = require("./paragraph")
 exports.setParagraphs=async (room,difficulty,roundCount)=>{
 
 
-  let [paragraphRow] = await englishParagraphService.getParagraphs(10)
+  let [paragraphRow] = await englishParagraphService.getParagraphs(1)
   let rand_0_length = await commonQuestionModule.randomNumRangeListLen(paragraphRow.length)  // 여러 챕터 중 한 개의 챕터
   let paragraph = paragraphRow[rand_0_length].english_paragraph
   let translation =paragraphRow[rand_0_length].english_paragraph_translation
@@ -16,7 +16,7 @@ exports.setParagraphs=async (room,difficulty,roundCount)=>{
 
   let paragraphs = paragraph.split("#")
   let translations = translation.split("#")
-  
+
   let questionParagraphs = []
   let questionTranslations = []
   let randomNumList = []
@@ -44,26 +44,40 @@ exports.setParagraphs=async (room,difficulty,roundCount)=>{
   }
   room.questionParagraphs = questionParagraphs
   room.questionTranslations = questionTranslations
+  console.log("room.paragraph",room.questionParagraphs)
+  console.log("room translation:", room.questionTranslations)
 }
 
 
 
 
-exports.createQuestion =async (questionParagraphs,questionTranslations,maxBlank) =>{
+exports.createQuestion =async (room,questionParagraphs,questionTranslations,maxBlank) =>{
+  // console.log("questionParagraphs:",questionParagraphs)
+  // console.log("questionTranslations:",questionTranslations)
+  console.log("room.questionParagraphs:",room.questionParagraphs)
+  console.log("room.questionTranslations:",room.questionTranslations)
+
 
   questionParagraph = questionParagraphs[0]
   questionTranslation = questionTranslations[0]
 
+  console.log(questionParagraph,questionTranslation)
 
-  if(questionParagraphs.length!=1){ 
-    questionParagraphs.slice(0,1)
-    questionTranslations.slice(0,1)
+  if(questionParagraphs.length!=1){
+    // questionParagraphs=questionParagraphs.slice(1,questionParagraphs.length)
+    // questionTranslations=questionTranslations.slice(1,questionTranslations.length)
+    room.questionParagraphs=questionParagraphs.slice(1,questionParagraphs.length)
+    room.questionTranslations=questionTranslations.slice(1,questionTranslations.length)
+
   }
+  console.log("slice 수행")
+  console.log("room.questionParagraphs:",room.questionParagraphs)
+  console.log("room.questionTranslations:",room.questionTranslations)
 
  let blankWords = await blankModule.createRandomBlankWords(questionParagraph,maxBlank)
-  
-  blankWordIndexes = await blankModule.getBlankPositions(blankWords,questionParagraph)
-  
+ console.log("blankWords:",blankWords)
+ let blankWordIndexes = await blankModule.getBlankPositions(blankWords,questionParagraph)
+ console.log("blankWordIndexes:",blankWordIndexes)
 
   let question ={
     questionParagraph : questionParagraph,
@@ -74,8 +88,3 @@ exports.createQuestion =async (questionParagraphs,questionTranslations,maxBlank)
   console.log(question)
   return question
 }
-
-
-
-
-

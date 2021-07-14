@@ -63,7 +63,7 @@ async function searchPositionWord (searchValue, paragraph){
     index = endIndex
     // console.log("substring:",paragraph.substring(startIndex,endIndex))
     // console.log("paragraph[index]==' '",paragraph[index]==" ")
-  
+
     if( searchValue==paragraph.substring(startIndex,endIndex) && (paragraph[index]=="" || paragraph[index]==" " || paragraph[index]=="," || paragraph[index]=="?" ||paragraph[index]=="!" || paragraph[endIndex]=="." ||  paragraph[endIndex]=='"' ||  paragraph[endIndex]=='(' )){
       // console.log("여기 걸림0")
       if(startIndex!=0 && paragraph[startIndex-1]!=" " && paragraph[startIndex-1]!='"' && paragraph[startIndex-1]!='('){
