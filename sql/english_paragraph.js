@@ -60,3 +60,49 @@ exports.findChapterRanks=async ()=>{
     conn.release()
   }
 }
+
+
+exports.saveParagraph = async(chapterName,addSharpParagraphs,addSharpTranslations,difficulty)=>{
+ 
+  const conn = await pool.getConnection()
+  var sql = "INSERT INTO english_paragraph (english_paragraph_chapter_name,english_paragraph,english_paragraph_translation,english_paragraph_difficulty,created_at)"
+          +"values (?,?,?,?,now())"
+  try {
+    params=[chapterName,addSharpParagraphs,addSharpTranslations,difficulty]
+    conn.query(sql, params)
+  } catch (e) {
+    throw new Error(e)
+  } finally {
+    conn.release()
+  }
+}
+
+exports.modifyParagraph=async(addSharpParagraphs,addSharpTranslations,paragraphId)=>{
+
+  const conn = await pool.getConnection()
+  var sql = "UPDATE english_paragraph SET english_paragraph= ? , english_paragraph_translation=?  where id = ?"
+  try {
+    params=[addSharpParagraphs,addSharpTranslations,paragraphId]
+    conn.query(sql, params)
+  } catch (e) {
+    throw new Error(e)
+  } finally {
+    conn.release()
+  }
+}
+
+
+
+exports.modifyParagraphDifficulty=async(paragraphId,difficulty)=>{
+
+  const conn = await pool.getConnection()
+  var sql = "UPDATE english_paragraph SET english_paragraph_difficulty= ?  where id = ?"
+  try {
+    params=[difficulty,paragraphId]
+    conn.query(sql, params)
+  } catch (e) {
+    throw new Error(e)
+  } finally {
+    conn.release()
+  }
+}
