@@ -17,13 +17,26 @@ var lowerWaitingClients = []
 
 
 upper.on('connection', function(socket) {
-
-   // require("./modules/socket/match.js").match(socket,upper,upperWaitingClients,upperRooms)
-
    require("./modules/socket/match.js").match(socket,upper,upperWaitingClients)
    require("./modules/socket/chat.js").chat(socket)
-   require("./modules/socket/play.js").play(socket,upper,constants.normalMaxBlank)
+   require("./modules/socket/play.js").play(socket,upper,constants.easyMaxBlank)
    require("./modules/socket/connect.js").disconnect(socket,upper,upperWaitingClients)
+})
+
+middle.on('connection', function(socket) {
+  require("./modules/socket/match.js").match(socket,middle,upperWaitingClients)
+  require("./modules/socket/chat.js").chat(socket)
+  require("./modules/socket/play.js").play(socket,middle,constants.normalMaxBlank)
+  require("./modules/socket/connect.js").disconnect(socket,middle,middleWaitingClients)
+})
+
+
+
+lower.on('connection', function(socket) {
+  require("./modules/socket/match.js").match(socket,lower,upperWaitingClients)
+  require("./modules/socket/chat.js").chat(socket)
+  require("./modules/socket/play.js").play(socket,lower,constants.hardMaxBlank)
+  require("./modules/socket/connect.js").disconnect(socket,lower,lowerWaitingClients)
 })
 
 server.listen(4000, function() {
