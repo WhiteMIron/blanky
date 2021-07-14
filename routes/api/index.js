@@ -3,10 +3,11 @@ const auth = require("./auth/index")
 const user = require("./user/index")
 const quiz = require("./quiz/index")
 const match = require("./match/index")
-
+const admin = require("./admin/index")
 const middlewares = require('../../middlewares/auth')
 const wrap = require("express-async-wrap")
 //로그인
+router.use('/admin',admin)
 router.use('/quiz',quiz)
 router.use('/auth',auth)
 // router.use('/match',match)

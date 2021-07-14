@@ -135,6 +135,7 @@ exports.removeSpecialSymbol =async (paragraph) =>{
     }
     translation = _.cloneDeep(tmp)
  }
+  console.log("questionTranslations[index].trim():",questionTranslations[index].trim())
   addSharpTranslations += questionTranslations[index].trim()
   questionInfo ={
     addSharpParagraphs : addSharpParagraphs,

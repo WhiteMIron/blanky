@@ -1,6 +1,5 @@
 
 const englishParagraphService = require("../../../../services/english_paragraph");
-const paragraphModule = require("../../../../modules/quiz/test_paragraph")
 exports.registerParagraph = async (req,res)=>{
 
     let registerJson = req.body
@@ -20,16 +19,18 @@ exports.registerParagraph = async (req,res)=>{
 
 //길이 정보도 있어야하나?
 exports.changeParagraph = async(req,res) =>{
+
+    console.log("요청 들어옴")
     let changeJson = req.body
     let paragraphId = req.params.paragraphId
     let cutLength = changeJson.cutLength
 
     let [row] = await englishParagraphService.getParagraph(paragraphId)
-    let paragraph = row[0].english_paragraph.replace("#"," ")
-    let translation = row[0].english_paragraph_translation.replace("#"," ")
+    let paragraph = row[0].english_paragraph.replace(/#/g," ")
+    let translation = row[0].english_paragraph_translation.replace(/#/g," ")
 
     console.log("paragraph:",paragraph)
-    console.log("paragraph:",translation)
+    console.log("translation:",translation)
 
     await englishParagraphService.changeParagraph(paragraph, translation, cutLength, paragraphId)
     console.log("챕터 지문 및 해석 길이 변경 완료")

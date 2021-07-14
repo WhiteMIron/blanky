@@ -7,8 +7,11 @@ const paragraphModule = require("./paragraph")
 
 exports.setParagraphs=async (room,difficulty,roundCount)=>{
 
+  console.log("difficulty:",difficulty)
 
-  let [paragraphRow] = await englishParagraphService.getParagraphs(1)
+  let [paragraphRow] = await englishParagraphService.getParagraphs(difficulty)
+  console.log(paragraphRow)
+
   let rand_0_length = await commonQuestionModule.randomNumRangeListLen(paragraphRow.length)  // 여러 챕터 중 한 개의 챕터
   let paragraph = paragraphRow[rand_0_length].english_paragraph
   let translation =paragraphRow[rand_0_length].english_paragraph_translation
@@ -70,7 +73,6 @@ exports.createQuestion =async (room,questionParagraphs,questionTranslations,maxB
     room.questionTranslations=questionTranslations.slice(1,questionTranslations.length)
 
   }
-  console.log("slice 수행")
   console.log("room.questionParagraphs:",room.questionParagraphs)
   console.log("room.questionTranslations:",room.questionTranslations)
 

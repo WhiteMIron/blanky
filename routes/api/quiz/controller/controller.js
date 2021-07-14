@@ -1,21 +1,15 @@
-const dirName ="C:\\Users\\user\\Documents\\작업공간\\V11\\views"
+const dirName ="C:\\Users\\BS\\Documents\\마스터\\views"
 
 const englishParagraphService = require("../../../../services/english_paragraph");
 const paragraphModule = require("../../../../modules/quiz/paragraph")
 const commonQuestionModule = require("../../../../modules/quiz/common_question")
 const blankModule = require("../../../../modules/quiz/blank");
 const constants = require("../../../../consts_folder/constants");
-exports.upper = function(req,res){
+
+exports.easy = function(req,res){
   res.sendFile(dirName + '/index.html');
 }
 
-exports.middle = function(req,res){
-  res.sendFile(dirName + '/index2.html');
-}
-
-exports.lower = function(req,res){
-  res.sendFile(dirName + '/index3.html');
-}
 
 
 exports.getChapterInfo = async (req,res)=>{
@@ -23,7 +17,7 @@ exports.getChapterInfo = async (req,res)=>{
 let difficulty = req.params.difficulty
 let jsonArray = new Array()
 
-let [rows] = await englishParagraphService.getChapters(difficulty)
+let [rows] = await englishParagraphService.getParagraphs(difficulty)
 for(row of rows){
   chapter={
     id: row.id,
@@ -69,6 +63,19 @@ exports.getChapterRank = async(req,res) => {
   
   console.log('User ChapterRank select success')
 }
+
+exports.getWordSearch = async(req,res) => {
+  console.log("요청 들어옴")
+  let word = req.query.word
+  const rows= await englishParagraphService.getWordSearch(word)
+
+  res.send({
+    name: word,
+    data: rows
+  });
+  console.log('User WordSearch select success')
+}
+
 
 
 exports.getQuestion = async (req,res) =>{

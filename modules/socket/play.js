@@ -8,7 +8,7 @@ const { upperWinnerScore, upperLoserScore } = require("../../consts_folder/socke
 const _ = require('lodash');
 
 
-exports.play = function(socket, io,maxBlank) {
+exports.play = function(socket, io,maxBlank,difficulty) {
     socket.on('start', async function() {
     if (socket.status == constants.matched) {
       let room = socket.room
@@ -40,7 +40,7 @@ exports.play = function(socket, io,maxBlank) {
           }
 
           //room에 라운드 수만큼 문장/해석 셋팅   room, difficulty, roundCount
-          await questionModule.setParagraphs(room,1,3)
+          await questionModule.setParagraphs(room,difficulty,3)
           let questionMsg = await questionModule.createQuestion(room,room.questionParagraphs,room.questionTranslations,maxBlank)
           let round = room.round
           sendQuestion(io, roomId, questionMsg)
