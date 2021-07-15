@@ -1,4 +1,3 @@
-const queries = require("../../../../sql/user")
 const userService = require("../../../../services/user")
 const matchHistoryService = require("../../../../services/match_history")
 const jwt =require('jsonwebtoken')
@@ -6,21 +5,22 @@ require("dotenv").config()
 
 
 exports.getMatchHistory = async (req,res) =>{
-    // const userId = await getUserIdByJwt(req.headers.auth)
-    userId = 1020
+    const userId = await getUserIdByJwt(req.headers.auth)
     const [rows] = await matchHistoryService.getMatchHistory(userId)
-
+    // console.log(rows)
     let jsonArray = new Array()
+
     for(row of rows){
         let json = new Object()
         json.id =row.id
         json.matchDate = row.match_date
+        let winUserId = row.win_user_id
         if(row.player1_user_id != userId){
             opponentUserId=row.player1_user_id
             row=await userService.getUserById(opponentUserId)
             json.opponentUserNickname = row[0].user_nickname
             json.opponentUserId = row[0].id
-       }
+        }
         else{
             opponentUserId=row.player2_user_id
             row=await userService.getUserById(opponentUserId)
@@ -28,10 +28,12 @@ exports.getMatchHistory = async (req,res) =>{
             json.opponentUserId = row[0].id
         }
 
-        if(row.win_user_id == userId){
+        if(winUserId == userId){
+            console.log("userId:",userId,"win_user_id:",winUserId)
             json.winYN = Boolean(true)
         }
         else{
+            console.log("userId:",userId,"win_user_id:",winUserId)
             json.winYN = Boolean(false)
         }
         jsonArray.push(json)
@@ -46,8 +48,7 @@ exports.getMatchHistory = async (req,res) =>{
 }
 
 exports.getRoundHistory = async (req,res) =>{
-    // const userId = await getUserIdByJwt(req.headers.auth)
-    const userId =1020
+    const userId = await getUserIdByJwt(req.headers.auth)
     let matchHistoryId = req.query.matchHistoryId
     const opponentUserId = req.query.opponentUserId
 
@@ -63,7 +64,6 @@ exports.getRoundHistory = async (req,res) =>{
         let answerJsonArray = new Array()
         for (answerRow of answerRows){
             let answerJson = new Object()
-            answerJson.word = answerRow.answer_right_word
             answerJson.startIndex = answerRow.answer_start_index
             answerJson.endIndex = answerRow.answer_end_index
             answerJson.answerYN = Boolean(answerRow.answer_yn)
@@ -88,8 +88,8 @@ exports.getRoundHistory = async (req,res) =>{
         let answerJsonArray = new Array()
         for (answerRow of answerRows){
             let answerJson = new Object()
-            answerJson.answerIndex = answerRow.answer_position_index
-            answerJson.answerLength = answerRow.answer_length
+            answerJson.startIndex = answerRow.answer_start_index
+            answerJson.endIndex = answerRow.answer_end_index
             answerJson.answerYN = Boolean(answerRow.answer_yn)
             answerJsonArray.push(answerJson)
         }
@@ -105,24 +105,19 @@ exports.getRoundHistory = async (req,res) =>{
     res.status(200).send(jObj)
 }
 
-//라운드 정보 다 줬을 때 기록하게 하는게 나을듯
-//매치,라운드,답변기록 다 한번에 처리
-
 
 
 exports.recordSoloMatchHistory=async(req,res)=>{
 
     let userId =await getUserIdByJwt(req.headers.auth)
-   
-    let history = req.body
     
-    let matchHistory = history.matchHistory
+
+    let history = req.body
+    let matchHistory =  history.matchHistory
     let matchDate = matchHistory.matchDate
     let isWin  =  matchHistory.isMatchWin
-
-    let matchHistoryId = await englishParagraphService.recordSoloMatchHistory(matchDate,userId,isWin)
-
-    let roundHistories = history.roundHistory 
+    let matchHistoryId = await matchHistoryService.recordSoloMatchHistory(matchDate,userId,isWin)
+    let roundHistories = matchHistory.roundHistories
 
     for ( roundHistory of roundHistories){
       let roundCount = roundHistory.count
@@ -130,14 +125,14 @@ exports.recordSoloMatchHistory=async(req,res)=>{
       let questionTranslation = roundHistory.questionTranslation
       isWin = roundHistory.isWin
       
-      let roundHistoryId = await englishParagraphService.recordSoloRoundHistory(roundCount,matchHistoryId,questionParagraph,questionTranslation,isWin)
+      let roundHistoryId = await matchHistoryService.recordSoloRoundHistory(roundCount,matchHistoryId,questionParagraph,questionTranslation,isWin)
       let answerHistory = roundHistory.answerHistory
       let isAnswer = answerHistory.isAnswer
       let answerStartIndex = answerHistory.startIndex
       let answerEndIndex = answerHistory.endIndex
       let answerRightWord = answerHistory.rightWord
-      await englishParagraphService.recordSoloAnswerHistory(roundHistoryId, isAnswer,answerStartIndex, answerEndIndex, answerRightWord )
-
+  
+      await matchHistoryService.recordSoloAnswerHistory(roundHistoryId, isAnswer,answerStartIndex, answerEndIndex, answerRightWord )
     } 
 
     let jObj = new Object()
@@ -162,7 +157,6 @@ exports.getSoloMatchHistory = async(req,res)=>{
         json.isWin = row.win_yn
         jsonArray.push(json)
     }
-    console.log(jsonArray)
     var jObj =  new Object()
     jObj.code = 200
     jObj.data = jsonArray
@@ -171,7 +165,7 @@ exports.getSoloMatchHistory = async(req,res)=>{
 }
 
 exports.getSoloRoundHistory = async(req,res)=>{
-    let matchHistoryId = req.params.matchHistoryId
+    let matchHistoryId = req.query.matchHistoryId
     const [roundRows] = await matchHistoryService.getSoloRoundHistory(matchHistoryId)
     let roundHistoryJsonArray = new Array()
     for( row of roundRows){ 
@@ -182,12 +176,10 @@ exports.getSoloRoundHistory = async(req,res)=>{
         roundJson.questionParagraph = row.question_paragraph
         roundJson.questionTranslation = row.question_translation
         roundJson.isWin = row.win_yn
-        console.log("roundJson:",roundJson)
         let [answerRows] = await matchHistoryService.getSoloAnswerHistory( roundJson.roundHistoryId )
         let answerJsonArray = new Array()
         for (answerRow of answerRows){
             let answerJson = new Object()
-            answerJson.word = answerRow.answer_right_word
             answerJson.startIndex = answerRow.answer_start_index
             answerJson.endIndex = answerRow.answer_end_index
             answerJson.answerYN = Boolean(answerRow.answer_yn)
@@ -204,7 +196,6 @@ exports.getSoloRoundHistory = async(req,res)=>{
 
 async function getUserIdByJwt(token){
   const decoded = jwt.verify(token, process.env.secret)
-  console.log(decoded)
   const id = decoded.userId
     
   return id

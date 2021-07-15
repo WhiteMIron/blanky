@@ -45,19 +45,6 @@ exports.findOneByUserKakaoId = async(userkakaoId)=>{
 
 }
 
-exports.findRanksByUserId =async ()=>{
-  const conn = await pool.getConnection()
-  try {
-    const rows = conn.query(
-    //전체 유저 랭킹 조회
-    `SELECT SUM(user_id) AS 'count', user_dual_score AS 'score' FROM user ORDER BY score DESC;`)
-    return rows
-  } catch (e) {
-    throw new Error(e)
-  } finally {
-    conn.release()
-  }
-}
 
 exports.findOneByUserKakaoIdAndVerify= async(userKakaoId)=>{
 
@@ -168,7 +155,7 @@ exports.findByGraphStatistics = async (graphId) => {
   }
 }
 
-exports.findRanksByUserId =async ()=>{
+exports.findRanks =async ()=>{
   const conn = await pool.getConnection()
   try {
     const rows = conn.query(

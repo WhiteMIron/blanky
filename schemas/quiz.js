@@ -42,12 +42,16 @@
 *                                  "chapterName": "Small Creative Ideas, Big Changes",
 *                                  "chapterImg": https://blanky.s3.ap-northeast-2.amazonaws.com/userProFile/1625640465324_1chapter.png,
 *                                  "playCount": 20,
+*                                  "difficulty": 1,
+*                                  "addedDate": "2021-07-03 13:28:31"
 *                                },
 *                                {
 *                                  "id": 2,
 *                                  "chapterName": "You can Be Confident",
 *                                  "chapterImg": https://blanky.s3.ap-northeast-2.amazonaws.com/userProFile/1625640465324_2chapter.png,
 *                                  "playCount": 25,
+*                                  "difficulty": 1,
+*                                  "addedDate": "2021-07-03 13:28:31"
 *
 *                                }
 *                               ]
@@ -124,7 +128,7 @@
 *          - in: path
 *            name: chapterId
 *          - in: query
-*            name: difficulty
+*            name: blankDifficulty
 *        tags: [quiz]
 *
 *        responses:
@@ -226,6 +230,8 @@
 *                         type : integer
 *                      img :
 *                         type : string
+*                      difficulty :
+*                         type : integer
 *                   example :
 *                       code : 200
 *                       data :
@@ -279,7 +285,7 @@
 *                         type : integer
 *                      data :
 *                         type : object
-*                      name: 
+*                      word: 
 *                         type : string
 *                      dictionaryResult: 
 *                         type : array

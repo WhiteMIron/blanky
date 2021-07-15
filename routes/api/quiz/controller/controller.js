@@ -23,7 +23,9 @@ for(row of rows){
     id: row.id,
     chapterName: row.english_paragraph_chapter_name,
     chapterImg : row.english_paragraph_chapter_img,
-    playCount : row.english_paragraph__play_count
+    playCount : row.english_paragraph__play_count,
+    difficulty : row.english_paragraph_difficulty,
+    addedDate : row.english_paragraph_created_at
   }
   jsonArray.push(chapter)
 }
@@ -84,8 +86,7 @@ exports.getWordSearch = async(req,res) => {
 exports.getQuestion = async (req,res) =>{
   console.log("요청")
   let chapterId = req.params.chapterId
-  let difficulty = req.query.difficulty
-  
+  let blankDifficulty = req.query.blankDifficulty
   let roundCount =3
   
   let randomNumList = []
@@ -96,7 +97,7 @@ exports.getQuestion = async (req,res) =>{
   let paragraph = row[0].english_paragraph.replace(/\r\n/gi," ")
   let translation = row[0].english_paragraph_translation
 
-  let questionParagraphList = await paragraphModule.splitParagraphBaseDot(paragraph)
+  let questionParagraphList = paragraph.split("#")
   let questionTranslationList =translation.split("#")
 
 
@@ -117,14 +118,14 @@ exports.getQuestion = async (req,res) =>{
     let questionParagraph = await paragraphModule.getParagraph(questionParagraphList,num)
     let questionTranslation = questionTranslationList[num]
     let blankWords = null
-    switch(difficulty){
-      case "1" :
+    switch(blankDifficulty){
+      case "easy" :
         blankWords = await blankModule.createRandomBlankWords(questionParagraph,constants.easyMaxBlank)
         break
-      case "2" :
+      case "normal" :
         blankWords = await blankModule.createRandomBlankWords(questionParagraph,constants.normalMaxBlank)
         break
-      case "3":
+      case "hard":
         blankWords = await blankModule.createRandomBlankWords(questionParagraph,constants.hardMaxBlank)
         break
     } 

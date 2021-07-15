@@ -133,7 +133,11 @@ exports.saveSoloMatchHistory = async (matchDate,userId,isWin)=>{
     let sql ="INSERT INTO solo_match_history(match_history_date,win_yn,user_id) values(?,?,?)"
     try{
         params = [matchDate,isWin,userId]
-        let row =conn.query(sql,params)
+        conn.query(sql,params)
+        sql = "SELECT LAST_INSERT_ID() as id"
+        let row=  conn.query(sql)
+        return row
+  
         return row
     }catch(e){
         throw new Error(e)
@@ -144,10 +148,13 @@ exports.saveSoloMatchHistory = async (matchDate,userId,isWin)=>{
 
 exports.saveSoloRoundHistory = async(roundCount,matchHistoryId,questionParagraph,questionTranslation,isWin)=>{
     const conn = await pool.getConnection()
-    let sql ="INSERT INTO solo_round_history(roundCount,matchHistoryId,questionParagraph,questionTranslation,isWin) values(?,?,?,?,?)"
+    let sql ="INSERT INTO solo_round_history(round_count,solo_match_history_id,question_paragraph,question_translation,win_yn) values(?,?,?,?,?)"
     try{
         params = [roundCount,matchHistoryId,questionParagraph,questionTranslation,isWin]
-        let row =conn.query(sql,params)
+        conn.query(sql,params)
+        sql = "SELECT LAST_INSERT_ID() as id"
+        let row=  conn.query(sql)
+       
         return row
     }catch(e){
         throw new Error(e)
@@ -159,7 +166,7 @@ exports.saveSoloRoundHistory = async(roundCount,matchHistoryId,questionParagraph
 
 exports.saveSoloAnswerHistory = async(roundHistoryId,isAnswer,answerStartIndex,answerEndIndex,answerRightWord)=>{
     const conn = await pool.getConnection()
-    let sql="INSERT INTO solo_answer_history(answer_start_index,answer_end_index,answer_yn,round_history_id,answer_word) values(?,?,?,?,?)"
+    let sql="INSERT INTO solo_answer_history(answer_start_index,answer_end_index,answer_yn,solo_round_history_id,answer_right_word) values(?,?,?,?,?)"
     try{
         params = [ answerStartIndex,answerEndIndex,isAnswer,roundHistoryId,answerRightWord]
 

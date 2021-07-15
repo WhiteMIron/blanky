@@ -417,6 +417,8 @@
 *              schema:
 *                 type: object
 *                 properties :
+*                    history :
+*                     type : object
 *                    matchHistory :
 *                     type : object
 *                    isMatchWin :
@@ -507,7 +509,7 @@
 *                   example :
 *                       code : 401
 *                       message : 유효하지 않은 토큰입니다.
-*   /match/history/solo/round:
+*   /match/history/solo/round/:
 *      get:
 *        summary : get solo roundHistory
 *        parameters :
@@ -678,6 +680,202 @@
 *                                  ]
 *                                 }
 *                                ]
+*
+*
+*          "410":
+*             description: 추가정보 미등록
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 410
+*                       message : 추가정보 미등록
+*          "419":
+*             description: 토큰 만료
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 419
+*                       message : 토큰이 만료되었습니다.
+*          "401":
+*             description: 유효하지 않은 토큰입니다.
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 401
+*                       message : 유효하지 않은 토큰입니다.
+*   /match/history/solo:
+*      get:
+*        summary: get solo matchHistory
+*        parameters:
+*          - in: header
+*            name: auth
+*        tags: [match]
+*
+*        responses:
+*          "200":
+*             description: 솔로 대전기록 조회 성공
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      data :
+*                         type : array
+*                      id :
+*                         type : string
+*                      matchDate :
+*                         type : string
+*                      winYN :
+*                         type : bool
+*                      opponentUserId:
+*                         type : integer
+*                      opponentUserNickname:
+*                         type : string
+*                   example :
+*                       code : 200
+*                       data :
+*                               [
+*                                {
+*                                  "id": 431,
+*                                  "matchDate":  "2021-07-15 11:05:43",
+*                                  "winYN": true,
+*                                },
+*                                {
+*                                  "id": 432,
+*                                  "matchDate":  "2021-07-15 11:05:43",
+*                                  "winYN": true,
+*                                }
+*                               ]
+*
+*
+*          "410":
+*             description: 추가정보 미등록
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 410
+*                       message : 추가정보 미등록
+*          "419":
+*             description: 토큰 만료
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 419
+*                       message : 토큰이 만료되었습니다.
+*          "401":
+*             description: 유효하지 않은 토큰입니다.
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 401
+*                       message : 유효하지 않은 토큰입니다.
+*      post:
+*        summary: record solo matchHistory
+*        parameters:
+*          - in: header
+*            name: auth
+*        tags: [match]
+*
+*        requestBody:
+*          description: Optional description in *Markdown*
+*          required: true
+*          content:
+*            application/json:
+*              schema:
+*                 type: object
+*                 properties :
+*                    history :
+*                     type : object
+*                    matchHistory :
+*                     type : object
+*                    isMatchWin :
+*                     type : bool
+*                    matchDate :
+*                     type : string
+*                    roundHistory :
+*                     type : object
+*                    count :
+*                     type : integer
+*                    questionParagraph:
+*                     type : string
+*                    questionTranslation:
+*                     type : string
+*                    isWin :
+*                     type : bool
+*                    answerHistory :
+*                     type : object
+*                    rightWord :
+*                     type : string
+*                    startIndex :
+*                     type : integer
+*                    endIndex :
+*                     type : integer
+*                    isAnswer :
+*                     type : bool
+*        responses:
+*          "200":
+*             description: 솔로 대전기록 저장 성공
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      data :
+*                         type : array
+*                      id :
+*                         type : string
+*                      matchDate :
+*                         type : string
+*                      winYN :
+*                         type : bool
+*                   example :
+*                       code : 200
 *
 *
 *          "410":

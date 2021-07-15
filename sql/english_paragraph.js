@@ -51,7 +51,7 @@ exports.findChapterRanks=async ()=>{
     const rows = conn.query(
     //인기 있는 챕터 조회
     `SELECT id, english_paragraph_chapter_name AS 'name', english_paragraph__play_count AS 'count',
-    english_paragraph_chapter_img AS 'img' FROM english_paragraph ORDER BY count DESC, name ASC LIMIT 10;`)
+    english_paragraph_chapter_img AS 'img',english_paragraph_difficulty AS 'difficulty'  FROM english_paragraph ORDER BY count DESC, name ASC LIMIT 10;`)
 
     return rows
   } catch (e) {
@@ -65,7 +65,7 @@ exports.findChapterRanks=async ()=>{
 exports.saveParagraph = async(chapterName,addSharpParagraphs,addSharpTranslations,difficulty)=>{
  
   const conn = await pool.getConnection()
-  var sql = "INSERT INTO english_paragraph (english_paragraph_chapter_name,english_paragraph,english_paragraph_translation,english_paragraph_difficulty,created_at)"
+  var sql = "INSERT INTO english_paragraph (english_paragraph_chapter_name,english_paragraph,english_paragraph_translation,english_paragraph_difficulty,english_paragraph_created_at)"
           +"values (?,?,?,?,now())"
   try {
     params=[chapterName,addSharpParagraphs,addSharpTranslations,difficulty]

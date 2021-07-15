@@ -57,6 +57,6 @@ exports.getGraph =async (graphId)=>{
 }
 
 exports.getRanks =async ()=>{
-    rows = await queries.findRanksByUserId()
+    rows = await queries.findRanks()
     return rows
 }
