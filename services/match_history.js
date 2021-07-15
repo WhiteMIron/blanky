@@ -57,16 +57,16 @@ exports.recordSoloAnswerHistory = async(roundHistoryId,isAnswer,answerStartIndex
 }
 
 exports.getSoloMatchHistory = async(userId) =>{
-    let rows = await queries.findSoloMatchHistoryByMatchHistoryId(userId)
+    let rows = await queries.findSoloMatchHistoryByUserId(userId)
     return rows
 }
 
 exports.getSoloRoundHistory = async(matchHistoryId)=>{
-    let rows = await queries.findSoloRoundHistoryId(matchHistoryId)
+    let rows = await queries.findSoloRoundHistoryByMatchHistoryId(matchHistoryId)
     return rows
 }
 
 exports.getSoloAnswerHistory = async(roundHistoryId)=>{
-    let rows = await queries.findSoloAnswerHistoryId(roundHistoryId)
+    let rows = await queries.findSoloAnswerHistoryByRoundHistoryId(roundHistoryId)
     return rows
 }

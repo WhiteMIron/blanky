@@ -190,7 +190,7 @@ exports.findSoloMatchHistoryByUserId = async(userId)=>{
 
 exports.findSoloRoundHistoryByMatchHistoryId = async(matchHistoryId)=>{
     const conn = await pool.getConnection()
-    let sql ="SELECT * from solo_round_history where match_history_id"
+    let sql ="SELECT * from solo_round_history where solo_match_history_id"
     try{
         params = [matchHistoryId]
         let row =conn.query(sql,params)
@@ -205,7 +205,7 @@ exports.findSoloRoundHistoryByMatchHistoryId = async(matchHistoryId)=>{
 
 exports.findSoloAnswerHistoryByRoundHistoryId = async(roundHistoryId)=>{
     const conn = await pool.getConnection()
-    let sql ="SELECT * from solo_answer_history where round_history_id = ?"
+    let sql ="SELECT * from solo_answer_history where solo_round_history_id = ?"
     try{
         params = [roundHistoryId]
         let row =conn.query(sql,params)
