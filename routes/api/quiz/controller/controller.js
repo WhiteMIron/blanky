@@ -142,3 +142,41 @@ exports.getQuestion = async (req,res) =>{
   res.status(200).send(jObj)
 }
 
+exports.recordSoloMatchHistory=async(req,res)=>{
+
+    decoded =await jwt.verify(req.headers.auth, process.env.secret)
+    let userId =decoded.userId
+
+    let history = req.body
+    
+    let matchHistory = history.matchHistory
+    let matchDate = matchHistory.matchDate
+    let isWin  =  matchHistory.isWin
+
+    let matchHistoryId = await englishParagraphService.recordSoloMatchHistory(matchDate,userId,isWin)
+
+    let roundHistories = history.roundHistory 
+
+    for ( roundHistory of roundHistories){
+      let roundCount = roundHistory.roundCount
+      let questionParagraph = roundHistory.questionParagraph
+      let questionTranslation = roundHistory.questionTranslation
+      isWin = roundHistory.isWin
+      
+      let roundHistoryId = await englishParagraphService.recordSoloRoundHistory(roundCount,matchHistoryId,questionParagraph,questionTranslation,isWin)
+      let answerHistory = roundHistory.answerHistory
+      let isAnswer = answerHistory.isAnswer
+      let answerStartIndex = answerHistory.startIndex
+      let answerEndIndex = answerHistory.endIndex
+      let answerRightWord = answerHistory.answerRightWord
+      await englishParagraphService.recordSoloAnswerHistory(roundHistoryId, isAnswer,answerStartIndex, answerEndIndex, answerRightWord )
+
+    } 
+
+    let jObj = new Object()
+    jObj.code =200
+    jObj.message = "솔로 대전 기록 저장 완료"
+    res.status(201).send(jObj)
+
+    
+}

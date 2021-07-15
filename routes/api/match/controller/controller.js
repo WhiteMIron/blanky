@@ -104,6 +104,12 @@ exports.getRoundHistory = async (req,res) =>{
     res.status(200).send(jObj)
 }
 
+//라운드 정보 다 줬을 때 기록하게 하는게 나을듯
+//매치,라운드,답변기록 다 한번에 처리
+
+exports.recordSoloMatchHistory= (req,res)=>{
+
+}
 
 
 async function getUserIdByJwt(token){
