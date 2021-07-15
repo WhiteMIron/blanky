@@ -259,4 +259,72 @@
 *                       code : 400
 *                       message : 잘못된 요청
 *
+*   /quiz/dictionary  :
+*      get:
+*        summary: get dictionary result info
+*        parameters:
+*          - in: query
+*            name: word
+*        tags: [quiz]
+*
+*        responses:
+*          "200":
+*             description: 영어사전 정보 조회 성공
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      data :
+*                         type : object
+*                      name: 
+*                         type : string
+*                      dictionaryResult: 
+*                         type : array
+*                      partOfSpeech: 
+*                         type : string
+*                      exampleOri: 
+*                         type : string
+*                      exampleTrans: 
+*                         type : string
+*                   example :
+*                       code : 200
+*                       data :
+*                             [
+*                                   "word": "hello",    
+*                                   {
+*                                     "partOfSpeech": "감탄사, 명사: 얼씨구(상대방의 말이 바보 같거나, 상대방이 주의를 기울이지 않고 있다고 여길 때) (→golden hello)",
+*                                     "exampleOri": "Hello? You didn’t really mean that, did you?",
+*                                     "exampleTrans": "얼씨구? 너 그 말 진심으로 한 건 아니겠지, 응?"
+*                                   },
+*                                   {
+*                                     "partOfSpeech": "감탄사, 명사: 얼씨구(상대방의 말이 바보 같거나, 상대방이 주의를 기울이지 않고 있다고 여길 때) (→golden hello)",
+*                                     "exampleOri": "Hello? You didn’t really mean that, did you?",
+*                                     "exampleTrans": "얼씨구? 너 그 말 진심으로 한 건 아니겠지, 응?"
+*                                   },
+*                                   {
+*                                     "partOfSpeech": "감탄사, 명사: 얼씨구(상대방의 말이 바보 같거나, 상대방이 주의를 기울이지 않고 있다고 여길 때) (→golden hello)",
+*                                     "exampleOri": "Hello? You didn’t really mean that, did you?",
+*                                     "exampleTrans": "얼씨구? 너 그 말 진심으로 한 건 아니겠지, 응?"
+*                                   }
+*                              ]
+*
+*
+*          "400":
+*             description: 잘못된 요청
+*             content:
+*               application/json:
+*                 schema:
+*                   type: object
+*                   properties :
+*                      code :
+*                         type : integer
+*                      message :
+*                         type : string
+*                   example :
+*                       code : 400
+*                       message : 잘못된 요청
+*
 */

@@ -65,20 +65,21 @@ exports.getWordSearch =async (word)=>{
   };
   const body= await request(options)
   const json = JSON.parse(body)
-  var resultJson = [];
+  var resultJsonArray = new Array();
   var typeFormLength = json.searchResultMap.searchResultListMap.WORD.items.length
 
   for (var j = 0; j < typeFormLength; j++) {
-    var meansLength = json.searchResultMap.searchResultListMap.WORD.items[j].meansCollector[0].means.length
+    let meansCollector =json.searchResultMap.searchResultListMap.WORD.items[j].meansCollector[0]
+    var meansLength = meansCollector.means.length
     if (json.searchResultMap.searchResultListMap.WORD.items[j].expDictTypeForm == '단어') {
       for (var i = 0; i < meansLength; i++) {
-        if (json.searchResultMap.searchResultListMap.WORD.items[j].meansCollector[0].means[i].exampleOri != null
-          && json.searchResultMap.searchResultListMap.WORD.items[j].meansCollector[0].means[i].exampleTrans != null) {
-          var partOfSpeech = json.searchResultMap.searchResultListMap.WORD.items[j].meansCollector[0].partOfSpeech + ': '
-            + json.searchResultMap.searchResultListMap.WORD.items[j].meansCollector[0].means[i].value.replace(/\<strong>/g, '').replace(/\<\/strong>/g, '').replace(/\<span class='related_word' lang='en' >/g, '').replace(/\<\/span>/g, '').replace('&lt;', '<').replace('&gt;', '>')
-          var exampleOri = json.searchResultMap.searchResultListMap.WORD.items[j].meansCollector[0].means[i].exampleOri.replace(/\<strong>/g, '').replace(/\<\/strong>/g, '')
-          var exampleTrans = json.searchResultMap.searchResultListMap.WORD.items[j].meansCollector[0].means[i].exampleTrans.replace(/\<strong>/g, '').replace(/\<\/strong>/g, '')
-          resultJson.push(
+        if (meansCollector.means[i].exampleOri != null
+          && meansCollector.means[i].exampleTrans != null) {
+          var partOfSpeech = meansCollector.partOfSpeech + ': '
+            + meansCollector.means[i].value.replace(/\<strong>/g, '').replace(/\<\/strong>/g, '').replace(/\<span class='related_word' lang='en' >/g, '').replace(/\<\/span>/g, '').replace('&lt;', '<').replace('&gt;', '>')
+          var exampleOri = meansCollector.means[i].exampleOri.replace(/\<strong>/g, '').replace(/\<\/strong>/g, '')
+          var exampleTrans = meansCollector.means[i].exampleTrans.replace(/\<strong>/g, '').replace(/\<\/strong>/g, '')
+          resultJsonArray.push(
             {
               partOfSpeech: partOfSpeech,
               exampleOri: exampleOri,
@@ -89,6 +90,6 @@ exports.getWordSearch =async (word)=>{
       }
     }
   }
-  console.log(resultJson)
-  return resultJson
+  console.log(resultJsonArray)
+  return resultJsonArray
 }

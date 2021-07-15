@@ -7,8 +7,8 @@ exports.recordTestMatchHistory=async(matchDate, player1UserId, player2UserId)=>{
 }
 
 
-exports.recordTestRoundHistory=async(roundCount,questionParagraph,winYN,userId,matchHistoryId)=>{
-   let [row]=await queries.saveTestRoundHistory(roundCount,questionParagraph,winYN,userId,matchHistoryId)
+exports.recordTestRoundHistory=async(roundCount,questionParagraph,questionTranslation,winYN,userId,matchHistoryId)=>{
+   let [row]=await queries.saveTestRoundHistory(roundCount,questionParagraph,questionTranslation,winYN,userId,matchHistoryId)
     return row[0].id
 }
 

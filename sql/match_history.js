@@ -48,12 +48,12 @@ exports.saveTestMatchResultHistory = async(matchHistoryId, winUserId)=>{
     }
 }
 
-exports.saveTestRoundHistory = async(roundCount,questionParagraph,winYN,userId,matchHistoryId)=>{
+exports.saveTestRoundHistory = async(roundCount,questionParagraph,questionTranslation,winYN,userId,matchHistoryId)=>{
     const conn = await pool.getConnection()
-    let sql ="INSERT INTO test_round_history (round_count,question_paragraph,win_yn,user_id,match_history_id)"
-            +"VALUES(?,?,?,?,?)"
+    let sql ="INSERT INTO test_round_history (round_count,question_paragraph,question_translation,win_yn,user_id,match_history_id)"
+            +"VALUES(?,?,?,?,?,?)"
     try{
-        params=[roundCount,questionParagraph,winYN,userId,matchHistoryId]
+        params=[roundCount,questionParagraph,questionTranslation,winYN,userId,matchHistoryId]
         conn.query(sql,params)
         sql = "SELECT LAST_INSERT_ID() as id"
         let row=  conn.query(sql)

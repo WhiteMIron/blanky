@@ -65,14 +65,17 @@ exports.getChapterRank = async(req,res) => {
 }
 
 exports.getWordSearch = async(req,res) => {
-  console.log("요청 들어옴")
   let word = req.query.word
-  const rows= await englishParagraphService.getWordSearch(word)
+  const dictionaryResult= await englishParagraphService.getWordSearch(word)
 
-  res.send({
-    name: word,
-    data: rows
-  });
+  let jObj = new Object()
+  jObj.code =200
+  jObj.data = {
+    word : word,
+    dictionaryResult : dictionaryResult
+  }
+  
+  res.send(jObj);
   console.log('User WordSearch select success')
 }
 

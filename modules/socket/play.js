@@ -46,6 +46,8 @@ exports.play = function(socket, io,maxBlank,difficulty) {
           sendQuestion(io, roomId, questionMsg)
           console.log("문제출제")
           round.questionParagraph = questionMsg.questionParagraph
+          round.questionTranslation = questionMsh.questionTranslation
+
         } catch (error) {
           msg = {
             code: 400,
@@ -129,6 +131,7 @@ exports.play = function(socket, io,maxBlank,difficulty) {
       let round = room.round
       let roundCount = round.count
       let roundQuestionParagraph = round.questionParagraph
+      let roundQuestionTranslation = round.questionTranslation
       let matchHistoryId = socket.matchHistoryId
       let positions = data.positions
       let userId = socket.userId
@@ -156,12 +159,12 @@ exports.play = function(socket, io,maxBlank,difficulty) {
       if(isWin == true){
 
         await matchService.recordTestMatchResultHistory(matchHistoryId,userId)
-        roundHistoryId=await matchService.recordTestRoundHistory(roundCount,roundQuestionParagraph,constants.win,userId,matchHistoryId)
+        roundHistoryId=await matchService.recordTestRoundHistory(roundCount,roundQuestionParagraph,roundQuestionTranslation,constants.win,userId,matchHistoryId)
         await matchService.recordScoreHistory(matchDate,upperWinnerScore,userId)
         await userService.changeUserScore(userId,constants.upperWinnerScore)
       }
       else if(isWin == false){
-          roundHistoryId=await matchService.recordTestRoundHistory(roundCount,roundQuestionParagraph,constants.lose,userId,matchHistoryId)
+          roundHistoryId=await matchService.recordTestRoundHistory(roundCount,roundQuestionParagraph,roundQuestionTranslation,constants.lose,userId,matchHistoryId)
           await matchService.recordScoreHistory(matchDate,upperLoserScore,socket.userId)
           await userService.changeUserScore(userId,constants.upperLoserScore)
       }

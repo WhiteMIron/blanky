@@ -112,21 +112,20 @@ exports.getRoundHistory = async (req,res) =>{
 
 exports.recordSoloMatchHistory=async(req,res)=>{
 
-    decoded =await getUserIdByJwt(req.headers.auth)
-    let userId =decoded.userId
-
+    let userId =await getUserIdByJwt(req.headers.auth)
+   
     let history = req.body
     
     let matchHistory = history.matchHistory
     let matchDate = matchHistory.matchDate
-    let isWin  =  matchHistory.isWin
+    let isWin  =  matchHistory.isMatchWin
 
     let matchHistoryId = await englishParagraphService.recordSoloMatchHistory(matchDate,userId,isWin)
 
     let roundHistories = history.roundHistory 
 
     for ( roundHistory of roundHistories){
-      let roundCount = roundHistory.roundCount
+      let roundCount = roundHistory.count
       let questionParagraph = roundHistory.questionParagraph
       let questionTranslation = roundHistory.questionTranslation
       isWin = roundHistory.isWin
@@ -136,7 +135,7 @@ exports.recordSoloMatchHistory=async(req,res)=>{
       let isAnswer = answerHistory.isAnswer
       let answerStartIndex = answerHistory.startIndex
       let answerEndIndex = answerHistory.endIndex
-      let answerRightWord = answerHistory.answerRightWord
+      let answerRightWord = answerHistory.rightWord
       await englishParagraphService.recordSoloAnswerHistory(roundHistoryId, isAnswer,answerStartIndex, answerEndIndex, answerRightWord )
 
     } 
@@ -150,8 +149,8 @@ exports.recordSoloMatchHistory=async(req,res)=>{
 }
 
 exports.getSoloMatchHistory = async(req,res)=>{
-    decoded =await getUserIdByJwt(req.headers.auth)
-    let userId =decoded.id
+    let userId =await getUserIdByJwt(req.headers.auth)
+    console.log("userId:",userId)
     const [rows] = await matchHistoryService.getSoloMatchHistory(userId)
 
     console.log(rows)
@@ -159,7 +158,7 @@ exports.getSoloMatchHistory = async(req,res)=>{
     for(row of rows){
         let json = new Object()
         json.matchHistoryId =row.id
-        json.matchDate = row.match_date
+        json.matchDate = row.match_history_date
         json.isWin = row.win_yn
         jsonArray.push(json)
     }
@@ -174,17 +173,16 @@ exports.getSoloMatchHistory = async(req,res)=>{
 exports.getSoloRoundHistory = async(req,res)=>{
     let matchHistoryId = req.params.matchHistoryId
     const [roundRows] = await matchHistoryService.getSoloRoundHistory(matchHistoryId)
-    console.log(roundRows)
     let roundHistoryJsonArray = new Array()
     for( row of roundRows){ 
         let roundJson = new Object()
         
         roundJson.roundHistoryId = row.id
-        roundJson·roundCount = row.round_count
-        roundJson·questionParagraph = row.question_paragraph
+        roundJson.roundCount = row.round_count
+        roundJson.questionParagraph = row.question_paragraph
         roundJson.questionTranslation = row.question_translation
         roundJson.isWin = row.win_yn
-        
+        console.log("roundJson:",roundJson)
         let [answerRows] = await matchHistoryService.getSoloAnswerHistory( roundJson.roundHistoryId )
         let answerJsonArray = new Array()
         for (answerRow of answerRows){
@@ -206,6 +204,8 @@ exports.getSoloRoundHistory = async(req,res)=>{
 
 async function getUserIdByJwt(token){
   const decoded = jwt.verify(token, process.env.secret)
+  console.log(decoded)
   const id = decoded.userId
+    
   return id
 }
