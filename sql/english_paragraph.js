@@ -31,7 +31,43 @@ exports.findByParagraphId = async(paragraphId)=>{
 }
 
 
+exports.findChapterList=async ()=>{
+  const conn = await pool.getConnection()
+  try {
+    const rows = conn.query(
+    //전체 챕터 리스트(최근순) 5개
+    `SELECT id, english_paragraph_chapter_name AS 'name', english_paragraph__play_count AS 'count',
+    CASE english_paragraph_difficulty WHEN 1 THEN "Easy" WHEN 2 THEN "Normal" WHEN 3 THEN "Hard" END AS difficulty
+    , english_paragraph_chapter_img AS 'img',  english_paragraph_created_at AS 'addedDate'
+    FROM english_paragraph ORDER BY english_paragraph_created_at DESC;`)
+
+    // //솔로모드 easy 챕터 리스트(최근순)
+    // `SELECT id, english_paragraph_chapter_name AS 'name', english_paragraph__play_count AS 'count',
+    // english_paragraph_chapter_img AS 'img', english_paragraph_created_at AS 'addedDate'
+    // FROM english_paragraph WHERE english_paragraph_difficulty=1 ORDER BY english_paragraph_created_at DESC;`+
+    //
+    // //솔로모드 normal 챕터 리스트(최근순)
+    // `SELECT id, english_paragraph_chapter_name AS 'name', english_paragraph__play_count AS 'count',
+    // english_paragraph_chapter_img AS 'img', english_paragraph_created_at AS 'addedDate'
+    // FROM english_paragraph WHERE english_paragraph_difficulty=2 ORDER BY english_paragraph_created_at DESC;`+
+    //
+    // //솔로모드 hard 챕터 리스트(최근순)
+    // `SELECT id, english_paragraph_chapter_name AS 'name', english_paragraph__play_count AS 'count',
+    // english_paragraph_chapter_img AS 'img', english_paragraph_created_at AS 'addedDate'
+    // FROM english_paragraph WHERE english_paragraph_difficulty=3 ORDER BY english_paragraph_created_at DESC;`)
+
+    return rows
+  } catch (e) {
+    throw new Error(e)
+  } finally {
+    conn.release()
+  }
+}
+
+
+
 exports.modifyPlayCount = async(chapterId)=>{
+  // console.log("chapterId:",chapterId)
   const conn = await pool.getConnection()
   var sql = "UPDATE english_paragraph SET english_paragraph__play_count =english_paragraph__play_count+1 where id=?"
   try {
@@ -63,7 +99,7 @@ exports.findChapterRanks=async ()=>{
 
 
 exports.saveParagraph = async(chapterName,addSharpParagraphs,addSharpTranslations,difficulty)=>{
- 
+
   const conn = await pool.getConnection()
   var sql = "INSERT INTO english_paragraph (english_paragraph_chapter_name,english_paragraph,english_paragraph_translation,english_paragraph_difficulty,english_paragraph_created_at)"
           +"values (?,?,?,?,now())"

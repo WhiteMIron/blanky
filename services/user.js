@@ -13,10 +13,6 @@ exports.getUserById= async(userId)=>{
     return row
 }
 
-exports.getUserByRank= async()=>{
-    rows = await queries.findOneByUserRank()
-    return rows
-}
 
 exports.loginCheck=async (userKakaoId) =>{
 
@@ -36,7 +32,8 @@ exports.signup=async (User)=>{
 }
 
 exports.signupAdditionalInfo = async(User)=>{
-    await queries.saveUserAdditionalInfo(User)
+    let [row]=await queries.saveUserAdditionalInfo(User)
+    return row[0].id
 }
 
 exports.changeUserInfo = async(User,id)=>{
@@ -48,6 +45,8 @@ exports.changeUserProfile =  async(profile,id)=>{
 }
 
 exports.changeUserScore = async(id,attainScore)=>{
+  // console.log("점수 변경 id:",id,"score:",attainScore)
+
   await queries.modifyUserScore(id,attainScore)
 }
 
@@ -59,4 +58,14 @@ exports.getGraph =async (graphId)=>{
 exports.getRanks =async ()=>{
     rows = await queries.findRanks()
     return rows
+}
+
+
+exports.getSampleImg = async() =>{
+   let [rows] = await  queries.findSampleImg()
+   // console.log("rows:",rows)
+   let randomNum = Math.floor(Math.random() *  rows.length)
+   let img = rows[randomNum].img
+
+   return img
 }

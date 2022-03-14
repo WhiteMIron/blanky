@@ -2,3 +2,10 @@ node_modules/
 /.env
 config/
 /.ftpconfig
+/.server_tesst.js
+/.server_test2.js
+/.resultjson.html
+/.test2.js
+./test.yml
+./test3.js
+

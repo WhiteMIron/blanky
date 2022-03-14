@@ -1,17 +1,4 @@
 const _ = require("lodash");
-exports.removeSpecialSymbol =async (paragraph) =>{
-
-    paragraph = paragraph.trim()
-    tmpStr = paragraph.replace(/,/gi, "")
-    tmpStr = tmpStr.replace(/\?/gi, "")
-    tmpStr = tmpStr.replace(/!/gi, "")
-    tmpStr = tmpStr.replace(/\./gi, "")
-    tmpStr = tmpStr.replace(/\:/gi, "")
-    tmpStr = tmpStr.replace(/\r\n/gi, "")
-
-    tmpStr = tmpStr.split(" ")
-    return tmpStr
-  }
 
   exports.splitParagraphBaseDot = async (paragraph,translation,cutLength) =>{
     // let questionParagraphList = []
@@ -135,7 +122,6 @@ exports.removeSpecialSymbol =async (paragraph) =>{
     }
     translation = _.cloneDeep(tmp)
  }
-  console.log("questionTranslations[index].trim():",questionTranslations[index].trim())
   addSharpTranslations += questionTranslations[index].trim()
   questionInfo ={
     addSharpParagraphs : addSharpParagraphs,

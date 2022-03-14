@@ -56,13 +56,13 @@ exports.kakaoLogin=async (req,res,next)=>{
     if(row.length==1){
 
         let userId = row[0].id
-        console.log("userId:",userId)
+        // console.log("userId:",userId)
         token =await authMiddleware.generateJwtToken(userId,1)
-        res.status(200).send({"code":200,"message":"로그인 성공","token":token})
+        res.status(200).send({"code":200,"message":"로그인 성공","token":token,"userId":userId})
 
     }
     else{
-        console.log("추가정보 수행")
+        // console.log("추가정보 수행")
         user ={
             kakaoId:kakaoId,
             name:name,
@@ -88,7 +88,7 @@ exports.kakaoLogin=async (req,res,next)=>{
 
 exports.signup = async(req,res)=>{
 
-  console.log(req.headers)
+  // console.log(req.headers)
     try{
     decoded =await jwt.verify(req.headers.auth, process.env.secret)
     }catch(e){
@@ -104,8 +104,11 @@ exports.signup = async(req,res)=>{
     if(!school){
       throw new RegisterError(400,"잘못된 값입니다.")
     }
+    console.log("id:",id)
     const token = await authMiddleware.generateJwtToken(id,1)
-    await userService.signupAdditionalInfo(user)
-    res.status(201).send({code:201,message:"회원가입완료","token":token})
+    let userId =await userService.signupAdditionalInfo(user)
+    // console.log("추가입력 후 userId:",userId)
+    // console.log("회원가입완료",userId)
+    res.status(201).send({code:201,message:"회원가입완료","token":token,"userId":userId})
 
 }

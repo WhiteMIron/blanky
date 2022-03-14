@@ -1,40 +1,68 @@
 const commonQuestionModule = require("./common_question")
 const constants = require("../../consts_folder/constants");
-const excludeWords = ['Hello', 'in', 'cook', 'you', 'Addae','the','she', 'he', 'my', 'this', 'that', 'day', 'to'];
-
+const excludeWords =
+["Info","Min","Jisu","Mrs","or","The","the","and","And","USA","JK","UK"
+,"Hi",'an','She','she','He','he','Hello', 'in', 'cook','her', 'you'
+,'Addae','the','she', 'he', 'my', 'this', 'that', 'day', 'to','They',
+'Jiwon','Jihun',"Minsu","Kelly","Addae","Jihun","Hmm","one","pm","am","th","nd",
+"at","At","of","This","That","your","Your","you","You","is","are","Are","Is","be",
+"these",'There',"there","These","they","They","our","Our","than","it","It","three",
+"their","Their","was","we","We","his","were","Then","then","korea","Korea","Mom","mom",
+"one","One","First","second","But","but","mother","very","do","month","today","Today","Dad","did","First",
+"mother","Mother","All","all","Her","Now","now","Oh","two","korean","Here","here","jeon","Korean","How","how",
+"me","garaetteok","tteokbokki","Ghana","Do","Kazim","My","them","Turky","Anansi","Turtle","Its","its","Kakadu",
+"Step","Spain","Iguazu"
+];
+const excludeSymbols = ['-',`'`]
 //명사 동사 전치사 이렇게 빈칸 구성할 수도?
 
-exports.createRandomBlankWords = async (paragraph,maxBlank) =>{
-    console.log("originalParagraph:",paragraph)
-
+exports.createRandomBlankWords = async (paragraph,maxBlank,minLength) =>{
+    // console.log("originalParagraph:",paragraph)
     let tmpStr = await removeSpecialSymbol(paragraph)
-    tmpStr = await excludeFilterWork(tmpStr)
-
+    tmpStr = await excludeFilterWork(tmpStr,minLength)
+    // console.log("tmpStr:",tmpStr)
+    let randomNumList =[]
+    // let arr =[]
     let blank = []
 
-    let randomNumList = []
-
-    while (randomNumList.length < maxBlank) {
-      let rand_0_length = await commonQuestionModule.randomNumRangeListLen(tmpStr.length)
-      if (randomNumList.indexOf(rand_0_length) == -1)
-        randomNumList.push(rand_0_length)
-
+    for (i in tmpStr){
+        randomNumList.push(i)
     }
+
+    // console.log("셔플 전 randomNumList:",randomNumList)
+    // console.log("randomNumList len:",randomNumList.length)
+    shuffle(randomNumList)
+    randomNumList=randomNumList.slice(0,10)
+    // console.log("randomNumList len:",randomNumList.length)
+    shuffle(randomNumList)
+    randomNumList=randomNumList.slice(0,4)
     randomNumList = await commonQuestionModule.sortAsc(randomNumList)
+    // console.log("randomNumList:",randomNumList)
 
-    for (i in randomNumList) {
-      if (blank.indexOf(tmpStr[randomNumList[i]]) == -1 && tmpStr[randomNumList[i]].length > 1)
-        blank.push(tmpStr[randomNumList[i]])
+    for (i=0;i<maxBlank;i++){
+      blankWord = tmpStr[randomNumList[i]]
+      blank.push(blankWord)
     }
-    // blank=[ 'few', 'days', 'Come', 'house' ]
-    console.log(blank)
+
+    // for (i=0;i<maxBlank;i++){
+    //   randomNum = Math.floor(Math.random() * arr.length)
+    //   randomNumList.push(arr[randomNum])
+    //   arr.splice(randomNum,1)
+    // }
+    // randomNumList = await commonQuestionModule.sortAsc(randomNumList)
+
+
+    // for (i in randomNumList) {
+    //     blankWord = tmpStr[randomNumList[i]]
+    //     blank.push(blankWord)
+    // }
+
     return blank
 }
 
 
 exports.getBlankPositions = async (blankWords, paragraph) =>{
   let blankWordPositions =[]
-
   for( word of blankWords){
     let position =await searchPositionWord(word,paragraph)
     blankWordPositions.push(position)
@@ -59,35 +87,30 @@ async function searchPositionWord (searchValue, paragraph){
 
   while(true){
 
+    // console.log("searchValue:",searchValue)
     endIndex=startIndex+searchValueLength
     index = endIndex
     // console.log("substring:",paragraph.substring(startIndex,endIndex))
     // console.log("paragraph[index]==' '",paragraph[index]==" ")
 
-    if( searchValue==paragraph.substring(startIndex,endIndex) && (paragraph[index]=="" || paragraph[index]==" " || paragraph[index]=="," || paragraph[index]=="?" ||paragraph[index]=="!" || paragraph[endIndex]=="." ||  paragraph[endIndex]=='"' ||  paragraph[endIndex]=='(' )){
-      // console.log("여기 걸림0")
-      if(startIndex!=0 && paragraph[startIndex-1]!=" " && paragraph[startIndex-1]!='"' && paragraph[startIndex-1]!='('){
+    if( searchValue==paragraph.substring(startIndex,endIndex) && (paragraph[index]=="" || paragraph[index]==" " || paragraph[index]=="," || paragraph[index]=="?" ||paragraph[index]=="!" || paragraph[endIndex]=="." ||  paragraph[endIndex]=='"' ||  paragraph[endIndex]==')' || paragraph[endIndex]==':' ||  paragraph[endIndex]=='”')){
+      if(startIndex!=0 && paragraph[startIndex-1]!=" " && paragraph[startIndex-1]!='"' && paragraph[startIndex-1]!='(' && paragraph[startIndex-1]!='“'){
+
         startIndex =paragraph.indexOf(searchValue,endIndex+1)
-        // console.log("여기 걸림1")
         continue
 
       }
-      // console.log("여기 걸림2")
       break
     }
     else{
-      // console.log("여기 걸림3")
       startIndex =paragraph.indexOf(searchValue,startIndex+searchValueLength+1)
     }
   }
-
-  //여기에서 오브젝트를 만들어줘야하나?
   let position ={
     startIndex: startIndex ,
     endIndex: endIndex ,
-    // length: searchValueLength
   }
-
+  // console.log("여기 걸림4",position)
   return position
 }
 
@@ -105,10 +128,12 @@ async function setBlankChars(searchValueLength){
     return blankChars
 }
 
-
 async function removeSpecialSymbol(paragraph){
     paragraph = paragraph.trim()
-    tmpStr = paragraph.replace(/,/gi, "")
+    tmpStr = paragraph.replace(/’/gi,"'")
+    tmpStr = tmpStr.replace(/”/gi,"")
+    tmpStr = tmpStr.replace(/“/gi,"")
+    tmpStr = tmpStr.replace(/,/gi, "")
     tmpStr = tmpStr.replace(/\?/gi, "")
     tmpStr = tmpStr.replace(/!/gi, "")
     tmpStr = tmpStr.replace(/\./gi, "")
@@ -118,25 +143,44 @@ async function removeSpecialSymbol(paragraph){
     tmpStr = tmpStr.replace(/\(/gi, "")
     tmpStr = tmpStr.replace(/\)/gi, "")
     tmpStr = tmpStr.replace(/[0-9]/g, "");
-
     tmpStr = tmpStr.split(" ")
+
     return tmpStr
 }
 
 
-async function excludeFilterWork (paragraphWords){
+async function excludeFilterWork (paragraphWords,minLength){
   let tmp = []
   for (pWord of paragraphWords) {
-        if(pWord.length>1){
-          index =excludeWords.indexOf(pWord)
-          if (index == -1){
-            index= tmp.indexOf(pWord)
-            if(index == -1)
-              tmp.push(pWord)
+        if(pWord.length>minLength){
+          let index =excludeWords.indexOf(pWord)
+          if(index == -1){
+            for (symbol of excludeSymbols){
+              index  = pWord.indexOf(symbol)
+              if(index != -1)
+                break
+              }
+              if(index == -1){
+                index= tmp.indexOf(pWord)
+                if(index == -1){
+                  tmp.push(pWord)
+                }
+              }
+            }
           }
-        }
   }
   paragraphWords =tmp
 
   return paragraphWords
+}
+
+
+function shuffle(array){
+  for(let index = array.length -1; index>0; index--){
+      const randomPosition = Math.floor(Math.random()* (index+1));
+      const temporary  = array[index];
+
+      array[index] = array[randomPosition];
+      array[randomPosition] = temporary;
+    }
 }

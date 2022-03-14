@@ -34,6 +34,7 @@
     <button class="btn btn-primary" id="joinGameBtn">게임참가</button>
     <button class="btn btn-primary" id="forceLeaveBtn">강퇴</button>
     <button class="btn btn-primary" id="testBtn">지우기</button>
+    <button class="btn btn-primary" id="testBtn">지우기</button>
 
     <div id="chatLogs"></div>
   </div>
@@ -44,13 +45,17 @@
   $(function(){
     var socket = io('/easy');
     var roomId = "";
-    var myName =makeRandomName()
+    var myName = makeRandomName()
     var myId = makeRandomId()
+    var myScore = makeRandomScore()
+    var myImg ="test.jpg"
     // var myId = 2
 
     socket.emit("enterNameSpace", {
       userName: myName,
-      userId : myId
+      userId : myId,
+      userScore : myScore,
+      userImg : myImg
     });
     socket.on("waiting", function(data) {
       $("#chatLogs").append("<div><strong>" +"나:   " + data.userName + " [대기중] </strong>" + "</div>");
@@ -68,6 +73,8 @@
 
     socket.on("enterRoomOpponent",function(data){
       $("#chatLogs").append("<div><strong>[안내] "+ data.userName+"님이 입장하였습니다."+"</strong>" + "</div>");
+      $("#chatLogs").append("<div><strong>[안내] "+ "Id:"+data.userId+ "img:"+data.userImg+"님이 입장하였습니다."+"</strong>" + "</div>");
+      socket.emit("start")
   });
 
     socket.on("enterRoomMy", function(data) {
@@ -75,6 +82,7 @@
 
       $("#chatLogs").append("<div><strong>" +"나: " + myName +"</strong>" + "</div>");
       $("#chatLogs").append("<div><strong>" + roomId + "번방 참가 </strong></div>");
+      // setTimeout(start,4000)
       socket.emit("start")
     });
 
@@ -87,7 +95,7 @@
     socket.on("printQuestion", function(data) {
       // let originalParagraph = data.originalParagraph
       let questionParagraph = data.questionParagraph
-      let translation = data.translation
+      let translation = data.questionTranslation
       let blankWords= data.blankWords
       let blankWordsIndexes =  data.blankWordsIndexes
 
@@ -228,7 +236,9 @@
       }
       return name;
     }
-
+    function start(){
+      socket.emit("start")
+    }
     function makeRandomId(){
       var id = "";
       var possible = "0123";
@@ -236,6 +246,11 @@
         id += possible.charAt(Math.floor(Math.random() * possible.length));
       }
       return id;
+    }
+
+    function makeRandomScore(){
+      let score =Math.floor((Math.random()*(2000 - 100)+100));
+      return score
     }
 
     function clearTextarea() {

@@ -1,12 +1,15 @@
 const jwt =require('jsonwebtoken')
 const request = require('request-promise');
 const TokenError = require('../error/token-error');
+const sharp = require("sharp");
+var sizeOf = require('image-size');
+
 require("dotenv").config()
 
 const BASIC_KAKAO_AUTH_URL ="https://kauth.kakao.com/"
 const BASIC_KAKAO_API_URL = "https://kapi.kakao.com"
 const REST_API_KEY =process.env.REST_API_KEY
-const REDIRECT_URI =process.env.REDIECT_URI
+const REDIRECT_URI =process.env.REDIRECT_URI
 
 
 exports.getKakaoToken = async(code)=>{
@@ -58,9 +61,11 @@ exports.getKakaoProfile = async (accessToken)=>{
     let name = kakao_account.profile.nickname
     let email =' '
     let profileImg = kakao_account.profile.profile_image_url
-
-    console.log(kakao_account.email_needs_agreement)
-    console.log(typeof(kakao_account.email_needs_agreement))
+    // sharp(profileImg).resize({width:500})
+    // var dimensions = sizeOf(profileImg);
+    // console.log("이미지 사이즈 :",dimensions.width, dimensions.height);
+    // console.log(kakao_account.email_needs_agreement)
+    // console.log(typeof(kakao_account.email_needs_agreement))
     if(kakao_account.email_needs_agreement==false){
       email = kakao_account.email
     }
@@ -72,7 +77,7 @@ exports.getKakaoProfile = async (accessToken)=>{
         email:email,
         profileImg:profileImg
     }
-    console.log(profile)
+    // console.log(profile)
     return profile
 }
 
@@ -104,6 +109,3 @@ exports.verifyToken =async (req, res, next) => {
           throw new TokenError()
       }
   }
-
-
-  

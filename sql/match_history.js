@@ -15,11 +15,11 @@ exports.saveScoreHistory = async (matchDate,attainScore,userId)=>{
 }
 
 
-exports.saveTestMatchHistory = async(matchDate, player1UserId, player2UserId)=>{
+exports.saveTestMatchHistory = async(matchDate, difficulty, player1UserId, player2UserId)=>{
     const conn = await pool.getConnection()
-    let sql = "INSERT INTO test_match_history (match_date,player1_user_id,player2_user_id) values(?,?,?)"
+    let sql = "INSERT INTO test_match_history (match_date,difficulty,player1_user_id,player2_user_id) values(?,?,?,?)"
     try{
-        params =[matchDate, player1UserId, player2UserId]
+        params =[matchDate,difficulty,player1UserId, player2UserId]
         conn.query(sql,params)
         sql = "SELECT LAST_INSERT_ID() as id"
         let row =  conn.query(sql)
@@ -47,6 +47,25 @@ exports.saveTestMatchResultHistory = async(matchHistoryId, winUserId)=>{
         conn.release()
     }
 }
+
+
+exports.saveMatchResultHistory= async(matchDate,difficulty,winnerId,userId, opponentUserId)=>{
+  const conn = await pool.getConnection()
+  let sql = "INSERT INTO test_match_history (match_date,difficulty,win_user_id,player1_user_id,player2_user_id) values(?,?,?,?,?)"
+  try{
+      params =[matchDate,difficulty,winnerId,userId, opponentUserId]
+      conn.query(sql,params)
+      sql = "SELECT LAST_INSERT_ID() as id"
+      let row =  conn.query(sql)
+      return row
+  }catch(e){
+      throw new Error(e)
+  }finally{
+      conn.release()
+  }
+}
+
+
 
 exports.saveTestRoundHistory = async(roundCount,questionParagraph,questionTranslation,winYN,userId,matchHistoryId)=>{
     const conn = await pool.getConnection()
@@ -85,7 +104,8 @@ exports.saveTestAnswerHistory = async(answerStartIndex, answerEndIndex,answerYN,
 exports.findMatchHistoryByUserId = async(userId)=>{
 
     const conn = await pool.getConnection()
-    let sql ="SELECT * from test_match_history where player1_user_id = ? OR player2_user_id = ?"
+    let sql =`SELECT id, match_date,CASE difficulty WHEN 1 THEN "Easy" WHEN 2 THEN "Normal" WHEN 3 THEN "Hard" END AS difficulty  , win_user_id, player1_user_id, player2_user_id`
+             +` from test_match_history where player1_user_id = ? OR player2_user_id = ?`
     try{
         params = [userId,userId]
         let rows = conn.query(sql,params)
@@ -128,16 +148,16 @@ exports.findAnswerHistoryByRoundHistoryId = async(roundHistoryId)=>{
 }
 
 
-exports.saveSoloMatchHistory = async (matchDate,userId,isWin)=>{
+exports.saveSoloMatchHistory = async (matchDate,difficulty,userId,isWin)=>{
     const conn = await pool.getConnection()
-    let sql ="INSERT INTO solo_match_history(match_history_date,win_yn,user_id) values(?,?,?)"
+    let sql ="INSERT INTO solo_match_history(match_history_date,difficulty,win_yn,user_id) values(?,?,?,?)"
     try{
-        params = [matchDate,isWin,userId]
+        params = [matchDate,difficulty,isWin,userId]
         conn.query(sql,params)
         sql = "SELECT LAST_INSERT_ID() as id"
         let row=  conn.query(sql)
         return row
-  
+
         return row
     }catch(e){
         throw new Error(e)
@@ -154,7 +174,7 @@ exports.saveSoloRoundHistory = async(roundCount,matchHistoryId,questionParagraph
         conn.query(sql,params)
         sql = "SELECT LAST_INSERT_ID() as id"
         let row=  conn.query(sql)
-       
+
         return row
     }catch(e){
         throw new Error(e)
@@ -183,7 +203,8 @@ exports.saveSoloAnswerHistory = async(roundHistoryId,isAnswer,answerStartIndex,a
 exports.findSoloMatchHistoryByUserId = async(userId)=>{
 
     const conn = await pool.getConnection()
-    let sql ="SELECT * from solo_match_history where user_id = ?"
+    let sql =`SELECT id, match_history_date, CASE difficulty WHEN 1 THEN "Easy" WHEN 2 THEN "Normal" WHEN 3 THEN "Hard" END AS difficulty,
+              win_yn from solo_match_history where user_id = ?`
     try{
         params = [userId]
         let rows = conn.query(sql,params)

@@ -4,44 +4,32 @@ const jwt =require('jsonwebtoken')
 require("dotenv").config()
 
 exports.getUserInfo=async (req, res) => {
+  let id = await getUserIdByJwt(req.headers.auth)
+  if(req.params.id != id){
+    // console.log("req:",req.params.id)
+    id = req.params.id
+  }
+  // console.log("id:",id)
 
-  const id = await getUserIdByJwt(req.headers.auth)
-  const row= await userService.getUserById(id)
-  const [rows]= await userService.getUserByRank()
-  var rank = 1
-  var k = 1
-  for (var i = 0; i < rows[0].length; i++) {
-    if (i > 0) {
-      if (rows[0][i].score == rows[0][i - 1].score) {
-        k++
-      }
-      else {
-        rank += k
-        k = 1
-      }
-    }
-    if (rows[0][i].id == id) {
-      break
-    }
-  }
+  const [row]= await userService.getUserById(id)
+
   user={
-    id:row[0].id,
-    nickname:row[0].user_nickname,
-    email:row[0].user_email,
-    school:row[0].user_school,
-    dualScore:row[0].user_dual_score,
-    soloScore:row[0].user_solo_score,
-    profileImg:row[0].user_profile_img,
-    description:row[0].user_description,
-    rank:rank,
-    totalRank:rows[1][0].count
-  }
-  var jObj =  new Object()
-  jObj.code=200
-  jObj.message="회원정보조회 성공"
-  jObj.data =user
+        id:row[0][0].id,
+        nickname:row[0][0].name,
+        email:row[0][0].email,
+        school:row[0][0].school,
+        dualScore:row[0][0].score,
+        profileImg:row[0][0].img,
+        description:row[0][0].description,
+        rank:row[0][0].ranknum,
+        totalRank:row[1][0].count
+     }
+    var jObj =  new Object()
+    jObj.code=200
+    jObj.message="회원정보조회 성공"
+    jObj.data =user
   // console.log(user)
-  res.status(200).send(jObj )
+  res.status(200).send(jObj)
 }
 
 exports.changeUserInfo= async(req,res) =>{
@@ -54,18 +42,30 @@ exports.changeUserInfo= async(req,res) =>{
 
 }
 
+
 exports.changeUserProfile = async(req,res) => {
-  console.log("요청 들어옴")
-  let profile = req.file.location;
-  console.log(profile)
+  let profile = req.file.transforms[0].location
   const id = await getUserIdByJwt(req.headers.auth)
   await userService.changeUserProfile(profile,id)
   res.status(201).send({code:201,message:"유저 프로필 변경 성공"})
 }
 
+
+// exports.changeUserProfile = async(req,res) => {
+//   console.log("요청 들어옴")
+//   let profile = req.file.location;
+//   console.log(profile)
+//   const id = await getUserIdByJwt(req.headers.auth)
+//   await userService.changeUserProfile(profile,id)
+//   res.status(201).send({code:201,message:"유저 프로필 변경 성공"})
+// }
+
 exports.getGraph = async(req,res) => {
   let id = await getUserIdByJwt(req.headers.auth)
-  // let id =2211
+  // console.log("요청 id:",req.params.id)
+  if(req.params.id != id){
+    id = req.params.id
+  }
   const [rows]= await userService.getGraph(id)
 
   res.send({
@@ -73,40 +73,17 @@ exports.getGraph = async(req,res) => {
     weekStat: rows[1],
     monthStat: rows[2]
   })
-  console.log('User Graph select success')
+  // console.log('User Graph select success')
 }
 
 exports.getRanks = async(req,res) => {
   const [rows]= await userService.getRanks()
 
-  var resultJson = [];
-  var rank = 1
-  var k = 1
-  for (var i = 0; i < rows.length; i++) {
-    if (i > 0) {
-      if (rows[i].score == rows[i - 1].score) {
-        k++
-      }
-      else {
-        rank += k
-        k = 1
-      }
-    }
-    resultJson.push(
-      {
-        rankNum: rank,
-        id: rows[i].id,
-        name: rows[i].name,
-        score: rows[i].score,
-        img: rows[i].img
-      }
-    )
-  }
   let jObj = new Object()
   jObj.code = 200
-  jObj.data = resultJson
+  jObj.data = rows
   res.send(jObj)
-  console.log('User Ranks select success')
+  // console.log('User Ranks select success')
 }
 
 

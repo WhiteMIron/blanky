@@ -26,6 +26,15 @@ exports.plusPlayCount = async(chapterId)=>{
 
 }
 
+
+
+exports.getChapterList =async ()=>{
+  rows = await queries.findChapterList()
+  return rows
+}
+
+
+
 exports.getChapterRanks =async ()=>{
   rows = await queries.findChapterRanks()
   return rows
@@ -38,16 +47,20 @@ exports.registerParagraph = async(chapterName,paragraph,translation,cutLength,di
   let quizInfo = await paragraphModule.splitParagraphBaseDot(paragraph,translation,cutLength)
   let addSharpParagraphs = quizInfo.addSharpParagraphs
   let addSharpTranslations = quizInfo.addSharpTranslations
-  //#이 추가된 상황 
+  //#이 추가된 상황
   console.log(quizInfo)
   await queries.saveParagraph(chapterName,addSharpParagraphs,addSharpTranslations,difficulty)
+}
+
+exports.changeParagraphPlayCount = async (paragraphId)=>{
+  await queries.modifyPlayCount(paragraphId)
 }
 
 exports.changeParagraph = async(paragraph,translation,cutLength,paragraphId)=>{
   let quizInfo = await paragraphModule.splitParagraphBaseDot(paragraph,translation,cutLength)
   let addSharpParagraphs = quizInfo.addSharpParagraphs
   let addSharpTranslations = quizInfo.addSharpTranslations
-  
+
   console.log("quizInfo:",quizInfo)
   await queries.modifyParagraph(addSharpParagraphs,addSharpTranslations,paragraphId)
 }

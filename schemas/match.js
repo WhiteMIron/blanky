@@ -3,12 +3,14 @@
 *  @swagger
 *
 *  paths:
-*   /match/history/dual :
+*   /match/history/dual/{id} :
 *      get:
 *        summary: get dual matchHistory
 *        parameters:
 *          - in: header
 *            name: auth
+*          - in: path
+*            name: id
 *        tags: [match]
 *
 *        responses:
@@ -27,12 +29,16 @@
 *                         type : string
 *                      matchDate :
 *                         type : string
+*                      difficulty :
+*                         type : string
 *                      winYN :
 *                         type : bool
 *                      opponentUserId:
 *                         type : integer
 *                      opponentUserNickname:
 *                         type : string
+*                      opponentUserImg :
+*                         tpye : string
 *                   example :
 *                       code : 200
 *                       data :
@@ -40,17 +46,21 @@
 *                                {
 *                                  "id": 431,
 *                                  "matchDate": "2021-07-01T13:31:22.*000Z",
+*                                  "difficulty": Easy,
 *                                  "winYN": true,
 *                                  "opponentUserId": 2220,
-                                   "opponentUserNickname" : "트팟"
+*                                  "opponentUserNickname" : "트팟",
+*                                  "opponentUserImg": "https://example.com/userProFile/1626847845028_image_picker4109960537015296611.png",
+*
 *                                },
 *                                {
 *                                  "id": 432,
 *                                  "matchDate": "2021-07-01T13:41:22.*000Z",
+*                                  "difficulty": Easy,
 *                                  "winYN": true,
- *                                 "opponentUserId": 2220,
-                                   "opponentUserNickname" : "팟트"
-
+*                                  "opponentUserId": 2220,
+*                                  "opponentUserNickname" : "팟트",
+*                                  "opponentUserImg": "https://example.com/userProFile/1626847845028_image_picker4109960537015296611.png",
 *                                }
 *                               ]
 *
@@ -120,6 +130,10 @@
 *                      code :
 *                         type : integer
 *                      data :
+*                         type : object
+*                      myRoundHistory :
+*                         type : array
+*                      opponentRoundHistory :
 *                         type : array
 *                      roundCount :
 *                         type : integer
@@ -139,8 +153,9 @@
 *                         type : bool
 *                   example :
 *                       code : 200
-*                       data: [
-*                                {
+*                       data: {
+*                              "myRoundHistory" :[
+*                                 {
 *                                   "roundCount": 1,
 *                                   "questionParagraph": "We're planning to join the K-pop Cover Dance Festival someday. We really want to visit Korea to see our favorite singers.",
 *                                   "questionTranslation": "테스트 해석문장",
@@ -203,7 +218,9 @@
 *                                       "isAnswer": true
 *                                   }
 *                                  ]
-*                                },
+*                                }
+*                               ],
+*                             "opponentRoundHistory" : [
 *                               {
 *                                   "roundCount": 1,
 *                                   "questionParagraph": "We're planning to join the K-pop Cover Dance Festival someday. We really want to visit Korea to see our favorite singers.",
@@ -268,7 +285,8 @@
 *                                   }
 *                                  ]
 *                                 }
-*                                ]
+*                              ]
+*                            }
 *
 *
 *          "410":
@@ -337,6 +355,8 @@
 *                         type : string
 *                      matchDate :
 *                         type : string
+*                      difficulty :
+*                         type : string
 *                      winYN :
 *                         type : bool
 *                      opponentUserId:
@@ -350,11 +370,13 @@
 *                                {
 *                                  "id": 431,
 *                                  "matchDate":  "2021-07-15 11:05:43",
+*                                  "difficulty": Easy,
 *                                  "winYN": true,
 *                                },
 *                                {
 *                                  "id": 432,
 *                                  "matchDate":  "2021-07-15 11:05:43",
+*                                  "difficulty": Easy,
 *                                  "winYN": true,
 *                                }
 *                               ]
@@ -423,6 +445,8 @@
 *                     type : bool
 *                    matchDate :
 *                     type : string
+*                    difficulty :
+*                     type : string
 *                    roundHistory :
 *                     type : object
 *                    count :
@@ -453,14 +477,6 @@
 *                   properties :
 *                      code :
 *                         type : integer
-*                      data :
-*                         type : array
-*                      id :
-*                         type : string
-*                      matchDate :
-*                         type : string
-*                      winYN :
-*                         type : bool
 *                   example :
 *                       code : 200
 *

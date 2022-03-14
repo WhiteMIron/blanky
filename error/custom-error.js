@@ -8,7 +8,6 @@ class CustomError extends Error {
 
       this.code = code
       this.message = message
-      this.params =params
 
       console.log(message)
     }

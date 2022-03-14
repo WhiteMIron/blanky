@@ -18,8 +18,8 @@ router.use('/match',match)
 
 router.get('/test',function(req,res){
     token = req.headers.auth
-    console.log(token)
-    console.log("test")
+    // console.log(token)
+    // console.log("test")
     res.send({"code":"200","message":"test success"})
 })
 

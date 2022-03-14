@@ -3,12 +3,14 @@
 *  @swagger
 *
 *  paths:
-*   /user:
+*   /user/{id}:
 *      get:
 *        summary: get userInfo
 *        parameters:
 *          - in: header
 *            name: auth
+*          - in: path
+*            name: id
 *        tags: [user]
 *
 *        responses:
@@ -33,8 +35,6 @@
 *                         type : string
 *                      dual_score:
 *                         type : integer
-*                      solo_score:
-*                         type : integer
 *                      profile_img:
 *                         type : string
 *                      description :
@@ -51,7 +51,6 @@
 *                                "nickname": "zizo",
 *                                "email" : "zizo@gmail.com",
 *                                "dualScore": 100,
-*                                "soloScore": 100,
 *                                "profileImg":"https://google.com/d02lmcxizdksjdiasdadkci.jpeg",
 *                                "description" : "올것이 왔군..",
 *                                "rank": 1,
@@ -269,12 +268,14 @@
 *                   example :
 *                       code : 401
 *                       message : 유효하지 않은 토큰입니다.
-*   /user/statistics:
+*   /user/statistics/{id}:
 *      get:
 *        summary: get score statistics
 *        parameters:
 *          - in: header
 *            name: auth
+*          - in: path
+*            name: id
 *        tags: [user]
 *
 *        responses:
@@ -386,7 +387,7 @@
 *                       message : 유효하지 않은 토큰입니다.
 *   /user/ranks  :
 *      get:
-*        summary: get userRanks 
+*        summary: get userRanks
 *        parameters:
 *          - in: header
 *            name: auth
@@ -404,33 +405,45 @@
 *                         type : integer
 *                      data :
 *                         type : array
-*                      rankNum :
+*                      rank :
 *                         type : integer
 *                      id  :
 *                         type : integer
-*                      name :
+*                      nickname :
 *                         type : integer
-*                      score :
+*                      dualScore :
 *                         type : string
-*                      img :
+*                      profileImg :
+*                         type : string
+*                      email :
+*                         type : string
+*                      school :
+*                         type : string
+*                      description :
 *                         type : string
 *                   example :
 *                       code : 200
 *                       data :
 *                             [
 *                               {
-*                                 "rankNum": 1,
+*                                 "rank": 1,
 *                                 "id": "1020",
-*                                 "name": 25,
-*                                 "score": "10",
-*                                 "img": "https://blanky.s3.ap-northeast-2.amazonaws.com/textbookFile/middle1/geumseong/TraditionalMarket.png"
-*                                },     
+*                                 "nickname": 25,
+*                                 "dualScore": "10",
+*                                 "profileImg": "https://example.com/textbookFile/middle1/geumseong/TraditionalMarket.png",
+*                                 "email": "",
+*                                 "school": "SCHOOL",
+*                                 "description": "hello"
+*                                },
 *                                {
-*                                 "rankNum": 1,
+*                                 "rank": 1,
 *                                 "id": "2123",
-*                                 "name": 25,
-*                                 "score": "10",
-*                                 "img": "https://blanky.s3.ap-northeast-2.amazonaws.com/textbookFile/middle1/geumseong/TraditionalMarket.png"
+*                                 "nickname": 25,
+*                                 "dualScore": "10",
+*                                 "profileImg": "https://example.com/textbookFile/middle1/geumseong/TraditionalMarket.png",
+*                                 "email": "",
+*                                 "school": "SCHOOL",
+*                                 "description": "hello"
 *                                }
 *                              ]
 *

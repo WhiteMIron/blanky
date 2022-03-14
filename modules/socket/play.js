@@ -8,7 +8,8 @@ const { upperWinnerScore, upperLoserScore } = require("../../consts_folder/socke
 const _ = require('lodash');
 
 
-exports.play = function(socket, io,maxBlank,difficulty) {
+exports.play = function(socket, io,maxBlank,difficulty,minLength) {
+
     socket.on('start', async function() {
     if (socket.status == constants.matched) {
       let room = socket.room
@@ -34,20 +35,20 @@ exports.play = function(socket, io,maxBlank,difficulty) {
           }
 
 
-          matchHistoryId=await matchService.recordTestMatchHistory(matchDate, userId, opponentUserId)
+          matchHistoryId=await matchService.recordTestMatchHistory(matchDate,difficulty,userId, opponentUserId)
           for(player of room.sockets){
             player.matchHistoryId = matchHistoryId
           }
 
           //room에 라운드 수만큼 문장/해석 셋팅   room, difficulty, roundCount
-          await questionModule.setParagraphs(room,difficulty,3)
-          let questionMsg = await questionModule.createQuestion(room,room.questionParagraphs,room.questionTranslations,maxBlank)
+          await questionModule.setParagraphs(room,difficulty,7)
+          console.log("minLength:",minLength)
+          let questionMsg = await questionModule.createQuestion(room,room.questionParagraphs,room.questionTranslations,maxBlank,minLength)
           let round = room.round
           sendQuestion(io, roomId, questionMsg)
           console.log("문제출제")
           round.questionParagraph = questionMsg.questionParagraph
-          round.questionTranslation = questionMsh.questionTranslation
-
+          round.questionTranslation = questionMsg.questionTranslation
         } catch (error) {
           msg = {
             code: 400,
@@ -119,8 +120,7 @@ exports.play = function(socket, io,maxBlank,difficulty) {
   })
 
     socket.on('notifyRoundResult',async function(data){
-      let isWin =data.isWin
-      messageModule.roundResultNotify(socket,isWin)
+      messageModule.roundResultNotify(socket)
     })
 
 
@@ -139,6 +139,7 @@ exports.play = function(socket, io,maxBlank,difficulty) {
       let wrongAnswerInfos = socket.wrongAnswerInfos
       let matchDate = socket.matchDate
 
+      let positions = data.positions
       for(position of positions){
         let rightAnswer = position.word
         let startIndex = position.startIndex
@@ -152,8 +153,8 @@ exports.play = function(socket, io,maxBlank,difficulty) {
             })
       }
 
-      rightAnswerInfos = rightAnswerInfos
-      wrongAnswerInfos = wrongAnswerInfos
+      // rightAnswerInfos = rightAnswerInfos
+      // wrongAnswerInfos = wrongAnswerInfos
 
 
       if(isWin == true){
@@ -161,12 +162,12 @@ exports.play = function(socket, io,maxBlank,difficulty) {
         await matchService.recordTestMatchResultHistory(matchHistoryId,userId)
         roundHistoryId=await matchService.recordTestRoundHistory(roundCount,roundQuestionParagraph,roundQuestionTranslation,constants.win,userId,matchHistoryId)
         await matchService.recordScoreHistory(matchDate,upperWinnerScore,userId)
-        await userService.changeUserScore(userId,constants.upperWinnerScore)
+        await userService.changeUserScore(userId,constants.easyWinnerScore)
       }
       else if(isWin == false){
           roundHistoryId=await matchService.recordTestRoundHistory(roundCount,roundQuestionParagraph,roundQuestionTranslation,constants.lose,userId,matchHistoryId)
           await matchService.recordScoreHistory(matchDate,upperLoserScore,socket.userId)
-          await userService.changeUserScore(userId,constants.upperLoserScore)
+          await userService.changeUserScore(userId,constants.easyLoserScore)
       }
 
       for(info of rightAnswerInfos)
@@ -181,25 +182,27 @@ exports.play = function(socket, io,maxBlank,difficulty) {
  //진쪽에서 이벤트 발생
  socket.on("submitQuestion",async function(){
   let room = socket.room
-  let questionMsg = await questionModule.createQuestion(room,room.questionParagraphs,room.questionTranslations,maxBlank)
+  let questionMsg = await questionModule.createQuestion(room,room.questionParagraphs,room.questionTranslations,maxBlank,minLength)
   let round = room.round
   let roomId=  room.id
   sendQuestion(io, roomId, questionMsg)
-  round.questionParagraph = questionMsg.questionParagraph
+  // round.questionParagraph = questionMsg.questionParagraph
   console.log("문제출제")
 
   })
 
-  //이긴쪽에서 먼저 이벤트 발생
   socket.on("finish",async function(data){
-    //여기에서 각자 맞춘갯수 / 틀린 갯수 정보를 상대에게 전달
-    if(isWin==true){
+
       let matchHistoryId = socket.matchHistoryId
       let winnerId = socket.id
+      let roomId = socket.room.id
       await matchService.recordTestMatchResultHistory(matchHistoryId,winnerId)
-    }
 
-    messageModule.gameResultNotify(socket,room)
+      messageModule.gameResultNotify(socket)
+
+      setTimeout(function(){
+        messageModule.recordSuccessNotify(io,roomId)
+      }, 2000);
   })
 
   socket.on("sendAnswerResult",function(data){
@@ -214,16 +217,14 @@ exports.play = function(socket, io,maxBlank,difficulty) {
 }
 
 
-
-
 function checkReadyPlayer(room,socket){
-  if(room.readyPlayers.indexOf(socket) ==-1)
+  if(room && room.readyPlayers.indexOf(socket) ==-1)
     room.readyPlayers.push(socket)
 }
 
 
 function isReadyRoom(room, socket) {
-    if (room.readyPlayers.length == 2){
+    if (room && room.readyPlayers.length == 2){
       room.status = constants.ready
       return constants.ready
     }

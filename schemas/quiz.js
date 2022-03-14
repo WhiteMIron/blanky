@@ -3,17 +3,14 @@
 *  @swagger
 *
 *  paths:
-*   /quiz/difficulty/{difficulty}  :
+*   /quiz/chapterList  :
 *      get:
-*        summary: get Chapter info by difficulty
-*        parameters:
-*          - in: path
-*            name: difficulty
+*        summary: get chapterList
 *        tags: [quiz]
 *
 *        responses:
 *          "200":
-*             description: 난이도별 챕터 조회 성공
+*             description: 전체 챕터 리스트 조회 성공
 *             content:
 *               application/json:
 *                 schema:
@@ -22,39 +19,136 @@
 *                      code :
 *                         type : integer
 *                      data :
+*                         type : object
+*                      allChapterSummaryList :
 *                         type : array
+*                      easyChapterList  :
+*                         type : array
+*                      normalChapterList :
+*                         type : array
+*                      hardChapterList :
+*                         type : string
 *                      id :
-*                         type : string
-*                      matchDate :
-*                         type : string
-*                      winYN :
-*                         type : bool
-*                      opponentUserId:
 *                         type : integer
-*                      opponentUserNickname:
+*                      name :
+*                         type : string
+*                      count :
+*                         type : integer
+*                      difficulty :
+*                         type : integer
+*                      img :
+*                         type : string
+*                      addedDate :
 *                         type : string
 *                   example :
 *                       code : 200
 *                       data :
-*                               [
-*                                {
-*                                  "id": 1,
-*                                  "chapterName": "Small Creative Ideas, Big Changes",
-*                                  "chapterImg": https://blanky.s3.ap-northeast-2.amazonaws.com/userProFile/1625640465324_1chapter.png,
-*                                  "playCount": 20,
-*                                  "difficulty": 1,
-*                                  "addedDate": "2021-07-03 13:28:31"
-*                                },
-*                                {
-*                                  "id": 2,
-*                                  "chapterName": "You can Be Confident",
-*                                  "chapterImg": https://blanky.s3.ap-northeast-2.amazonaws.com/userProFile/1625640465324_2chapter.png,
-*                                  "playCount": 25,
-*                                  "difficulty": 1,
-*                                  "addedDate": "2021-07-03 13:28:31"
-*
-*                                }
-*                               ]
+*                             {
+*                               "allChapterSummaryList":[
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      },
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      },
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      }
+*                               ],
+*                               "easyChapterList":[
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      },
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      },
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      }
+*                                ],
+*                               "normalChapterList":[
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      },
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      },
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      }
+*                                 ],
+*                               "hardChapterList":[
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      },
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      },
+*                                     {
+*                                       "id": 43,
+*                                       "name": "Let’s Make Ricotta Cheese",
+*                                       "count": 0,
+*                                       "difficulty": 1,
+*                                       "img": null,
+*                                       "addedDate": "2021-07-15"
+*                                      }
+*                                  ]
+*                               }
 *
 *
 *          "400":
@@ -74,7 +168,7 @@
 *
 *   /quiz/chapter/{chapterId}  :
 *      get:
-*        summary: get Chapter detail info 
+*        summary: get Chapter detail info
 *        parameters:
 *          - in: path
 *            name: chapterId
@@ -100,10 +194,10 @@
 *                       code : 200
 *                       data :
 *                                {
-*                                  "chapterName": "I feel great because many Korea lovers from all around the world posted messages. I believe that they love Korea a lot. I will read the top three to show my special thanks.",
-*                                  "chapterImg": 오늘은 전 세계의 한국을 사랑하는 많은 분들이 메시지를 올려 주셔서 정말 기분이 좋네요. 저는 그분들이 한국을 정말 사랑한다고 믿어요. 제가 특별히 감사함을 표현하기 위해 가장 잘 쓴 세 개의 메시지를 읽어 드릴게요. 
+*                                  "paragraph": "I feel great because many Korea lovers from all around the world posted messages. I believe that they love Korea a lot. I will read the top three to show my special thanks.",
+*                                  "translation": 오늘은 전 세계의 한국을 사랑하는 많은 분들이 메시지를 올려 주셔서 정말 기분이 좋네요. 저는 그분들이 한국을 정말 사랑한다고 믿어요. 제가 특별히 감사함을 표현하기 위해 가장 잘 쓴 세 개의 메시지를 읽어 드릴게요.
 *                                }
-*                               
+*
 *
 *
 *          "400":
@@ -185,7 +279,7 @@
 *                                         "startIndex": 40,
 *                                         "endIndex": 44
 *                                       }
-*                                     ]  
+*                                     ]
 *                                   }
 *                                 ]
 *
@@ -285,21 +379,21 @@
 *                         type : integer
 *                      data :
 *                         type : object
-*                      word: 
+*                      word:
 *                         type : string
-*                      dictionaryResult: 
+*                      dictionaryResult:
 *                         type : array
-*                      partOfSpeech: 
+*                      partOfSpeech:
 *                         type : string
-*                      exampleOri: 
+*                      exampleOri:
 *                         type : string
-*                      exampleTrans: 
+*                      exampleTrans:
 *                         type : string
 *                   example :
 *                       code : 200
 *                       data :
 *                             [
-*                                   "word": "hello",    
+*                                   "word": "hello",
 *                                   {
 *                                     "partOfSpeech": "감탄사, 명사: 얼씨구(상대방의 말이 바보 같거나, 상대방이 주의를 기울이지 않고 있다고 여길 때) (→golden hello)",
 *                                     "exampleOri": "Hello? You didn’t really mean that, did you?",
